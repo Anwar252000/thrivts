@@ -1,0 +1,14 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Thrivts.Api/Thrivts.Api.csproj" />
+    <Project Path="src/Thrivts.Application/Thrivts.Application.csproj" />
+    <Project Path="src/Thrivts.Domain/Thrivts.Domain.csproj" />
+    <Project Path="src/Thrivts.Infrastructure/Thrivts.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Thrivts.Api.IntegrationTests/Thrivts.Api.IntegrationTests.csproj" />
+    <Project Path="tests/Thrivts.Application.UnitTests/Thrivts.Application.UnitTests.csproj" />
+    <Project Path="tests/Thrivts.Domain.UnitTests/Thrivts.Domain.UnitTests.csproj" />
+    <Project Path="tests/Thrivts.Infrastructure.IntegrationTests/Thrivts.Infrastructure.IntegrationTests.csproj" />
+  </Folder>
+</Solution>

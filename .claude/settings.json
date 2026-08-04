@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet --version)",
+      "Bash(dotnet --list-sdks)",
+      "Bash(cd \"c:\\\\Users\\\\anwar.islam\\\\Desktop\\\\Projects\\\\test\\\\thrivts\\\\Backend\" && rm -rf .vs appsettings.Development.json appsettings.json backend.csproj backend.csproj.user backend.http backend.slnx bin obj Controllers Program.cs Properties WeatherForecast.cs && ls -la)",
+      "Bash(dotnet add *)"
+    ],
+    "additionalDirectories": [
+      "c:\\Users\\anwar.islam\\Desktop\\Projects\\test\\thrivts\\Backend\\.vs"
+    ]
+  }
+}

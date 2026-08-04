@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<meta name="description" content="Thrivts partner dashboard — track your referrals and commissions." />
+<title>Thrivts Partners — Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root{
+    --sage:#73837A;--sage-deep:#4E5A52;--moss:#222A25;--ink:#2C342E;
+    --cream:#F4F1EA;--paper:#FBFAF6;--paper-2:#EFEBE1;
+    --brass:#B58E54;--brass-soft:#C9A86A;
+    --line:rgba(44,52,46,.12);--line-soft:rgba(44,52,46,.07);
+    --display:'Space Grotesk',sans-serif;--body:'Inter',sans-serif;--mono:'Space Mono',monospace;
+    --shadow:0 1px 2px rgba(34,42,37,.04),0 18px 40px -24px rgba(34,42,37,.28);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:var(--body);background:var(--cream);color:var(--ink);-webkit-font-smoothing:antialiased}
+  h1,h2,h3,h4{font-family:var(--display);font-weight:600;color:var(--moss);letter-spacing:-.01em}
+  .mono{font-family:var(--mono)}
+  button{font-family:var(--body);cursor:pointer}
+
+  /* login */
+  .login{min-height:100vh;display:grid;place-items:center;padding:24px}
+  .login-card{width:100%;max-width:400px;background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:40px;box-shadow:var(--shadow)}
+  .brand{display:flex;align-items:center;gap:9px;font-family:var(--display);font-weight:700;font-size:1.15rem;color:var(--moss)}
+  .brand .dot{width:9px;height:9px;border-radius:50%;background:var(--brass);box-shadow:0 0 0 4px rgba(181,142,84,.18)}
+  .brand small{font-family:var(--mono);font-weight:400;font-size:10px;letter-spacing:.14em;color:var(--sage);text-transform:uppercase}
+  .login-card h2{margin:26px 0 4px;font-size:1.5rem}
+  .login-card .sub{color:var(--sage-deep);font-size:.92rem;margin-bottom:24px}
+  label{display:block;font-weight:600;font-size:.85rem;margin-bottom:7px;color:var(--moss)}
+  input,select{width:100%;padding:12px 14px;border:1px solid var(--line);border-radius:11px;background:var(--cream);font-family:var(--body);font-size:.95rem;color:var(--ink);transition:.2s}
+  input:focus,select:focus{outline:none;border-color:var(--sage);box-shadow:0 0 0 3px rgba(115,131,122,.15)}
+  .fg{margin-bottom:16px}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:var(--moss);color:var(--cream);border:none;border-radius:100px;padding:13px 22px;font-weight:600;font-size:.95rem;transition:.25s;width:100%}
+  .btn:hover{background:var(--sage-deep)}
+  .btn.sm{width:auto;padding:9px 16px;font-size:.85rem}
+  .btn.ghost{background:transparent;color:var(--moss);border:1px solid var(--line)}
+  .btn.ghost:hover{background:var(--cream);border-color:var(--sage)}
+  .err{color:#a33;font-size:.85rem;margin-top:10px;min-height:1em}
+
+  /* app */
+  .app{display:none;min-height:100vh}
+  .app.show{display:block}
+  .topbar{position:sticky;top:0;z-index:30;background:rgba(251,250,246,.85);backdrop-filter:blur(14px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:14px 28px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap}
+  .tab{background:transparent;border:none;padding:9px 16px;border-radius:100px;color:var(--sage-deep);font-weight:500;font-size:.9rem;transition:.2s}
+  .tab:hover{background:var(--paper-2)}
+  .tab.active{background:var(--moss);color:var(--cream)}
+  .wrap{max-width:1080px;margin:0 auto;padding:34px 28px 80px}
+  .view{display:none}.view.active{display:block}
+  .view h1{font-size:1.7rem;margin-bottom:6px}
+  .view .vsub{color:var(--sage-deep);margin-bottom:28px;font-size:.95rem}
+
+  .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:16px;margin-bottom:28px}
+  .kpi{background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .kpi .k{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--sage)}
+  .kpi .v{font-family:var(--display);font-weight:600;font-size:1.9rem;color:var(--moss);margin-top:8px;font-variant-numeric:tabular-nums}
+  .kpi.dark{background:var(--moss);color:#fff}
+  .kpi.dark .k{color:rgba(244,241,234,.6)}
+  .kpi.dark .v{color:#fff}
+  .kpi.dark .v .cur{color:var(--brass-soft)}
+
+  .panel{background:var(--paper);border:1px solid var(--line);border-radius:18px;overflow-x:auto}
+  table{width:100%;border-collapse:collapse}
+  th{font-family:var(--mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--sage);text-align:left;padding:14px 18px;border-bottom:1px solid var(--line);background:var(--paper-2)}
+  td{padding:15px 18px;border-bottom:1px solid var(--line-soft);font-size:.92rem}
+  tr:last-child td{border-bottom:none}
+  .pill{display:inline-block;padding:3px 10px;border-radius:100px;font-size:.74rem;font-weight:600;font-family:var(--mono)}
+  .pill.accrued{background:rgba(181,142,84,.14);color:var(--brass)}
+  .pill.released{background:rgba(115,131,122,.16);color:var(--sage-deep)}
+  .pill.reversed{background:rgba(163,51,51,.12);color:#a33}
+  .empty{padding:40px;text-align:center;color:var(--sage);font-size:.92rem}
+  .money{font-family:var(--display);font-weight:600;color:var(--moss);font-variant-numeric:tabular-nums}
+
+  /* referral */
+  .ref-card{background:var(--moss);color:#fff;border-radius:20px;padding:34px;position:relative;overflow:hidden;margin-bottom:24px}
+  .ref-card::before{content:"";position:absolute;inset:0;background:radial-gradient(120% 90% at 100% 0,rgba(181,142,84,.22),transparent 60%)}
+  .ref-card .lab{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:rgba(244,241,234,.6);position:relative}
+  .ref-code{font-family:var(--display);font-weight:700;font-size:2.6rem;color:#fff;letter-spacing:.04em;margin:10px 0 18px;position:relative}
+  .ref-card .copy{position:relative;background:var(--cream);color:var(--moss)}
+  .ref-card .copy:hover{background:#fff}
+  .guide{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:30px}
+  .guide h3{font-size:1.2rem;margin-bottom:18px}
+  .step{display:flex;gap:16px;padding:16px 0;border-bottom:1px solid var(--line-soft)}
+  .step:last-child{border-bottom:none}
+  .step .n{flex:none;width:30px;height:30px;border-radius:50%;background:var(--moss);color:var(--cream);display:grid;place-items:center;font-family:var(--mono);font-size:.8rem}
+  .step h4{font-size:1rem;margin-bottom:3px}
+  .step p{font-size:.9rem;color:var(--sage-deep)}
+  .note{margin-top:20px;background:rgba(181,142,84,.09);border:1px solid rgba(181,142,84,.25);border-radius:14px;padding:18px 20px;font-size:.92rem;color:var(--sage-deep)}
+  .note b{color:var(--brass)}
+  .profile-row{display:flex;justify-content:space-between;padding:15px 0;border-bottom:1px solid var(--line-soft);font-size:.95rem}
+  .profile-row:last-child{border-bottom:none}
+  .profile-row .l{color:var(--sage)}
+  .profile-row .r{font-weight:600;color:var(--moss)}
+  .cfgwarn{background:#fff3cd;border:1px solid #e0c97a;color:#7a5d00;padding:10px 14px;border-radius:10px;font-size:.84rem;margin-bottom:16px}
+  @media(max-width:640px){.topbar{flex-direction:column;gap:12px;align-items:stretch}.ref-code{font-size:2rem}}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login" id="loginView">
+  <div class="login-card">
+    <div class="brand"><span class="dot"></span>Thrivts <small>Partners</small></div>
+    <h2>Partner login</h2>
+    <p class="sub">Sign in to track your referrals and earnings.</p>
+    <div id="cfgWarn" class="cfgwarn" style="display:none">Set your Supabase anon key in the CONFIG block before this works.</div>
+    <div class="fg"><label>Email</label><input id="email" type="email" placeholder="you@email.com" autocomplete="email" /></div>
+    <div class="fg"><label>Password</label><div style="position:relative;"><input id="password" type="password" placeholder="••••••••" autocomplete="current-password" style="padding-right:60px;" /><a onclick="var p=document.getElementById('password');p.type=p.type==='password'?'text':'password';this.textContent=p.type==='password'?'Show':'Hide';" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:.75rem;font-weight:600;color:var(--sage-deep);cursor:pointer;user-select:none;">Show</a></div></div>
+    <button class="btn" onclick="signIn()">Sign in</button>
+    <div class="err" id="loginErr" role="alert" aria-live="assertive"></div>
+    <p style="text-align:center;margin-top:18px;font-size:.85rem;color:var(--sage)">Not a partner yet? <a href="/" style="color:var(--brass);font-weight:600">Apply here &rarr;</a></p>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="appView">
+  <div class="topbar">
+    <div class="brand"><span class="dot"></span>Thrivts <small>Partners</small></div>
+    <div class="tabs">
+      <button class="tab active" data-v="dashboard">Dashboard</button>
+      <button class="tab" data-v="buyers">My Buyers</button>
+      <button class="tab" data-v="commissions">Commissions</button>
+      <button class="tab" data-v="referral">Referral &amp; Guide</button>
+      <button class="tab" data-v="profile">Profile</button>
+    </div>
+    <button class="btn ghost sm" onclick="signOut()">Sign out</button>
+  </div>
+
+  <div class="wrap">
+    <!-- DASHBOARD -->
+    <section class="view active" id="v-dashboard">
+      <h1>Welcome back<span id="dashName"></span></h1>
+      <p class="vsub">Your referrals earn you a recurring 5% on every order for 12 months.</p>
+      <div class="kpis" id="kpis"></div>
+      <div class="ref-card">
+        <div class="lab">Your referral code · share this</div>
+        <div class="ref-code" id="dashCode">—</div>
+        <button class="btn sm copy" onclick="copyCode()">Copy code</button>
+      </div>
+    </section>
+
+    <!-- BUYERS -->
+    <section class="view" id="v-buyers">
+      <h1>My Buyers</h1>
+      <p class="vsub">Buyers who joined with your code. Identities stay private — you see activity and earnings only.</p>
+      <div class="panel"><table><thead><tr><th>Buyer</th><th>Joined</th><th>First order</th><th>Orders</th><th>Earned</th></tr></thead><tbody id="buyersBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div>
+    </section>
+
+    <!-- COMMISSIONS -->
+    <section class="view" id="v-commissions">
+      <h1>Commissions</h1>
+      <p class="vsub">5% of each referred order. Accrued when delivered, released after settlement.</p>
+      <div class="panel"><table><thead><tr><th>Date</th><th>Order value</th><th>Rate</th><th>Your 5%</th><th>Status</th></tr></thead><tbody id="commBody"><tr><td colspan="5" class="empty">Loading…</td></tr></tbody></table></div>
+    </section>
+
+    <!-- REFERRAL & GUIDE -->
+    <section class="view" id="v-referral">
+      <h1>Referral &amp; Guide</h1>
+      <p class="vsub">Your code is how every sale gets credited to you. Here's exactly how it works.</p>
+      <div class="ref-card">
+        <div class="lab">Your referral code</div>
+        <div class="ref-code" id="refCode">—</div>
+        <button class="btn sm copy" onclick="copyCode()">Copy code</button>
+      </div>
+      <div class="guide">
+        <h3>How you get paid</h3>
+        <div class="step"><div class="n">1</div><div><h4>Share your code</h4><p>Give your referral code to buyers in your network — resellers, shop owners, anyone who buys wholesale vintage.</p></div></div>
+        <div class="step"><div class="n">2</div><div><h4>They enter it at sign-up</h4><p>The buyer applies your code when they register. They get 5% off their first order, and from that moment they're linked to you. Your 12-month window starts on their first order.</p></div></div>
+        <div class="step"><div class="n">3</div><div><h4>You earn 5% for a year</h4><p>Every order that buyer places over the next 12 months pays you a recurring 5% — tracked automatically and shown here in real time.</p></div></div>
+        <div class="note"><b>Important:</b> the referral code is the <b>only</b> way a buyer gets credited to you. Always make sure they enter it at sign-up — no code, no link, no commission. Earnings accrue when an order is delivered and are released after the deal settles.</div>
+      </div>
+    </section>
+
+    <!-- PROFILE -->
+    <section class="view" id="v-profile">
+      <h1>Profile</h1>
+      <p class="vsub">Your partner account details.</p>
+      <div class="panel" style="padding:26px">
+        <div class="profile-row"><span class="l">Name</span><span class="r" id="pName">—</span></div>
+        <div class="profile-row"><span class="l">Partner code</span><span class="r mono" id="pCode">—</span></div>
+        <div class="profile-row"><span class="l">Referral code</span><span class="r mono" id="pRef">—</span></div>
+        <div class="profile-row"><span class="l">Email</span><span class="r" id="pEmail">—</span></div>
+        <div class="profile-row"><span class="l">Phone</span><span class="r" id="pPhone">—</span></div>
+        <div class="profile-row"><span class="l">Instagram</span><span class="r" id="pIg">—</span></div>
+        <div class="profile-row"><span class="l">TikTok</span><span class="r" id="pTt">—</span></div>
+        <div class="profile-row"><span class="l">Commission rate</span><span class="r" id="pRate">—</span></div>
+        <div class="profile-row"><span class="l">Status</span><span class="r" id="pStatus">—</span></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<script>
+  /* ============ CONFIG — paste your thrivts-prod anon key ============ */
+  const SUPABASE_URL = 'https://wdtzsmvciysevswqnklo.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndkdHpzbXZjaXlzZXZzd3Fua2xvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODExMDUxNDgsImV4cCI6MjA5NjY4MTE0OH0.m3470t1ZoQdH6bglrfeVDME7uAJjVB-ZSuo3seuhu8c';
+  /* ================================================================== */
+
+  const usd = n => '$' + Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+  const esc = s => String(s??'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const pillClass = st => ({accrued:'accrued',released:'released',reversed:'reversed'})[st] || '';
+  const dt  = s => s ? new Date(s).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}) : '—';
+  let db, INF = null;
+
+  if(!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes('PASTE')){
+    document.getElementById('cfgWarn').style.display='block';
+  } else if(!window.supabase){
+    var _w=document.getElementById('cfgWarn'); _w.textContent='Couldn\'t load the app — please check your connection and refresh.'; _w.style.display='block';
+  } else {
+    db = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+    db.auth.getSession().then(({data})=>{ if(data.session) boot(); });
+  }
+
+  let _signingIn=false;
+  async function signIn(){
+    if(_signingIn) return;
+    const err=document.getElementById('loginErr'); err.textContent='';
+    if(!db){ err.textContent='Anon key not set.'; return; }
+    const email=document.getElementById('email').value.trim();
+    const password=document.getElementById('password').value;
+    if(!email||!password){ err.textContent='Email and password required.'; return; }
+    const btn=document.querySelector('.login-card .btn');
+    _signingIn=true; if(btn){ btn.disabled=true; btn.textContent='Signing in\u2026'; }
+    const {error}=await db.auth.signInWithPassword({email,password});
+    _signingIn=false; if(btn){ btn.disabled=false; btn.textContent='Sign in'; }
+    if(error){ err.textContent=error.message; return; }
+    boot();
+  }
+  async function signOut(){ await db.auth.signOut(); location.reload(); }
+
+  async function boot(){
+    // load my influencer row (RLS: self read)
+    const {data:inf,error}=await db.from('influencers').select('*').eq('user_id',(await db.auth.getUser()).data.user.id).maybeSingle();
+    if(error||!inf){ try{ await db.auth.signOut(); }catch(_){} document.getElementById('loginErr').textContent = error ? ('Could not load your partner profile: '+error.message) : 'This account is not set up as a partner yet. Contact Thrivts if you believe this is a mistake.'; return; }
+    INF=inf;
+    document.getElementById('loginView').style.display='none';
+    document.getElementById('appView').classList.add('show');
+    fillProfile(); loadOverview(); loadBuyers(); loadCommissions();
+  }
+
+  function fillProfile(){
+    const code = INF.referral_code || '—';
+    document.getElementById('dashName').textContent = INF.full_name ? (', ' + INF.full_name.split(' ')[0]) : '';
+    document.getElementById('dashCode').textContent = code;
+    document.getElementById('refCode').textContent = code;
+    document.getElementById('pName').textContent = INF.full_name||'—';
+    document.getElementById('pCode').textContent = INF.influencer_code||'—';
+    document.getElementById('pRef').textContent = code;
+    document.getElementById('pEmail').textContent = INF.email||'—';
+    document.getElementById('pPhone').textContent = INF.phone||'—';
+    document.getElementById('pIg').textContent = INF.instagram_handle||'—';
+    document.getElementById('pTt').textContent = INF.tiktok_handle||'—';
+    document.getElementById('pRate').textContent = Math.round((INF.commission_rate||0.05)*100)+'%';
+    document.getElementById('pStatus').textContent = INF.status||'active';
+  }
+
+  async function loadOverview(){
+    const {data,error}=await db.rpc('get_influencer_overview');
+    if(error){ document.getElementById('kpis').innerHTML='<div class="kpi"><div class="k">Error</div><div class="v" style="font-size:.95rem;color:#a33;">Could not load stats — refresh to retry.</div></div>'; return; }
+    const o=Array.isArray(data)?(data[0]||{}):(data||{});
+    const k=document.getElementById('kpis');
+    k.innerHTML = `
+      <div class="kpi"><div class="k">Referred buyers</div><div class="v">${o.referred_buyers||0}</div></div>
+      <div class="kpi"><div class="k">Attributed orders</div><div class="v">${o.attributed_orders||0}</div></div>
+      <div class="kpi dark"><div class="k">Total earned</div><div class="v"><span class="cur">$</span>${Number(o.total_earned_usd||0).toLocaleString('en-US',{maximumFractionDigits:0})}</div></div>
+      <div class="kpi"><div class="k">Pending (accrued)</div><div class="v">${usd(o.pending_usd)}</div></div>
+      <div class="kpi"><div class="k">Released (paid)</div><div class="v">${usd(o.paid_usd)}</div></div>`;
+  }
+
+  async function loadBuyers(){
+    const {data,error}=await db.rpc('get_influencer_buyers');
+    const body=document.getElementById('buyersBody');
+    if(error){ body.innerHTML='<tr><td colspan="5" class="empty">Could not load buyers ('+esc(error.message)+'). Refresh to retry.</td></tr>'; return; }
+    if(!data||!data.length){ body.innerHTML='<tr><td colspan="5" class="empty">No referred buyers yet. Share your code to get started.</td></tr>'; return; }
+    body.innerHTML=data.map(b=>`<tr><td class="mono">${esc(b.buyer_label)}</td><td>${dt(b.linked_at)}</td><td>${dt(b.first_order_at)}</td><td>${Number(b.order_count||0)}</td><td class="money">${usd(b.earned_usd)}</td></tr>`).join('');
+  }
+
+  async function loadCommissions(){
+    const {data,error}=await db.from('influencer_commissions').select('*').order('created_at',{ascending:false}).limit(500);
+    const body=document.getElementById('commBody');
+    if(error){ body.innerHTML='<tr><td colspan="5" class="empty">Could not load commissions ('+esc(error.message)+'). Refresh to retry.</td></tr>'; return; }
+    if(!data||!data.length){ body.innerHTML='<tr><td colspan="5" class="empty">No commissions yet.</td></tr>'; return; }
+    body.innerHTML=data.map(c=>`<tr><td>${dt(c.created_at)}</td><td>${usd(c.order_value_usd)}</td><td>${Math.round((c.rate||0.05)*100)}%</td><td class="money">${usd(c.amount_usd)}</td><td><span class="pill ${pillClass(c.status)}">${esc(c.status)}</span></td></tr>`).join('');
+  }
+
+  function copyCode(){
+    const code = INF?.referral_code || '';
+    const done = ok => document.querySelectorAll('.copy').forEach(b=>{const t=b.textContent;b.textContent=ok?'Copied ✓':'Copy failed';setTimeout(()=>b.textContent=t,1500);});
+    const legacy = () => { try { const ta=document.createElement('textarea'); ta.value=code; ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); const ok=document.execCommand('copy'); document.body.removeChild(ta); done(ok); } catch(_) { done(false); } };
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(code).then(()=>done(true)).catch(legacy); } else { legacy(); }
+  }
+
+  document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('v-'+t.dataset.v).classList.add('active');
+  }));
+  document.getElementById('password').addEventListener('keydown',e=>{if(e.key==='Enter')signIn();});
+  document.getElementById('email').addEventListener('keydown',e=>{if(e.key==='Enter')signIn();});
+</script>
+</body>
+</html>
