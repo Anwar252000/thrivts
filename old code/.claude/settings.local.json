@@ -1,7 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:vhq-backstage-7k2.thrivts.com)"
-    ]
-  }
-}

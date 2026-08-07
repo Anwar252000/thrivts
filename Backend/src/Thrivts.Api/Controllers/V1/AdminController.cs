@@ -2,7 +2,9 @@ using Asp.Versioning;
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Thrivts.Application.Admin.Buyers;
 using Thrivts.Application.Admin.Deals;
+using Thrivts.Application.Admin.Sellers;
 using Thrivts.Domain.Enums;
 
 namespace Thrivts.Api.Controllers.V1;
@@ -30,6 +32,36 @@ public class AdminController : ControllerBase
             errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
     }
 
+    [HttpPost("sellers/{sellerId:guid}/approval")]
+    public async Task<IActionResult> SetSellerApprovalStatus(Guid sellerId, [FromBody] SetApprovalStatusRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new SetSellerApprovalStatusCommand(sellerId, request.Action), cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => NoContent(),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
+    [HttpPost("sellers/{sellerId:guid}/kyc")]
+    public async Task<IActionResult> SetSellerKycVerification(Guid sellerId, [FromBody] SetKycVerificationRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new SetSellerKycVerificationCommand(sellerId, request.Verified), cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => NoContent(),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
+    [HttpPost("buyers/{buyerId:guid}/approval")]
+    public async Task<IActionResult> SetBuyerApprovalStatus(Guid buyerId, [FromBody] SetApprovalStatusRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new SetBuyerApprovalStatusCommand(buyerId, request.Action), cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => NoContent(),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
     private static int MapStatusCode(ErrorOr.ErrorType errorType) => errorType switch
     {
         ErrorOr.ErrorType.NotFound => StatusCodes.Status404NotFound,
@@ -40,3 +72,5 @@ public class AdminController : ControllerBase
 }
 
 public record AdvanceDealStatusRequest(DealStatus NewStatus);
+public record SetApprovalStatusRequest(ProfileApprovalAction Action);
+public record SetKycVerificationRequest(bool Verified);

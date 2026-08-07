@@ -21,7 +21,11 @@ public class ProfileConfiguration : IEntityTypeConfiguration<Profile>
 
         builder.Property(p => p.Email).HasColumnName("email").IsRequired();
         builder.Property(p => p.FullName).HasColumnName("full_name").IsRequired();
-        builder.Property(p => p.IsApproved).HasColumnName("is_approved");
+
+        builder.Property(p => p.ApprovalStatus)
+            .HasConversion<string>()
+            .HasColumnName("approval_status");
+
         builder.Property(p => p.IsActive).HasColumnName("is_active");
     }
 }

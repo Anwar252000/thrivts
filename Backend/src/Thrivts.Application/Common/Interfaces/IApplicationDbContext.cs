@@ -10,7 +10,26 @@ namespace Thrivts.Application.Common.Interfaces;
 public interface IApplicationDbContext
 {
     DbSet<Profile> Profiles { get; }
+    DbSet<Buyer> Buyers { get; }
+    DbSet<Seller> Sellers { get; }
+    DbSet<SellerInvite> SellerInvites { get; }
+    DbSet<Agency> Agencies { get; }
+    DbSet<Influencer> Influencers { get; }
+    DbSet<Category> Categories { get; }
+    DbSet<Requirement> Requirements { get; }
+    DbSet<SellerResponse> SellerResponses { get; }
+    DbSet<RequirementSellerOffer> RequirementSellerOffers { get; }
+    DbSet<OfferRound> OfferRounds { get; }
     DbSet<Deal> Deals { get; }
+    DbSet<DealAllocation> DealAllocations { get; }
+    DbSet<Commission> Commissions { get; }
+    DbSet<InfluencerCommission> InfluencerCommissions { get; }
+    DbSet<Dispute> Disputes { get; }
+    DbSet<MessageThread> MessageThreads { get; }
+    DbSet<Notification> Notifications { get; }
+    DbSet<AuditLog> AuditLogs { get; }
+    DbSet<ExchangeRate> ExchangeRates { get; }
+    DbSet<ShippingRate> ShippingRates { get; }
 
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

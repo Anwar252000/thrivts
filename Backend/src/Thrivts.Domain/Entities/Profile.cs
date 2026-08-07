@@ -12,7 +12,7 @@ public class Profile : BaseEntity, IAggregateRoot
     public UserRole Role { get; private set; }
     public string Email { get; private set; } = default!;
     public string FullName { get; private set; } = default!;
-    public bool IsApproved { get; private set; }
+    public ApprovalStatus ApprovalStatus { get; private set; } = ApprovalStatus.Pending;
     public bool IsActive { get; private set; } = true;
 
     private Profile()
@@ -26,5 +26,25 @@ public class Profile : BaseEntity, IAggregateRoot
         Role = role;
         Email = email;
         FullName = fullName;
+    }
+
+    /// <summary>Replaces approve_seller (and the equivalent admin buyer-approval path).</summary>
+    public void Approve() => ApprovalStatus = ApprovalStatus.Approved;
+
+    /// <summary>Replaces reject_seller.</summary>
+    public void Reject() => ApprovalStatus = ApprovalStatus.Rejected;
+
+    /// <summary>Replaces block_seller / admin_block_buyer.</summary>
+    public void Block()
+    {
+        ApprovalStatus = ApprovalStatus.Suspended;
+        IsActive = false;
+    }
+
+    /// <summary>Replaces unblock_seller / admin_unblock_buyer.</summary>
+    public void Unblock()
+    {
+        ApprovalStatus = ApprovalStatus.Approved;
+        IsActive = true;
     }
 }
