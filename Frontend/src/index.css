@@ -1,111 +1,206 @@
-:root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+@import "tailwindcss";
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+/* Power Grotesk — extracted from the live thrivts.com marketing page's embedded @font-face
+   (see thrivts/01_deploy_to_netlify + the public site itself). Same font, self-hosted here. */
+@font-face {
+  font-family: 'Power Grotesk';
+  font-style: normal;
+  font-weight: 200;
+  font-display: swap;
+  src: url('/fonts/Power-Grotesk-200.woff2') format('woff2');
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
-  }
+@font-face {
+  font-family: 'Power Grotesk';
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('/fonts/Power-Grotesk-300.woff2') format('woff2');
 }
-
-#root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+@font-face {
+  font-family: 'Power Grotesk';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('/fonts/Power-Grotesk-400.woff2') format('woff2');
 }
-
-body {
-  margin: 0;
-}
-
-h1,
-h2 {
-  font-family: var(--heading);
+@font-face {
+  font-family: 'Power Grotesk';
+  font-style: normal;
   font-weight: 500;
-  color: var(--text-h);
+  font-display: swap;
+  src: url('/fonts/Power-Grotesk-500.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Power Grotesk';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('/fonts/Power-Grotesk-700.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Power Grotesk';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('/fonts/Power-Grotesk-800.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Power Grotesk';
+  font-style: normal;
+  font-weight: 900;
+  font-display: swap;
+  src: url('/fonts/Power-Grotesk-900.woff2') format('woff2');
 }
 
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+/* ============================================================
+   THRIVTS DESIGN TOKENS
+   Ported 1:1 from the live buyer/seller/admin portals (see
+   thrivts/01_deploy_to_netlify/*.html :root) so the new React UI
+   carries the same sage/cream identity. Values are real CSS custom
+   properties (Tailwind v4 emits them from @theme), so ThemeProvider
+   can override them at runtime for dark mode / accent customization.
+   ============================================================ */
+@theme {
+  --color-sage: #73837a;
+  --color-sage-deep: #5c6a62;
+  --color-sage-dark: #3a443e;
+  --color-sage-darker: #2a322d;
+  --color-sage-soft: #aeb8b1;
+  --color-sage-mist: #eaede9;
+  --color-sage-paper: #f2f0ea;
+
+  --color-ink: #222825;
+  --color-ink-soft: #4a524c;
+  --color-ink-faint: #7a7f7c;
+  --color-cream: #fcfbf7;
+  --color-white: #ffffff;
+
+  --color-accent: #c5874b;
+  --color-accent-soft: #e9c9a4;
+
+  --color-success: #2d6a4f;
+  --color-success-soft: #d4e4dc;
+  --color-warning: #b5651d;
+  --color-warning-soft: #f5e2cb;
+  --color-danger: #8e2a2a;
+  --color-danger-soft: #f1d6d6;
+  --color-info: #2d4f6b;
+  --color-info-soft: #d4dee7;
+
+  --color-line: rgb(34 40 37 / 0.1);
+  --color-line-soft: rgb(34 40 37 / 0.06);
+  --color-line-strong: rgb(34 40 37 / 0.16);
+
+  --radius-xl: 34px;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+
+  --shadow-xl: 0 50px 100px -40px rgb(42 50 45 / 0.42);
+  --shadow-lg: 0 34px 70px -34px rgb(42 50 45 / 0.34);
+  --shadow-md: 0 20px 44px -26px rgb(42 50 45 / 0.28);
+  --shadow-sm: 0 10px 30px -18px rgb(42 50 45 / 0.22);
+  --shadow-xs: 0 2px 8px -4px rgb(42 50 45 / 0.15);
+
+  --ease-thrivts: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-thrivts-soft: cubic-bezier(0.33, 1, 0.68, 1);
+
+  --font-sans: 'Power Grotesk', 'Helvetica Neue', Arial, sans-serif;
+
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-drift: drift 7s ease-in-out infinite alternate;
+  --animate-ticker: ticker 40s linear infinite;
+  --animate-spark: spark-spin 2.4s var(--ease-thrivts) infinite;
+  --animate-cue: cue 2s var(--ease-thrivts) infinite;
+}
+
+@keyframes ticker {
+  to {
+    transform: translateX(-50%);
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+@keyframes spark-spin {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.25);
   }
 }
-p {
-  margin: 0;
+
+@keyframes cue {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(300%);
+  }
 }
 
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+@keyframes drift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  100% {
+    transform: translate3d(0, -14px, 0) scale(1.07);
+  }
+}
+
+/* ---- Dark theme override — same tokens, night values ----
+   Kept intentionally close in hue to the sage/cream identity rather
+   than a generic slate dark mode, so it still reads as "Thrivts". */
+[data-theme='dark'] {
+  --color-cream: #1b201d;
+  --color-white: #232b26;
+  --color-ink: #eef1ee;
+  --color-ink-soft: #c3cac4;
+  --color-ink-faint: #8a938c;
+
+  --color-sage-mist: #2a322d;
+  --color-sage-paper: #232b26;
+  --color-sage-soft: #5c6a62;
+
+  --color-line: rgb(238 241 238 / 0.1);
+  --color-line-soft: rgb(238 241 238 / 0.06);
+  --color-line-strong: rgb(238 241 238 / 0.18);
+
+  --shadow-xl: 0 50px 100px -40px rgb(0 0 0 / 0.6);
+  --shadow-lg: 0 34px 70px -34px rgb(0 0 0 / 0.5);
+  --shadow-md: 0 20px 44px -26px rgb(0 0 0 / 0.45);
+  --shadow-sm: 0 10px 30px -18px rgb(0 0 0 / 0.4);
+  --shadow-xs: 0 2px 8px -4px rgb(0 0 0 / 0.35);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-cream);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    transition:
+      background-color 0.3s var(--ease-thrivts-soft),
+      color 0.3s var(--ease-thrivts-soft);
+  }
 }

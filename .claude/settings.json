@@ -4,10 +4,26 @@
       "Bash(dotnet --version)",
       "Bash(dotnet --list-sdks)",
       "Bash(cd \"c:\\\\Users\\\\anwar.islam\\\\Desktop\\\\Projects\\\\test\\\\thrivts\\\\Backend\" && rm -rf .vs appsettings.Development.json appsettings.json backend.csproj backend.csproj.user backend.http backend.slnx bin obj Controllers Program.cs Properties WeatherForecast.cs && ls -la)",
-      "Bash(dotnet add *)"
+      "Bash(dotnet add *)",
+      "Bash(npm uninstall *)",
+      "WebFetch(domain:thrivts.com)",
+      "Bash(curl -sL \"https://thrivts.com/\" -o \"/d/thrivts/.scratch_docx1/thrivts-live.html\" -A \"Mozilla/5.0 \\(Windows NT 10.0; Win64; x64\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/120.0 Safari/537.36\")",
+      "Bash(grep -oE '<img[^>]{0,120}' thrivts-live.html)",
+      "Bash(python3 -c \"print\\('no python'\\)\")",
+      "Bash(node extract-assets.mjs)",
+      "Bash(grep -oE '<nav[^>]*>.{0,400}' \"/d/thrivts/.scratch_docx1/thrivts-live.html\")",
+      "Bash(grep -oE 'class=\"[^\"]*brand[^\"]*\"[^>]{0,300}' \"/d/thrivts/.scratch_docx1/thrivts-live.html\")",
+      "Bash(grep -oE '<a[^>]*class=\"[^\"]*logo[^\"]*\"[^>]*>.{0,200}' \"/d/thrivts/.scratch_docx1/thrivts-live.html\")",
+      "Bash(grep -oE 'nav-bar\">.{0,600}' \"/d/thrivts/.scratch_docx1/thrivts-live.html\")",
+      "Bash(mkdir -p \"d:/thrivts/Frontend/src/assets/marketing\" \"d:/thrivts/Frontend/public/fonts\" *)",
+      "Bash(node -e \"const m = require\\('lucide-react'\\); console.log\\(Object.keys\\(m\\).filter\\(k => /facebook|instagram|twitter|x$/i.test\\(k\\)\\)\\)\")",
+      "Bash(node -e ' *)",
+      "Bash(node check-landing.mjs)",
+      "Bash(sed -i \"s/await page.waitForTimeout\\(1800\\); \\\\/\\\\/ let loader finish + hero reveal play/await page.waitForTimeout\\(3200\\);/\" check-landing.mjs)"
     ],
     "additionalDirectories": [
-      "c:\\Users\\anwar.islam\\Desktop\\Projects\\test\\thrivts\\Backend\\.vs"
+      "c:\\Users\\anwar.islam\\Desktop\\Projects\\test\\thrivts\\Backend\\.vs",
+      "d:\\thrivts\\.scratch_docx1\\extracted"
     ]
   }
 }

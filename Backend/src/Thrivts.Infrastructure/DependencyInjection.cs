@@ -33,6 +33,10 @@ public static class DependencyInjection
         services.AddHttpClient<IEmailSender, ResendEmailSender>()
             .AddStandardResilienceHandler();
 
+        services.Configure<SupabaseAuthOptions>(configuration.GetSection(SupabaseAuthOptions.SectionName));
+        services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>()
+            .AddStandardResilienceHandler();
+
         AddSupabaseAuthentication(services, configuration);
 
         return services;
