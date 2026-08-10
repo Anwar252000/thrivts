@@ -4,7 +4,7 @@ using Thrivts.Domain.Exceptions;
 namespace Thrivts.Domain.DomainServices;
 
 /// <summary>
-/// match -> confirmed -> paid -> in_fulfillment -> dispatched -> delivered -> settled
+/// draft -> confirmed -> awaiting_payment -> paid -> in_fulfillment -> dispatched -> delivered -> settled
 /// Off-ramps: cancelled (from any pre-settled state), disputed (from any post-confirmed state).
 /// Replaces the old Postgres advance_deal_status RPC.
 /// </summary>
@@ -12,15 +12,25 @@ public static class DealStateMachine
 {
     private static readonly Dictionary<DealStatus, DealStatus[]> AllowedTransitions = new()
     {
-        [DealStatus.Match] = [DealStatus.Confirmed, DealStatus.Cancelled],
-        [DealStatus.Confirmed] = [DealStatus.Paid, DealStatus.Cancelled, DealStatus.Disputed],
+        [DealStatus.Draft] = [DealStatus.Confirmed, DealStatus.Cancelled],
+        [DealStatus.Confirmed] = [DealStatus.AwaitingPayment, DealStatus.Cancelled, DealStatus.Disputed],
+        [DealStatus.AwaitingPayment] = [DealStatus.Paid, DealStatus.Cancelled, DealStatus.Disputed],
         [DealStatus.Paid] = [DealStatus.InFulfillment, DealStatus.Cancelled, DealStatus.Disputed],
         [DealStatus.InFulfillment] = [DealStatus.Dispatched, DealStatus.Cancelled, DealStatus.Disputed],
         [DealStatus.Dispatched] = [DealStatus.Delivered, DealStatus.Disputed],
         [DealStatus.Delivered] = [DealStatus.Settled, DealStatus.Disputed],
         [DealStatus.Settled] = [],
         [DealStatus.Cancelled] = [],
-        [DealStatus.Disputed] = [DealStatus.Confirmed, DealStatus.Paid, DealStatus.InFulfillment, DealStatus.Dispatched, DealStatus.Delivered, DealStatus.Cancelled]
+        [DealStatus.Disputed] =
+        [
+            DealStatus.Confirmed, DealStatus.AwaitingPayment, DealStatus.Paid, DealStatus.InFulfillment,
+            DealStatus.Dispatched, DealStatus.Delivered, DealStatus.Cancelled
+        ],
+        // Legacy enum labels (see DealStatus) — no legitimate deal ever transitions through these.
+        [DealStatus.Pending] = [],
+        [DealStatus.Accrued] = [],
+        [DealStatus.Released] = [],
+        [DealStatus.Reversed] = []
     };
 
     public static bool CanTransition(DealStatus from, DealStatus to) =>

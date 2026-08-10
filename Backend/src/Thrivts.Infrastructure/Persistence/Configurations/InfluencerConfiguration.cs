@@ -11,11 +11,13 @@ public class InfluencerConfiguration : IEntityTypeConfiguration<Influencer>
         builder.ToTable("influencers");
 
         builder.HasKey(i => i.Id);
-
-        builder.Property(i => i.Id)
-            .ValueGeneratedNever(); // Id == auth.uid().
+        // Id is its own generated key here (unlike Buyer/Seller/Agency/Profile) — UserId is the
+        // optional, unenforced link to a profile. See Influencer's class remarks.
 
         builder.HasIndex(i => i.ReferralCode)
+            .IsUnique();
+
+        builder.HasIndex(i => i.InfluencerCode)
             .IsUnique();
     }
 }

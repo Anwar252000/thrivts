@@ -15,7 +15,7 @@ public class AgencyConfiguration : IEntityTypeConfiguration<Agency>
         builder.Property(a => a.Id)
             .ValueGeneratedNever(); // Id == auth.uid().
 
-        builder.HasIndex(a => a.ReferralCode)
+        builder.HasIndex(a => a.AgencyCode)
             .IsUnique();
     }
 }

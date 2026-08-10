@@ -35,7 +35,7 @@ public class AdminController : ControllerBase
     [HttpPost("sellers/{sellerId:guid}/approval")]
     public async Task<IActionResult> SetSellerApprovalStatus(Guid sellerId, [FromBody] SetApprovalStatusRequest request, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new SetSellerApprovalStatusCommand(sellerId, request.Action), cancellationToken);
+        var result = await _mediator.Send(new SetSellerApprovalStatusCommand(sellerId, request.Action, request.Reason), cancellationToken);
 
         return result.Match<IActionResult>(
             _ => NoContent(),
@@ -55,7 +55,7 @@ public class AdminController : ControllerBase
     [HttpPost("buyers/{buyerId:guid}/approval")]
     public async Task<IActionResult> SetBuyerApprovalStatus(Guid buyerId, [FromBody] SetApprovalStatusRequest request, CancellationToken cancellationToken)
     {
-        var result = await _mediator.Send(new SetBuyerApprovalStatusCommand(buyerId, request.Action), cancellationToken);
+        var result = await _mediator.Send(new SetBuyerApprovalStatusCommand(buyerId, request.Action, request.Reason), cancellationToken);
 
         return result.Match<IActionResult>(
             _ => NoContent(),
@@ -72,5 +72,5 @@ public class AdminController : ControllerBase
 }
 
 public record AdvanceDealStatusRequest(DealStatus NewStatus);
-public record SetApprovalStatusRequest(ProfileApprovalAction Action);
-public record SetKycVerificationRequest(bool Verified);
+public record SetApprovalStatusRequest(ProfileApprovalAction Action, string? Reason = null);
+public record SetKycVerificationRequest(bool Verified, string? Notes = null);

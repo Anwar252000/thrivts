@@ -11,16 +11,18 @@ public sealed class SetBuyerApprovalStatusCommandHandler
 {
     private readonly IApplicationDbContext _db;
     private readonly ICurrentUserService _currentUser;
+    private readonly IDateTimeProvider _clock;
 
-    public SetBuyerApprovalStatusCommandHandler(IApplicationDbContext db, ICurrentUserService currentUser)
+    public SetBuyerApprovalStatusCommandHandler(IApplicationDbContext db, ICurrentUserService currentUser, IDateTimeProvider clock)
     {
         _db = db;
         _currentUser = currentUser;
+        _clock = clock;
     }
 
     public async ValueTask<ErrorOr<Success>> Handle(SetBuyerApprovalStatusCommand command, CancellationToken cancellationToken)
     {
-        if (_currentUser.Role != UserRole.Admin)
+        if (_currentUser.Role != UserRole.Admin || _currentUser.UserId is null)
             return Error.Forbidden(description: "Only admins can change a buyer's approval status.");
 
         var profile = await _db.Profiles.FirstOrDefaultAsync(p => p.Id == command.BuyerId, cancellationToken);
@@ -32,10 +34,10 @@ public sealed class SetBuyerApprovalStatusCommandHandler
         switch (command.Action)
         {
             case ProfileApprovalAction.Approve:
-                profile.Approve();
+                profile.Approve(_currentUser.UserId.Value, _clock.UtcNow);
                 break;
             case ProfileApprovalAction.Reject:
-                profile.Reject();
+                profile.Reject(command.Reason ?? "No reason given");
                 break;
             case ProfileApprovalAction.Block:
                 profile.Block();

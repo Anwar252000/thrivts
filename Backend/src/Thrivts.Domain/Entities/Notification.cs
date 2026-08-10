@@ -4,38 +4,63 @@ using Thrivts.Domain.Enums;
 namespace Thrivts.Domain.Entities;
 
 /// <summary>
-/// One row per notification (the live schema's notifications table, PART8A_notifications_table.sql
-/// — column set confirmed exactly against that migration). Every write here is also what feeds
-/// the thrivts-notify Edge Function -> Resend email; that fan-out becomes an IEmailSender call
-/// from the Application layer once this replaces push_notification.
+/// One row per notification. The live schema has TWO generations of columns on this table:
+/// RecipientId/Channel/RefType/RefId/Language (current, NOT NULL recipient) and the original
+/// UserId/Audience/Kind/LinkType/LinkId from PART8A_notifications_table.sql (legacy, nullable —
+/// RLS reads `coalesce(recipient_id, user_id)`, see THRIVTS_AUDIT_AND_TEST_SCRIPT.md). New code
+/// should only ever write the current columns; the legacy ones are kept for existing rows.
 /// </summary>
 public class Notification : BaseEntity, IAggregateRoot
 {
-    public Guid UserId { get; private set; }
-    public NotificationAudience Audience { get; private set; }
-    public string Kind { get; private set; } = default!;
+    public Guid RecipientId { get; private set; }
+    public NotificationChannel Channel { get; private set; } = NotificationChannel.InApp;
     public string Title { get; private set; } = default!;
-    public string? Body { get; private set; }
+    public string Body { get; private set; } = default!;
+    public string? RefType { get; private set; }
+    public Guid? RefId { get; private set; }
+    public LanguagePref Language { get; private set; } = LanguagePref.En;
+
+    public bool IsRead { get; private set; }
+    public DateTimeOffset? ReadAt { get; private set; }
+    public DateTimeOffset? SentAt { get; private set; }
+    public string? DeliveryStatus { get; private set; }
+    public string? DeliveryError { get; private set; }
+
+    // Legacy (PART8A) columns — read-compatible only, never written by new code.
+    public Guid? UserId { get; private set; }
+    public string? Audience { get; private set; }
+    public string? Kind { get; private set; }
     public string? LinkType { get; private set; }
     public Guid? LinkId { get; private set; }
-    public DateTimeOffset? ReadAt { get; private set; }
 
     private Notification()
     {
         // EF Core
     }
 
-    public Notification(Guid userId, NotificationAudience audience, string kind, string title,
-        string? body = null, string? linkType = null, Guid? linkId = null)
+    public Notification(Guid recipientId, string title, string body, NotificationChannel channel = NotificationChannel.InApp,
+        string? refType = null, Guid? refId = null, LanguagePref language = LanguagePref.En)
     {
-        UserId = userId;
-        Audience = audience;
-        Kind = kind;
+        RecipientId = recipientId;
         Title = title;
         Body = body;
-        LinkType = linkType;
-        LinkId = linkId;
+        Channel = channel;
+        RefType = refType;
+        RefId = refId;
+        Language = language;
     }
 
-    public void MarkRead() => ReadAt ??= DateTimeOffset.UtcNow;
+    public void MarkRead(DateTimeOffset occurredAt)
+    {
+        IsRead = true;
+        ReadAt ??= occurredAt;
+    }
+
+    public void MarkSent(DateTimeOffset occurredAt, string deliveryStatus)
+    {
+        SentAt = occurredAt;
+        DeliveryStatus = deliveryStatus;
+    }
+
+    public void MarkDeliveryFailed(string error) => DeliveryError = error;
 }

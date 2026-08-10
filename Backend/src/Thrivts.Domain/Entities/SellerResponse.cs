@@ -22,13 +22,13 @@ public class SellerResponse : BaseEntity, IAggregateRoot
     public int AvailableQuantityPcs { get; private set; }
 
     /// <summary>The seller's originally-submitted price/pc (USD, seller-side, never shown to the buyer directly).</summary>
-    public decimal ProposedPriceUsd { get; private set; }
+    public decimal? ProposedPriceUsd { get; private set; }
 
     /// <summary>The live seller-side price/pc on the table right now — updated by counters.</summary>
-    public decimal CurrentPriceUsd { get; private set; }
+    public decimal? CurrentPriceUsd { get; private set; }
 
     /// <summary>Platform fee/pc frozen at insert. Never recalculated even if the global rate changes later.</summary>
-    public decimal FeePerPcAppliedUsd { get; private set; }
+    public decimal? FeePerPcAppliedUsd { get; private set; }
 
     public string? SellerNotes { get; private set; }
     public BidStatus Status { get; private set; } = BidStatus.Pending;
@@ -36,6 +36,13 @@ public class SellerResponse : BaseEntity, IAggregateRoot
     public NegotiationActor? LastActor { get; private set; }
     public int RoundCount { get; private set; }
     public DateTimeOffset? LastActionAt { get; private set; }
+    public DateTimeOffset? RespondedAt { get; private set; }
+
+    public int? AcceptedQuantityPcs { get; private set; }
+    public decimal? FinalPriceUsd { get; private set; }
+    public DateTimeOffset? AcceptedAt { get; private set; }
+    public DateTimeOffset? BackedOutAt { get; private set; }
+    public string? BackoutReason { get; private set; }
 
     public decimal? BuyerCounterPriceUsd { get; private set; }
     public DateTimeOffset? BuyerCounterAt { get; private set; }
@@ -63,10 +70,11 @@ public class SellerResponse : BaseEntity, IAggregateRoot
         CurrentPriceUsd = proposedPriceUsd;
         FeePerPcAppliedUsd = feePerPcAppliedUsd;
         SellerNotes = sellerNotes;
+        RespondedAt = DateTimeOffset.UtcNow;
     }
 
     /// <summary>Buyer-facing all-in price/pc — the ONLY number a buyer-side DTO may carry.</summary>
-    public decimal BuyerPricePerPcUsd => CurrentPriceUsd + FeePerPcAppliedUsd;
+    public decimal? BuyerPricePerPcUsd => CurrentPriceUsd + FeePerPcAppliedUsd;
 
     /// <summary>Seller re-quotes before any negotiation started (replaces the old duplicate-key-erroring re-submit).</summary>
     public void Revise(decimal newPriceUsd, int availableQuantityPcs, string? sellerNotes)
@@ -87,7 +95,8 @@ public class SellerResponse : BaseEntity, IAggregateRoot
         if (counterBuyerPriceUsd <= 0)
             throw new DomainException("Enter a valid counter price.");
 
-        var sellerSide = counterBuyerPriceUsd - FeePerPcAppliedUsd;
+        var fee = FeePerPcAppliedUsd ?? 0;
+        var sellerSide = counterBuyerPriceUsd - fee;
         if (sellerSide <= 0)
             throw new DomainException("Counter must be more than the platform fee.");
 
@@ -137,12 +146,15 @@ public class SellerResponse : BaseEntity, IAggregateRoot
     }
 
     /// <summary>Called once a Deal has been created from this bid (either accept path).</summary>
-    public void MarkAccepted(Guid dealId)
+    public void MarkAccepted(Guid dealId, int acceptedQuantityPcs, decimal finalPriceUsd, DateTimeOffset occurredAt)
     {
         Status = BidStatus.Accepted;
         NegotiationState = NegotiationState.Accepted;
         DealId = dealId;
-        LastActionAt = DateTimeOffset.UtcNow;
+        AcceptedQuantityPcs = acceptedQuantityPcs;
+        FinalPriceUsd = finalPriceUsd;
+        AcceptedAt = occurredAt;
+        LastActionAt = occurredAt;
     }
 
     /// <summary>Called by the deal-cancellation cascade to free this bid back onto the board.</summary>
@@ -154,9 +166,14 @@ public class SellerResponse : BaseEntity, IAggregateRoot
         LastActionAt = DateTimeOffset.UtcNow;
     }
 
-    public bool CanBeAccepted() =>
-        Status is not (BidStatus.Accepted or BidStatus.Rejected or BidStatus.Withdrawn
-            or BidStatus.Expired or BidStatus.Cancelled);
+    public void BackOut(string reason, DateTimeOffset occurredAt)
+    {
+        Status = BidStatus.CancelledBackout;
+        BackoutReason = reason;
+        BackedOutAt = occurredAt;
+    }
+
+    public bool CanBeAccepted() => Status == BidStatus.Pending;
 
     private void EnsureNotAccepted()
     {

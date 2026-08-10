@@ -5,29 +5,32 @@ namespace Thrivts.Domain.Entities;
 
 /// <summary>
 /// One round of the admin/seller back-and-forth on a RequirementSellerOffer — an audit trail of
-/// post_offer_round calls in the live schema. NOTE: inferred — the offer_rounds table was not in
-/// the exported SQL set; verify the exact column set once the schema export lands.
+/// post_offer_round calls in the live schema.
 /// </summary>
 public class OfferRound : BaseEntity, IAggregateRoot
 {
-    public Guid RequirementSellerOfferId { get; private set; }
-    public NegotiationActor PostedBy { get; private set; }
-    public int RoundNumber { get; private set; }
-    public decimal PricePerPcUsd { get; private set; }
-    public string? Note { get; private set; }
+    public Guid OfferId { get; private set; }
+    public NegotiationActor Party { get; private set; }
+
+    /// <summary>Free-text action label ('offer' | 'counter' | 'accept' | 'decline', etc.) — no dedicated enum in the live schema.</summary>
+    public string Kind { get; private set; } = default!;
+    public decimal? PricePerPcUsd { get; private set; }
+    public string? Notes { get; private set; }
+    public Guid? CreatedBy { get; private set; }
 
     private OfferRound()
     {
         // EF Core
     }
 
-    public OfferRound(Guid requirementSellerOfferId, NegotiationActor postedBy, int roundNumber,
-        decimal pricePerPcUsd, string? note = null)
+    public OfferRound(Guid offerId, NegotiationActor party, string kind, decimal? pricePerPcUsd = null,
+        string? notes = null, Guid? createdBy = null)
     {
-        RequirementSellerOfferId = requirementSellerOfferId;
-        PostedBy = postedBy;
-        RoundNumber = roundNumber;
+        OfferId = offerId;
+        Party = party;
+        Kind = kind;
         PricePerPcUsd = pricePerPcUsd;
-        Note = note;
+        Notes = notes;
+        CreatedBy = createdBy;
     }
 }

@@ -32,6 +32,22 @@ public class ThrivtsDbContext : DbContext, IApplicationDbContext
     public DbSet<ExchangeRate> ExchangeRates => Set<ExchangeRate>();
     public DbSet<ShippingRate> ShippingRates => Set<ShippingRate>();
 
+    public DbSet<AppConfig> AppConfigs => Set<AppConfig>();
+    public DbSet<BlockedIp> BlockedIps => Set<BlockedIp>();
+    public DbSet<Message> Messages => Set<Message>();
+    public DbSet<OpsChatMessage> OpsChatMessages => Set<OpsChatMessage>();
+    public DbSet<OpsPresence> OpsPresences => Set<OpsPresence>();
+    public DbSet<OpsTask> OpsTasks => Set<OpsTask>();
+    public DbSet<PartnerApplication> PartnerApplications => Set<PartnerApplication>();
+    public DbSet<PlatformFeeConfig> PlatformFeeConfigs => Set<PlatformFeeConfig>();
+    public DbSet<PlatformFeeOverride> PlatformFeeOverrides => Set<PlatformFeeOverride>();
+    public DbSet<PlatformStats> PlatformStats => Set<PlatformStats>();
+    public DbSet<StockEntry> StockEntries => Set<StockEntry>();
+    public DbSet<StockoutEntry> StockoutEntries => Set<StockoutEntry>();
+    public DbSet<WashReceivedEntry> WashReceivedEntries => Set<WashReceivedEntry>();
+    public DbSet<WashSentEntry> WashSentEntries => Set<WashSentEntry>();
+    public DbSet<TranslationEntry> Translations => Set<TranslationEntry>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(ThrivtsDbContext).Assembly);

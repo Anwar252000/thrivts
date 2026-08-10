@@ -11,16 +11,18 @@ public sealed class SetSellerKycVerificationCommandHandler
 {
     private readonly IApplicationDbContext _db;
     private readonly ICurrentUserService _currentUser;
+    private readonly IDateTimeProvider _clock;
 
-    public SetSellerKycVerificationCommandHandler(IApplicationDbContext db, ICurrentUserService currentUser)
+    public SetSellerKycVerificationCommandHandler(IApplicationDbContext db, ICurrentUserService currentUser, IDateTimeProvider clock)
     {
         _db = db;
         _currentUser = currentUser;
+        _clock = clock;
     }
 
     public async ValueTask<ErrorOr<Success>> Handle(SetSellerKycVerificationCommand command, CancellationToken cancellationToken)
     {
-        if (_currentUser.Role != UserRole.Admin)
+        if (_currentUser.Role != UserRole.Admin || _currentUser.UserId is null)
             return Error.Forbidden(description: "Only admins can change a seller's KYC status.");
 
         var seller = await _db.Sellers.FirstOrDefaultAsync(s => s.Id == command.SellerId, cancellationToken);
@@ -28,7 +30,7 @@ public sealed class SetSellerKycVerificationCommandHandler
             return Error.NotFound(description: $"Seller '{command.SellerId}' was not found.");
 
         if (command.Verified)
-            seller.VerifyKyc();
+            seller.VerifyKyc(_currentUser.UserId.Value, _clock.UtcNow, command.Notes);
         else
             seller.UnverifyKyc();
 

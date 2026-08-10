@@ -1,16 +1,22 @@
 namespace Thrivts.Domain.Enums;
 
-/// <summary>
-/// posted -> matching -> ready_to_order -> in_fulfillment -> settled, with cancelled as an off-ramp.
-/// Mirrors the requirements.status values driven by buyer_accept_bid / finalize_bid_to_deal /
-/// the cancel cascade in the live schema.
-/// </summary>
+/// <summary>Mirrors the live schema's requirement_status enum exactly (16 labels).</summary>
 public enum RequirementStatus
 {
+    PendingReview,
     Posted,
     Matching,
     ReadyToOrder,
+    Confirmed,
+    AwaitingPayment,
+    Paid,
     InFulfillment,
+    SellersPaid,
+    Dispatched,
+    Delivered,
+    Disputed,
     Settled,
-    Cancelled
+    Cancelled,
+    Expired,
+    Stale
 }

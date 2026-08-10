@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
+using Thrivts.Domain.Enums;
+using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -11,5 +13,8 @@ public class DealAllocationConfiguration : IEntityTypeConfiguration<DealAllocati
         builder.ToTable("deal_allocations");
 
         builder.HasKey(a => a.Id);
+
+        builder.Property(a => a.Status)
+            .HasConversion(new SnakeCaseEnumConverter<BidStatus>());
     }
 }

@@ -7,7 +7,7 @@ import { Logo } from './Logo'
 const NAV_LINKS = [
   { href: '#about', label: 'Buyers' },
   { href: '#vendors', label: 'Sellers' },
-  { href: '#app', label: 'App soon' },
+  { href: '#app', label: 'App' },
   { href: '#about', label: 'About' },
   { href: '#contact', label: 'Contact' },
 ]
@@ -57,7 +57,7 @@ export function MarketingNav() {
                   className="group relative py-1.5 text-xs font-semibold uppercase tracking-widest text-[var(--color-ink-soft)] transition-colors hover:text-[var(--color-ink)]"
                 >
                   {link.label}
-                  {link.label === 'App soon' && (
+                  {link.label === 'App' && (
                     <span className="ml-1.5 rounded bg-[var(--color-sage)]/15 px-1.5 py-0.5 text-[0.58rem] text-[var(--color-sage)]">
                       soon
                     </span>

@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
+using Thrivts.Domain.Enums;
+using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -13,7 +15,10 @@ public class DisputeConfiguration : IEntityTypeConfiguration<Dispute>
         builder.HasKey(d => d.Id);
 
         builder.Property(d => d.Status)
-            .HasConversion<string>()
-            .HasColumnName("status");
+            .HasConversion(new SnakeCaseEnumConverter<DisputeStatus>());
+
+        builder.Property(d => d.AttachmentsJson).HasColumnName("attachments").HasColumnType("jsonb");
+
+        builder.HasIndex(d => d.DisputeNumber).IsUnique();
     }
 }

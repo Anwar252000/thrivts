@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
+using Thrivts.Domain.Enums;
+using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -13,7 +15,8 @@ public class RequirementSellerOfferConfiguration : IEntityTypeConfiguration<Requ
         builder.HasKey(o => o.Id);
 
         builder.Property(o => o.Status)
-            .HasConversion<string>()
-            .HasColumnName("status");
+            .HasConversion(new SnakeCaseEnumConverter<OfferStatus>());
+
+        builder.Property(o => o.ExchangeRateSnapshotJson).HasColumnName("exchange_rate_snapshot").HasColumnType("jsonb");
     }
 }

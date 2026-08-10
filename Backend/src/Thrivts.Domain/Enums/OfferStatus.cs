@@ -1,14 +1,14 @@
 namespace Thrivts.Domain.Enums;
 
-/// <summary>
-/// Status of an admin-initiated direct offer to a seller (requirement_seller_offers).
-/// Accepting an offer does not itself create a deal — admin still runs the deal-from-match
-/// step separately (see THRIVTS_FLOW_MATRIX.md section 5).
-/// </summary>
+/// <summary>Mirrors the live schema's offer_status enum exactly (requirement_seller_offers.status
+/// is plain text in the live DB, defaulting to 'sent', but this enum type matches the values used).</summary>
 public enum OfferStatus
 {
-    Pending,
-    Countered,
+    Sent,
+    Viewed,
     Accepted,
-    Declined
+    Declined,
+    Countered,
+    Expired,
+    Withdrawn
 }

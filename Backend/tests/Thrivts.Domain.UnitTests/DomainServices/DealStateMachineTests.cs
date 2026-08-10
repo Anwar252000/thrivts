@@ -7,11 +7,12 @@ namespace Thrivts.Domain.UnitTests.DomainServices;
 public class DealStateMachineTests
 {
     [Theory]
-    [InlineData(DealStatus.Match, DealStatus.Confirmed, true)]
-    [InlineData(DealStatus.Confirmed, DealStatus.Paid, true)]
+    [InlineData(DealStatus.Draft, DealStatus.Confirmed, true)]
+    [InlineData(DealStatus.Confirmed, DealStatus.AwaitingPayment, true)]
+    [InlineData(DealStatus.AwaitingPayment, DealStatus.Paid, true)]
     [InlineData(DealStatus.Delivered, DealStatus.Settled, true)]
     [InlineData(DealStatus.Settled, DealStatus.Confirmed, false)]
-    [InlineData(DealStatus.Match, DealStatus.Delivered, false)]
+    [InlineData(DealStatus.Draft, DealStatus.Delivered, false)]
     [InlineData(DealStatus.Cancelled, DealStatus.Confirmed, false)]
     public void CanTransition_matches_the_documented_lifecycle(DealStatus from, DealStatus to, bool expected)
     {

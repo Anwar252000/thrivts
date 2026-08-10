@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
+using Thrivts.Domain.Enums;
+using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -13,16 +15,15 @@ public class SellerResponseConfiguration : IEntityTypeConfiguration<SellerRespon
         builder.HasKey(sr => sr.Id);
 
         builder.Property(sr => sr.Status)
-            .HasConversion<string>()
-            .HasColumnName("status");
+            .HasConversion(new SnakeCaseEnumConverter<BidStatus>());
 
         builder.Property(sr => sr.NegotiationState)
-            .HasConversion<string>()
-            .HasColumnName("negotiation_state");
+            .HasConversion(new SnakeCaseEnumConverter<NegotiationState>());
 
         builder.Property(sr => sr.LastActor)
-            .HasConversion<string>()
-            .HasColumnName("last_actor");
+            .HasConversion(
+                v => v == null ? null : EnumSnakeCase.ToSnakeCase(v.Value.ToString()),
+                v => v == null ? null : EnumSnakeCase.FromSnakeCase<NegotiationActor>(v));
 
         // BuyerPricePerPcUsd is derived (CurrentPriceUsd + FeePerPcAppliedUsd), never stored —
         // it is also the ONLY price field a buyer-facing DTO may project (see the "fee opacity" moat rule).

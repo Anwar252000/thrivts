@@ -31,5 +31,21 @@ public interface IApplicationDbContext
     DbSet<ExchangeRate> ExchangeRates { get; }
     DbSet<ShippingRate> ShippingRates { get; }
 
+    DbSet<AppConfig> AppConfigs { get; }
+    DbSet<BlockedIp> BlockedIps { get; }
+    DbSet<Message> Messages { get; }
+    DbSet<OpsChatMessage> OpsChatMessages { get; }
+    DbSet<OpsPresence> OpsPresences { get; }
+    DbSet<OpsTask> OpsTasks { get; }
+    DbSet<PartnerApplication> PartnerApplications { get; }
+    DbSet<PlatformFeeConfig> PlatformFeeConfigs { get; }
+    DbSet<PlatformFeeOverride> PlatformFeeOverrides { get; }
+    DbSet<PlatformStats> PlatformStats { get; }
+    DbSet<StockEntry> StockEntries { get; }
+    DbSet<StockoutEntry> StockoutEntries { get; }
+    DbSet<WashReceivedEntry> WashReceivedEntries { get; }
+    DbSet<WashSentEntry> WashSentEntries { get; }
+    DbSet<TranslationEntry> Translations { get; }
+
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

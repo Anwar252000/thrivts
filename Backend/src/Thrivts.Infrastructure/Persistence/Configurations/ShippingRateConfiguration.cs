@@ -11,5 +11,6 @@ public class ShippingRateConfiguration : IEntityTypeConfiguration<ShippingRate>
         builder.ToTable("shipping_rates");
 
         builder.HasKey(r => r.Id);
+        builder.Property(r => r.Id).ValueGeneratedOnAdd(); // plain integer identity, not a uuid.
     }
 }

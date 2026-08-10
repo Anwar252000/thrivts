@@ -14,5 +14,8 @@ public class BuyerConfiguration : IEntityTypeConfiguration<Buyer>
 
         builder.Property(b => b.Id)
             .ValueGeneratedNever(); // Id == auth.uid().
+
+        builder.Property(b => b.SocialMediaJson).HasColumnName("social_media").HasColumnType("jsonb");
+        builder.Property(b => b.CategoriesJson).HasColumnName("categories").HasColumnType("jsonb");
     }
 }

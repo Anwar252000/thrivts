@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
+using Thrivts.Domain.Enums;
+using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -14,6 +16,11 @@ public class SellerConfiguration : IEntityTypeConfiguration<Seller>
 
         builder.Property(s => s.Id)
             .ValueGeneratedNever(); // Id == auth.uid().
+
+        builder.Property(s => s.Tier)
+            .HasConversion(new SnakeCaseEnumConverter<SellerTier>());
+
+        builder.Property(s => s.SocialMediaJson).HasColumnName("social_media").HasColumnType("jsonb");
 
         builder.HasIndex(s => s.PublicAlias)
             .IsUnique(); // the buyer-facing pseudonym must never collide — see README_HANDOVER.md's "moat".

@@ -1,13 +1,12 @@
 namespace Thrivts.Domain.Enums;
 
-/// <summary>
-/// NOTE: inferred — the live schema's disputes table was not in the exported SQL set.
-/// Verify these values (and any missing ones) once the schema export lands.
-/// </summary>
+/// <summary>Mirrors the live schema's dispute_status enum exactly (disputes.status is plain text
+/// in the live DB, but this enum type exists and matches the values actually used).</summary>
 public enum DisputeStatus
 {
     Open,
-    UnderReview,
+    Investigating,
     Resolved,
-    Rejected
+    Rejected,
+    Withdrawn
 }

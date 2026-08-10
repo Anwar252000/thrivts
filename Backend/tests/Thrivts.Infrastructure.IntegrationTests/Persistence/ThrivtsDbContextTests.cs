@@ -2,7 +2,6 @@ using AwesomeAssertions;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
 using Thrivts.Domain.Entities;
-using Thrivts.Domain.ValueObjects;
 using Thrivts.Infrastructure.Persistence;
 
 namespace Thrivts.Infrastructure.IntegrationTests.Persistence;
@@ -40,7 +39,9 @@ public class ThrivtsDbContextTests : IAsyncLifetime
     [Fact]
     public async Task Can_persist_and_reload_a_deal()
     {
-        var deal = new Deal("DEAL-0001", Guid.NewGuid(), Guid.NewGuid(), Money.Usd(1000), Money.Usd(300), totalQuantityPcs: 100);
+        var deal = new Deal("DEAL-0001", Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), totalQuantityPcs: 100,
+            buyerPricePerPcUsd: 13m, avgSellerPricePerPcUsd: 12.30m, spreadPerPcUsd: 0.70m,
+            subtotalUsd: 1300m, totalInvoiceUsd: 1300m, totalSpreadUsd: 70m, totalSellerPayoutUsd: 1230m);
 
         _db.Deals.Add(deal);
         await _db.SaveChangesAsync(CancellationToken.None);
@@ -48,6 +49,6 @@ public class ThrivtsDbContextTests : IAsyncLifetime
         var reloaded = await _db.Deals.AsNoTracking().SingleAsync(d => d.Id == deal.Id);
 
         reloaded.DealNumber.Should().Be("DEAL-0001");
-        reloaded.TotalInvoice.Amount.Should().Be(1000);
+        reloaded.TotalInvoiceUsd.Should().Be(1300m);
     }
 }

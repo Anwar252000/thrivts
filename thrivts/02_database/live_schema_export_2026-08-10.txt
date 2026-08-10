@@ -1,0 +1,1053 @@
+=== TABLES ===
+agencies
+app_config
+audit_log
+blocked_ips
+buyers
+categories
+commissions
+deal_allocations
+deals
+disputes
+exchange_rates
+influencer_commissions
+influencers
+message_threads
+messages
+notifications
+offer_rounds
+ops_chat
+ops_presence
+ops_tasks
+partner_applications
+platform_fee_config
+platform_fee_overrides
+platform_stats
+profiles
+requirement_seller_offers
+requirements
+seller_invites
+seller_responses
+sellers
+shipping_rates
+stock_entries
+stockout_entries
+translations
+wash_received
+wash_sent
+
+=== VIEWS ===
+admin_bid_board
+agency_deals_view
+buyer_deals_view
+buyer_visible_bids
+platform_fee_revenue
+public_activity_feed
+seller_deals_view
+seller_own_bids
+seller_requirements_view
+
+=== COLUMNS BY TABLE ===
+
+-- admin_bid_board --
+  requirement_id | uuid | nullable=YES | default=
+  requirement_number | text | nullable=YES | default=
+  item_name | text | nullable=YES | default=
+  required_pcs | integer (int4) | nullable=YES | default=
+  requirement_status | USER-DEFINED (requirement_status) | nullable=YES | default=
+  bid_id | uuid | nullable=YES | default=
+  bid_pcs | integer (int4) | nullable=YES | default=
+  seller_price_per_pc | numeric | nullable=YES | default=
+  fee_per_pc | numeric | nullable=YES | default=
+  buyer_sees_per_pc | numeric | nullable=YES | default=
+  buyer_total | numeric | nullable=YES | default=
+  thrivts_fee_total | numeric | nullable=YES | default=
+  bid_status | USER-DEFINED (seller_response_status) | nullable=YES | default=
+  responded_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  seller_id | uuid | nullable=YES | default=
+  seller_real_name | text | nullable=YES | default=
+  seller_alias | text | nullable=YES | default=
+  seller_tier | USER-DEFINED (seller_tier) | nullable=YES | default=
+  kyc_verified | boolean (bool) | nullable=YES | default=
+  committed_pcs | bigint (int8) | nullable=YES | default=
+
+-- agencies --
+  id | uuid | nullable=NO | default=
+  agency_name | text | nullable=NO | default=
+  agency_code | text | nullable=NO | default=
+  owner_full_name | text | nullable=NO | default=
+  country | text | nullable=NO | default=
+  city | text | nullable=YES | default=
+  team_size | integer (int4) | nullable=YES | default=
+  commission_rate | numeric | nullable=YES | default=30.00
+  total_buyers_referred | integer (int4) | nullable=YES | default=0
+  total_deals_closed | integer (int4) | nullable=YES | default=0
+  total_commission_earned_usd | numeric | nullable=YES | default=0
+  total_commission_paid_usd | numeric | nullable=YES | default=0
+  total_commission_pending_usd | numeric | nullable=YES | default=0
+  notes | text | nullable=YES | default=
+  contract_signed_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  contract_document_url | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  is_active | boolean (bool) | nullable=YES | default=true
+  approval_status | text | nullable=YES | default='approved'::text
+
+-- agency_deals_view --
+  id | uuid | nullable=YES | default=
+  deal_number | text | nullable=YES | default=
+  status | USER-DEFINED (deal_status) | nullable=YES | default=
+  total_quantity_pcs | integer (int4) | nullable=YES | default=
+  total_spread_usd | numeric | nullable=YES | default=
+  net_settled_spread_usd | numeric | nullable=YES | default=
+  buyer_reference | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  dispatched_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  delivered_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  commission_amount_usd | numeric | nullable=YES | default=
+  final_commission_usd | numeric | nullable=YES | default=
+  commission_status | USER-DEFINED (commission_status) | nullable=YES | default=
+  release_due_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  released_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- app_config --
+  id | text | nullable=NO | default=
+  data | jsonb | nullable=NO | default='{}'::jsonb
+  updated_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+
+-- audit_log --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  actor_id | uuid | nullable=YES | default=
+  actor_role | USER-DEFINED (user_role) | nullable=YES | default=
+  action | text | nullable=NO | default=
+  entity_type | text | nullable=NO | default=
+  entity_id | uuid | nullable=YES | default=
+  details | jsonb | nullable=YES | default=
+  ip_address | text | nullable=YES | default=
+  user_agent | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- blocked_ips --
+  id | uuid | nullable=NO | default=gen_random_uuid()
+  ip_address | text | nullable=NO | default=
+  reason | text | nullable=YES | default=
+  blocked_by | uuid | nullable=YES | default=
+  blocked_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- buyer_deals_view --
+  buyer_id | uuid | nullable=YES | default=
+  deal_id | uuid | nullable=YES | default=
+  deal_number | text | nullable=YES | default=
+  status | USER-DEFINED (deal_status) | nullable=YES | default=
+  total_quantity_pcs | integer (int4) | nullable=YES | default=
+  buyer_price_per_pc_usd | numeric | nullable=YES | default=
+  subtotal_usd | numeric | nullable=YES | default=
+  shipping_cost_usd | numeric | nullable=YES | default=
+  total_invoice_usd | numeric | nullable=YES | default=
+  shipping_quote_currency | text | nullable=YES | default=
+  confirmed_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  paid_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  in_fulfillment_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  dispatched_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  delivered_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  settled_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  cancelled_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  estimated_dispatch_date | date | nullable=YES | default=
+  estimated_arrival_date | date | nullable=YES | default=
+  expected_delivery_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  destination_country | text | nullable=YES | default=
+  destination_port | text | nullable=YES | default=
+  tracking_number | text | nullable=YES | default=
+  tracking_url | text | nullable=YES | default=
+  courier | text | nullable=YES | default=
+  shipping_line | text | nullable=YES | default=
+  vessel_name | text | nullable=YES | default=
+  container_number | text | nullable=YES | default=
+  bill_of_lading | text | nullable=YES | default=
+  payment_method | text | nullable=YES | default=
+  payment_reference | text | nullable=YES | default=
+  has_dispute | boolean (bool) | nullable=YES | default=
+  dispute_amount_usd | numeric | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  item_name | text | nullable=YES | default=
+  grade | USER-DEFINED (grade_type) | nullable=YES | default=
+  requirement_number | text | nullable=YES | default=
+  shipping_mode | text | nullable=YES | default=
+  req_destination_country | text | nullable=YES | default=
+
+-- buyer_visible_bids --
+  bid_id | uuid | nullable=YES | default=
+  requirement_id | uuid | nullable=YES | default=
+  available_quantity_pcs | integer (int4) | nullable=YES | default=
+  buyer_price_per_pc_usd | numeric | nullable=YES | default=
+  buyer_total_usd | numeric | nullable=YES | default=
+  fills_pct_of_requirement | numeric | nullable=YES | default=
+  requirement_qty_pcs | integer (int4) | nullable=YES | default=
+  negotiation_state | text | nullable=YES | default=
+  last_actor | text | nullable=YES | default=
+  round_count | integer (int4) | nullable=YES | default=
+  last_action_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  status_label | text | nullable=YES | default=
+  status | USER-DEFINED (seller_response_status) | nullable=YES | default=
+  bid_time | timestamp with time zone (timestamptz) | nullable=YES | default=
+  seller_alias | text | nullable=YES | default=
+  seller_tier | USER-DEFINED (seller_tier) | nullable=YES | default=
+  seller_verified | boolean (bool) | nullable=YES | default=
+
+-- buyers --
+  id | uuid | nullable=NO | default=
+  company_name | text | nullable=NO | default=
+  company_registration | text | nullable=YES | default=
+  vat_id | text | nullable=YES | default=
+  country | text | nullable=NO | default=
+  city | text | nullable=YES | default=
+  website | text | nullable=YES | default=
+  social_media | jsonb | nullable=YES | default='{}'::jsonb
+  estimated_monthly_volume_pcs | integer (int4) | nullable=YES | default=
+  categories_of_interest | ARRAY (_text) | nullable=YES | default=
+  attributed_to_agency | uuid | nullable=YES | default=
+  attribution_locked_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  total_orders | integer (int4) | nullable=YES | default=0
+  total_spend_usd | numeric | nullable=YES | default=0
+  notes | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  instagram | text | nullable=YES | default=
+  monthly_volume | text | nullable=YES | default=
+  typical_req_type | text | nullable=YES | default=
+  categories | jsonb | nullable=YES | default='[]'::jsonb
+  agency_ref | text | nullable=YES | default=
+  approval_status | text | nullable=YES | default='pending'::text
+  influencer_id | uuid | nullable=YES | default=
+  referral_code_used | text | nullable=YES | default=
+  referral_linked_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  first_order_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  first_order_discount_applied | boolean (bool) | nullable=YES | default=false
+  is_premium | boolean (bool) | nullable=NO | default=false
+
+-- categories --
+  id | integer (int4) | nullable=NO | default=nextval('categories_id_seq'::regclass)
+  name | text | nullable=NO | default=
+  name_fr | text | nullable=YES | default=
+  weight_per_piece_kg | numeric | nullable=YES | default=
+  display_order | integer (int4) | nullable=YES | default=0
+  is_active | boolean (bool) | nullable=YES | default=true
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- commissions --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  deal_id | uuid | nullable=NO | default=
+  agency_id | uuid | nullable=NO | default=
+  commission_rate | numeric | nullable=NO | default=
+  gross_spread_usd | numeric | nullable=NO | default=
+  net_settled_spread_usd | numeric | nullable=YES | default=
+  commission_amount_usd | numeric | nullable=NO | default=
+  final_commission_usd | numeric | nullable=YES | default=
+  status | USER-DEFINED (commission_status) | nullable=YES | default='pending'::commission_status
+  release_due_at | timestamp with time zone (timestamptz) | nullable=NO | default=
+  released_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  released_by | uuid | nullable=YES | default=
+  payout_method | text | nullable=YES | default=
+  payout_reference | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  spread_usd | numeric | nullable=YES | default=
+  accrued_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  paid_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- deal_allocations --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  deal_id | uuid | nullable=NO | default=
+  seller_id | uuid | nullable=NO | default=
+  seller_response_id | uuid | nullable=YES | default=
+  lot_number | text | nullable=NO | default=
+  allocated_quantity_pcs | integer (int4) | nullable=NO | default=
+  price_per_pc_usd | numeric | nullable=NO | default=
+  total_payout_usd | numeric | nullable=NO | default=
+  payout_scheduled_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  payout_paid_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  payout_method | text | nullable=YES | default=
+  payout_reference | text | nullable=YES | default=
+  status | USER-DEFINED (seller_response_status) | nullable=YES | default='accepted'::seller_response_status
+  backed_out_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  replaced_by_allocation_id | uuid | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  source_response_id | uuid | nullable=YES | default=
+  source_offer_id | uuid | nullable=YES | default=
+  fee_per_pc_applied_usd | numeric | nullable=YES | default=
+  platform_fee_usd | numeric | nullable=YES | default=
+  gross_payout_usd | numeric | nullable=YES | default=
+
+-- deals --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  deal_number | text | nullable=NO | default=
+  requirement_id | uuid | nullable=NO | default=
+  buyer_id | uuid | nullable=NO | default=
+  agency_id | uuid | nullable=YES | default=
+  total_quantity_pcs | integer (int4) | nullable=NO | default=
+  buyer_price_per_pc_usd | numeric | nullable=NO | default=
+  avg_seller_price_per_pc_usd | numeric | nullable=NO | default=
+  spread_per_pc_usd | numeric | nullable=NO | default=
+  subtotal_usd | numeric | nullable=NO | default=
+  shipping_cost_usd | numeric | nullable=YES | default=
+  total_invoice_usd | numeric | nullable=NO | default=
+  total_spread_usd | numeric | nullable=NO | default=
+  total_seller_payout_usd | numeric | nullable=NO | default=
+  payment_received_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  payment_method | text | nullable=YES | default=
+  payment_reference | text | nullable=YES | default=
+  payment_received_by | uuid | nullable=YES | default=
+  sellers_paid_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  container_number | text | nullable=YES | default=
+  container_size | text | nullable=YES | default=
+  shipping_line | text | nullable=YES | default=
+  vessel_name | text | nullable=YES | default=
+  bill_of_lading | text | nullable=YES | default=
+  dispatched_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  expected_delivery_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  delivered_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  commission_release_due_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  status | USER-DEFINED (deal_status) | nullable=YES | default='draft'::deal_status
+  has_dispute | boolean (bool) | nullable=YES | default=false
+  dispute_amount_usd | numeric | nullable=YES | default=0
+  net_settled_spread_usd | numeric | nullable=YES | default=
+  admin_notes | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  seller_id | uuid | nullable=YES | default=
+  accepted_offer_id | uuid | nullable=YES | default=
+  seller_cost_per_pc_usd | numeric | nullable=YES | default=
+  total_seller_cost_usd | numeric | nullable=YES | default=
+  shipping_quote_currency | text | nullable=YES | default=
+  spread_usd | numeric | nullable=YES | default=
+  exchange_rate_snapshot | jsonb | nullable=YES | default=
+  destination_country | text | nullable=YES | default=
+  destination_port | text | nullable=YES | default=
+  confirmed_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  paid_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  settled_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  in_fulfillment_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  tracking_number | text | nullable=YES | default=
+  tracking_url | text | nullable=YES | default=
+  courier | text | nullable=YES | default=
+  estimated_dispatch_date | date | nullable=YES | default=
+  estimated_arrival_date | date | nullable=YES | default=
+  source_response_id | uuid | nullable=YES | default=
+  source_offer_id | uuid | nullable=YES | default=
+  created_by | uuid | nullable=YES | default=
+  cancelled_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- disputes --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  dispute_number | text | nullable=NO | default=
+  deal_id | uuid | nullable=NO | default=
+  raised_by | uuid | nullable=NO | default=
+  category | text | nullable=YES | default=
+  description | text | nullable=NO | default=
+  requested_resolution | text | nullable=YES | default=
+  attachments | jsonb | nullable=YES | default='[]'::jsonb
+  status | text | nullable=YES | default='open'::text
+  resolution | text | nullable=YES | default=
+  refund_amount_usd | numeric | nullable=YES | default=0
+  resolved_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  resolved_by | uuid | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  resolution_notes | text | nullable=YES | default=
+
+-- exchange_rates --
+  id | integer (int4) | nullable=NO | default=nextval('exchange_rates_id_seq'::regclass)
+  currency | USER-DEFINED (currency_type) | nullable=NO | default=
+  rate_to_usd | numeric | nullable=NO | default=
+  effective_from | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  set_by | uuid | nullable=YES | default=
+  notes | text | nullable=YES | default=
+  usd_to_rate | numeric | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- influencer_commissions --
+  id | uuid | nullable=NO | default=gen_random_uuid()
+  influencer_id | uuid | nullable=YES | default=
+  buyer_id | uuid | nullable=YES | default=
+  deal_id | uuid | nullable=YES | default=
+  order_value_usd | numeric | nullable=NO | default=
+  rate | numeric | nullable=NO | default=0.05
+  amount_usd | numeric | nullable=NO | default=
+  status | text | nullable=NO | default='accrued'::text
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  released_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- influencers --
+  id | uuid | nullable=NO | default=gen_random_uuid()
+  user_id | uuid | nullable=YES | default=
+  influencer_code | text | nullable=NO | default=
+  referral_code | text | nullable=NO | default=
+  full_name | text | nullable=YES | default=
+  email | text | nullable=YES | default=
+  phone | text | nullable=YES | default=
+  instagram_handle | text | nullable=YES | default=
+  tiktok_handle | text | nullable=YES | default=
+  commission_rate | numeric | nullable=NO | default=0.05
+  window_months | integer (int4) | nullable=NO | default=12
+  status | text | nullable=NO | default='active'::text
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- message_threads --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  requirement_id | uuid | nullable=YES | default=
+  deal_id | uuid | nullable=YES | default=
+  seller_response_id | uuid | nullable=YES | default=
+  participant_role | USER-DEFINED (user_role) | nullable=NO | default=
+  participant_id | uuid | nullable=NO | default=
+  subject | text | nullable=YES | default=
+  is_open | boolean (bool) | nullable=YES | default=true
+  last_message_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  unread_for_admin | boolean (bool) | nullable=YES | default=false
+  unread_for_participant | boolean (bool) | nullable=YES | default=false
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  offer_id | uuid | nullable=YES | default=
+  unread_count | integer (int4) | nullable=YES | default=0
+
+-- messages --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  thread_id | uuid | nullable=NO | default=
+  sender_id | uuid | nullable=NO | default=
+  sender_type | USER-DEFINED (message_sender_type) | nullable=NO | default=
+  body | text | nullable=NO | default=
+  attachments | jsonb | nullable=YES | default='[]'::jsonb
+  is_read | boolean (bool) | nullable=YES | default=false
+  read_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- notifications --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  recipient_id | uuid | nullable=NO | default=
+  channel | USER-DEFINED (notification_channel) | nullable=YES | default='in_app'::notification_channel
+  title | text | nullable=NO | default=
+  body | text | nullable=NO | default=
+  ref_type | text | nullable=YES | default=
+  ref_id | uuid | nullable=YES | default=
+  is_read | boolean (bool) | nullable=YES | default=false
+  read_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  sent_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  delivery_status | text | nullable=YES | default=
+  delivery_error | text | nullable=YES | default=
+  language | USER-DEFINED (language_pref) | nullable=YES | default='en'::language_pref
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  user_id | uuid | nullable=YES | default=
+  audience | text | nullable=YES | default=
+  kind | text | nullable=YES | default=
+  link_type | text | nullable=YES | default=
+  link_id | uuid | nullable=YES | default=
+
+-- offer_rounds --
+  id | uuid | nullable=NO | default=gen_random_uuid()
+  offer_id | uuid | nullable=NO | default=
+  party | text | nullable=NO | default=
+  kind | text | nullable=NO | default=
+  price_per_pc_usd | numeric | nullable=YES | default=
+  notes | text | nullable=YES | default=
+  created_by | uuid | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+
+-- ops_chat --
+  id | bigint (int8) | nullable=NO | default=
+  sender | text | nullable=NO | default=
+  body | text | nullable=NO | default=
+  ts | bigint (int8) | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- ops_presence --
+  who | text | nullable=NO | default=
+  name | text | nullable=YES | default=
+  online | boolean (bool) | nullable=YES | default=false
+  ts | bigint (int8) | nullable=YES | default=
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- ops_tasks --
+  id | text | nullable=NO | default=
+  w | integer (int4) | nullable=YES | default=
+  cat | text | nullable=YES | default=
+  own | text | nullable=YES | default=
+  p | integer (int4) | nullable=YES | default=
+  title | text | nullable=NO | default=
+  note | text | nullable=YES | default=
+  due | date | nullable=YES | default=
+  status | text | nullable=YES | default='todo'::text
+  ts | bigint (int8) | nullable=YES | default=
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- partner_applications --
+  id | uuid | nullable=NO | default=gen_random_uuid()
+  full_name | text | nullable=NO | default=
+  email | text | nullable=NO | default=
+  instagram | text | nullable=YES | default=
+  tiktok | text | nullable=YES | default=
+  experience | text | nullable=YES | default=
+  platform | text | nullable=YES | default=
+  profile_link | text | nullable=YES | default=
+  about | text | nullable=YES | default=
+  status | text | nullable=NO | default='pending'::text
+  influencer_id | uuid | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+  reviewed_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- platform_fee_config --
+  id | boolean (bool) | nullable=NO | default=true
+  fee_per_pc_usd | numeric | nullable=NO | default=0.70
+  pkr_reference | text | nullable=NO | default='≈ PKR 200'::text
+  updated_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+  updated_by | uuid | nullable=YES | default=
+
+-- platform_fee_overrides --
+  id | uuid | nullable=NO | default=gen_random_uuid()
+  scope | text | nullable=NO | default=
+  category_id | uuid | nullable=YES | default=
+  seller_id | uuid | nullable=YES | default=
+  fee_per_pc_usd | numeric | nullable=NO | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+
+-- platform_fee_revenue --
+  month | timestamp with time zone (timestamptz) | nullable=YES | default=
+  allocations | bigint (int8) | nullable=YES | default=
+  pcs | bigint (int8) | nullable=YES | default=
+  fee_revenue_usd | numeric | nullable=YES | default=
+  gross_paid_usd | numeric | nullable=YES | default=
+  net_paid_to_sellers_usd | numeric | nullable=YES | default=
+
+-- platform_stats --
+  id | integer (int4) | nullable=NO | default=1
+  total_requirements_posted | integer (int4) | nullable=YES | default=0
+  total_deals_closed | integer (int4) | nullable=YES | default=0
+  total_pcs_moved | bigint (int8) | nullable=YES | default=0
+  total_volume_usd | numeric | nullable=YES | default=0
+  active_buyers | integer (int4) | nullable=YES | default=0
+  active_sellers | integer (int4) | nullable=YES | default=0
+  active_agencies | integer (int4) | nullable=YES | default=0
+  countries_served | integer (int4) | nullable=YES | default=0
+  today_requirements | integer (int4) | nullable=YES | default=0
+  today_matches | integer (int4) | nullable=YES | default=0
+  today_dispatched | integer (int4) | nullable=YES | default=0
+  this_month_deals | integer (int4) | nullable=YES | default=0
+  this_month_volume_usd | numeric | nullable=YES | default=0
+  last_updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- profiles --
+  id | uuid | nullable=NO | default=
+  role | USER-DEFINED (user_role) | nullable=NO | default=
+  email | text | nullable=NO | default=
+  phone | text | nullable=YES | default=
+  whatsapp | text | nullable=YES | default=
+  full_name | text | nullable=NO | default=
+  language_pref | USER-DEFINED (language_pref) | nullable=YES | default='en'::language_pref
+  approval_status | USER-DEFINED (approval_status) | nullable=YES | default='pending'::approval_status
+  approved_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  approved_by | uuid | nullable=YES | default=
+  rejection_reason | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  last_login_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  is_active | boolean (bool) | nullable=YES | default=true
+  signup_ip | text | nullable=YES | default=
+  signup_user_agent | text | nullable=YES | default=
+
+-- public_activity_feed --
+  id | uuid | nullable=YES | default=
+  category | text | nullable=YES | default=
+  category_fr | text | nullable=YES | default=
+  quantity_band | text | nullable=YES | default=
+  grade | USER-DEFINED (grade_type) | nullable=YES | default=
+  destination_country | text | nullable=YES | default=
+  delivery_timeline_days | integer (int4) | nullable=YES | default=
+  activity_type | text | nullable=YES | default=
+  activity_time | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- requirement_seller_offers --
+  id | uuid | nullable=NO | default=gen_random_uuid()
+  offer_number | text | nullable=YES | default=
+  requirement_id | uuid | nullable=NO | default=
+  seller_id | uuid | nullable=NO | default=
+  item_name | text | nullable=YES | default=
+  quantity_pcs | integer (int4) | nullable=YES | default=
+  grade | text | nullable=YES | default=
+  offer_price_per_pc | numeric | nullable=YES | default=
+  offer_currency | text | nullable=YES | default='USD'::text
+  offer_price_usd | numeric | nullable=YES | default=
+  exchange_rate_snapshot | jsonb | nullable=YES | default=
+  status | text | nullable=YES | default='sent'::text
+  counter_price_per_pc | numeric | nullable=YES | default=
+  counter_currency | text | nullable=YES | default=
+  counter_notes | text | nullable=YES | default=
+  admin_notes | text | nullable=YES | default=
+  sent_by | uuid | nullable=YES | default=
+  sent_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  viewed_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  responded_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  expires_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  deal_id | uuid | nullable=YES | default=
+  current_price_per_pc | numeric | nullable=YES | default=
+
+-- requirements --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  requirement_number | text | nullable=NO | default=
+  buyer_id | uuid | nullable=NO | default=
+  category_id | integer (int4) | nullable=YES | default=
+  item_name | text | nullable=NO | default=
+  quantity_pcs | integer (int4) | nullable=NO | default=
+  grade | USER-DEFINED (grade_type) | nullable=NO | default=
+  buyer_target_price_usd | numeric | nullable=NO | default=
+  buyer_currency | USER-DEFINED (currency_type) | nullable=YES | default='USD'::currency_type
+  buyer_target_price_original | numeric | nullable=YES | default=
+  buyer_exchange_rate | numeric | nullable=YES | default=
+  seller_target_price_usd | numeric | nullable=YES | default=
+  spread_per_pc_usd | numeric | nullable=YES | default=
+  total_spread_usd | numeric | nullable=YES | default=
+  destination_country | text | nullable=NO | default=
+  destination_port | text | nullable=YES | default=
+  delivery_timeline_days | integer (int4) | nullable=YES | default=
+  preferred_dispatch_date | date | nullable=YES | default=
+  status | USER-DEFINED (requirement_status) | nullable=YES | default='pending_review'::requirement_status
+  public_display | boolean (bool) | nullable=YES | default=false
+  buyer_notes | text | nullable=YES | default=
+  admin_notes | text | nullable=YES | default=
+  min_seller_tier | USER-DEFINED (seller_tier) | nullable=YES | default='bronze'::seller_tier
+  restricted_to_tags | ARRAY (_text) | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  posted_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  matched_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  confirmed_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  paid_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  dispatched_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  delivered_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  settled_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  expires_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  exchange_rate_snapshot | jsonb | nullable=YES | default=
+  preferred_shipment_date | date | nullable=YES | default=
+  specific_brands | text | nullable=YES | default=
+  target_currency | text | nullable=YES | default=
+  target_price_per_piece | numeric | nullable=YES | default=
+  target_total_buyer_currency | numeric | nullable=YES | default=
+  target_total_usd | numeric | nullable=YES | default=
+  estimated_weight_kg | numeric | nullable=YES | default=
+  additional_notes | text | nullable=YES | default=
+  requirement_type | USER-DEFINED (requirement_type) | nullable=YES | default=
+  target_price_currency | text | nullable=YES | default=
+  target_price_per_pc | numeric | nullable=YES | default=
+  shipping_mode | text | nullable=YES | default=
+
+-- seller_deals_view --
+  seller_id | uuid | nullable=YES | default=
+  deal_id | uuid | nullable=YES | default=
+  allocated_quantity_pcs | integer (int4) | nullable=YES | default=
+  price_per_pc_usd | numeric | nullable=YES | default=
+  total_payout_usd | numeric | nullable=YES | default=
+  payout_paid_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  deal_number | text | nullable=YES | default=
+  status | USER-DEFINED (deal_status) | nullable=YES | default=
+  confirmed_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  paid_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  in_fulfillment_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  dispatched_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  delivered_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  settled_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  cancelled_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  estimated_dispatch_date | date | nullable=YES | default=
+  estimated_arrival_date | date | nullable=YES | default=
+  expected_delivery_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  destination_country | text | nullable=YES | default=
+  tracking_number | text | nullable=YES | default=
+  tracking_url | text | nullable=YES | default=
+  courier | text | nullable=YES | default=
+  shipping_line | text | nullable=YES | default=
+  vessel_name | text | nullable=YES | default=
+  container_number | text | nullable=YES | default=
+  bill_of_lading | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  item_name | text | nullable=YES | default=
+  grade | USER-DEFINED (grade_type) | nullable=YES | default=
+  req_destination_country | text | nullable=YES | default=
+  shipping_mode | text | nullable=YES | default=
+
+-- seller_invites --
+  id | uuid | nullable=NO | default=gen_random_uuid()
+  token | text | nullable=NO | default=replace((gen_random_uuid())::text, '-'::text, ''::text)
+  invited_by | uuid | nullable=YES | default=
+  company_name | text | nullable=NO | default=
+  phone | text | nullable=YES | default=
+  country | text | nullable=YES | default=
+  notes | text | nullable=YES | default=
+  used_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  used_by | uuid | nullable=YES | default=
+  expires_at | timestamp with time zone (timestamptz) | nullable=NO | default=(now() + '30 days'::interval)
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- seller_own_bids --
+  bid_id | uuid | nullable=YES | default=
+  requirement_id | uuid | nullable=YES | default=
+  seller_id | uuid | nullable=YES | default=
+  requirement_number | text | nullable=YES | default=
+  item_name | text | nullable=YES | default=
+  requirement_qty_pcs | integer (int4) | nullable=YES | default=
+  grade | USER-DEFINED (grade_type) | nullable=YES | default=
+  destination_country | text | nullable=YES | default=
+  available_quantity_pcs | integer (int4) | nullable=YES | default=
+  your_price_per_pc_usd | numeric | nullable=YES | default=
+  platform_fee_per_pc_usd | numeric | nullable=YES | default=
+  you_receive_per_pc_usd | numeric | nullable=YES | default=
+  you_receive_total_usd | numeric | nullable=YES | default=
+  buyer_counter_price_usd | numeric | nullable=YES | default=
+  counter_you_receive_per_pc | numeric | nullable=YES | default=
+  buyer_counter_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  buyer_counter_note | text | nullable=YES | default=
+  negotiation_state | text | nullable=YES | default=
+  last_actor | text | nullable=YES | default=
+  last_action_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  status_label | text | nullable=YES | default=
+  status | USER-DEFINED (seller_response_status) | nullable=YES | default=
+  responded_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- seller_requirements_view --
+  id | uuid | nullable=YES | default=
+  requirement_number | text | nullable=YES | default=
+  category_id | integer (int4) | nullable=YES | default=
+  item_name | text | nullable=YES | default=
+  quantity_pcs | integer (int4) | nullable=YES | default=
+  grade | USER-DEFINED (grade_type) | nullable=YES | default=
+  destination_country | text | nullable=YES | default=
+  shipping_mode | text | nullable=YES | default=
+  delivery_timeline_days | integer (int4) | nullable=YES | default=
+  preferred_dispatch_date | date | nullable=YES | default=
+  status | USER-DEFINED (requirement_status) | nullable=YES | default=
+  min_seller_tier | USER-DEFINED (seller_tier) | nullable=YES | default=
+  restricted_to_tags | ARRAY (_text) | nullable=YES | default=
+  posted_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  expires_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- seller_responses --
+  id | uuid | nullable=NO | default=uuid_generate_v4()
+  requirement_id | uuid | nullable=NO | default=
+  seller_id | uuid | nullable=NO | default=
+  available_quantity_pcs | integer (int4) | nullable=NO | default=
+  proposed_price_usd | numeric | nullable=YES | default=
+  seller_notes | text | nullable=YES | default=
+  status | USER-DEFINED (seller_response_status) | nullable=YES | default='pending'::seller_response_status
+  accepted_quantity_pcs | integer (int4) | nullable=YES | default=
+  final_price_usd | numeric | nullable=YES | default=
+  backed_out_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  backout_reason | text | nullable=YES | default=
+  responded_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  accepted_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  deal_id | uuid | nullable=YES | default=
+  fee_per_pc_applied_usd | numeric | nullable=YES | default=
+  buyer_counter_price_usd | numeric | nullable=YES | default=
+  buyer_counter_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  buyer_counter_note | text | nullable=YES | default=
+  negotiation_state | text | nullable=YES | default='open'::text
+  last_actor | text | nullable=YES | default=
+  current_price_usd | numeric | nullable=YES | default=
+  round_count | integer (int4) | nullable=YES | default=0
+  last_action_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+
+-- sellers --
+  id | uuid | nullable=NO | default=
+  company_name | text | nullable=YES | default=
+  location_city | text | nullable=NO | default=
+  location_country | text | nullable=NO | default='Pakistan'::text
+  years_in_business | integer (int4) | nullable=YES | default=
+  social_media | jsonb | nullable=YES | default='{}'::jsonb
+  categories_supplied | ARRAY (_text) | nullable=NO | default=
+  monthly_volume_capacity_pcs | integer (int4) | nullable=YES | default=
+  reference_contact | text | nullable=YES | default=
+  tier | USER-DEFINED (seller_tier) | nullable=YES | default='bronze'::seller_tier
+  tags | ARRAY (_text) | nullable=YES | default='{}'::text[]
+  total_orders_fulfilled | integer (int4) | nullable=YES | default=0
+  total_pcs_supplied | bigint (int8) | nullable=YES | default=0
+  total_paid_usd | numeric | nullable=YES | default=0
+  dispute_count | integer (int4) | nullable=YES | default=0
+  backout_count | integer (int4) | nullable=YES | default=0
+  on_time_dispatch_rate | numeric | nullable=YES | default=
+  avg_grade_accuracy | numeric | nullable=YES | default=
+  is_pre_loaded | boolean (bool) | nullable=YES | default=false
+  notes | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  phone | text | nullable=YES | default=
+  whatsapp | text | nullable=YES | default=
+  invited_by | uuid | nullable=YES | default=
+  invited_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  invite_token | text | nullable=YES | default=
+  invite_accepted_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  is_active | boolean (bool) | nullable=YES | default=true
+  last_active_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  tier_updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  tier_updated_by | uuid | nullable=YES | default=
+  tier_notes | text | nullable=YES | default=
+  manual_tags | ARRAY (_text) | nullable=YES | default=
+  seller_code | text | nullable=YES | default=
+  kyc_verified | boolean (bool) | nullable=YES | default=false
+  kyc_verified_at | timestamp with time zone (timestamptz) | nullable=YES | default=
+  kyc_verified_by | uuid | nullable=YES | default=
+  kyc_notes | text | nullable=YES | default=
+  public_alias | text | nullable=YES | default=
+
+-- shipping_rates --
+  id | integer (int4) | nullable=NO | default=nextval('shipping_rates_id_seq'::regclass)
+  destination_country | text | nullable=NO | default=
+  destination_port | text | nullable=YES | default=
+  container_size | text | nullable=YES | default=
+  rate_usd_per_kg | numeric | nullable=YES | default=
+  flat_rate_usd | numeric | nullable=YES | default=
+  transit_days | integer (int4) | nullable=YES | default=
+  is_active | boolean (bool) | nullable=YES | default=true
+  effective_from | date | nullable=YES | default=CURRENT_DATE
+  effective_to | date | nullable=YES | default=
+  notes | text | nullable=YES | default=
+  created_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+  zone_name | text | nullable=YES | default=
+  countries | ARRAY (_text) | nullable=YES | default='{}'::text[]
+  currency | text | nullable=YES | default='USD'::text
+  rate_per_kg | numeric | nullable=YES | default=
+  delivery_days_min | integer (int4) | nullable=YES | default=
+  delivery_days_max | integer (int4) | nullable=YES | default=
+
+-- stock_entries --
+  id | text | nullable=NO | default=
+  data | jsonb | nullable=NO | default='{}'::jsonb
+  updated_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+
+-- stockout_entries --
+  id | text | nullable=NO | default=
+  data | jsonb | nullable=NO | default='{}'::jsonb
+  updated_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+
+-- translations --
+  id | integer (int4) | nullable=NO | default=nextval('translations_id_seq'::regclass)
+  key | text | nullable=NO | default=
+  language | USER-DEFINED (language_pref) | nullable=NO | default=
+  value | text | nullable=NO | default=
+  updated_at | timestamp with time zone (timestamptz) | nullable=YES | default=now()
+
+-- wash_received --
+  id | text | nullable=NO | default=
+  data | jsonb | nullable=NO | default='{}'::jsonb
+  updated_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+
+-- wash_sent --
+  id | text | nullable=NO | default=
+  data | jsonb | nullable=NO | default='{}'::jsonb
+  updated_at | timestamp with time zone (timestamptz) | nullable=NO | default=now()
+
+=== ENUMS ===
+
+-- approval_status --
+  pending
+  approved
+  rejected
+  suspended
+
+-- approval_status_type --
+  pending
+  approved
+  rejected
+  suspended
+
+-- commission_status --
+  pending
+  ready_to_release
+  released
+  cancelled
+  accrued
+  reversed
+
+-- currency_type --
+  USD
+  GBP
+  EUR
+  PKR
+
+-- deal_status --
+  draft
+  confirmed
+  awaiting_payment
+  paid
+  in_fulfillment
+  dispatched
+  delivered
+  settled
+  cancelled
+  disputed
+  pending
+  accrued
+  released
+  reversed
+
+-- dispute_status --
+  open
+  investigating
+  resolved
+  rejected
+  withdrawn
+
+-- grade_type --
+  A
+  A/B
+  B
+  Mixed
+  A_B
+  MIXED
+
+-- language_pref --
+  en
+  fr
+
+-- message_sender_type --
+  admin
+  buyer
+  seller
+  agency
+
+-- notification_channel --
+  email
+  whatsapp
+  in_app
+
+-- offer_status --
+  sent
+  viewed
+  accepted
+  declined
+  countered
+  expired
+  withdrawn
+
+-- requirement_status --
+  pending_review
+  posted
+  matching
+  ready_to_order
+  confirmed
+  awaiting_payment
+  paid
+  in_fulfillment
+  sellers_paid
+  dispatched
+  delivered
+  disputed
+  settled
+  cancelled
+  expired
+  stale
+
+-- requirement_type --
+  container_load
+  partial_load
+
+-- seller_response_status --
+  pending
+  accepted
+  rejected
+  cancelled_backout
+  accrued
+  released
+  reversed
+
+-- seller_tier --
+  bronze
+  silver
+  gold
+  platinum
+
+-- user_role --
+  admin
+  buyer
+  seller
+  agency
+
+=== PRIMARY KEYS ===
+  agencies.id
+  app_config.id
+  audit_log.id
+  blocked_ips.id
+  buyers.id
+  categories.id
+  commissions.id
+  deal_allocations.id
+  deals.id
+  disputes.id
+  exchange_rates.id
+  influencer_commissions.id
+  influencers.id
+  message_threads.id
+  messages.id
+  notifications.id
+  offer_rounds.id
+  ops_chat.id
+  ops_presence.who
+  ops_tasks.id
+  partner_applications.id
+  platform_fee_config.id
+  platform_fee_overrides.id
+  platform_stats.id
+  profiles.id
+  requirement_seller_offers.id
+  requirements.id
+  seller_invites.id
+  seller_responses.id
+  sellers.id
+  shipping_rates.id
+  stock_entries.id
+  stockout_entries.id
+  translations.id
+  wash_received.id
+  wash_sent.id
+
+=== FOREIGN KEYS ===
+  agencies.id -> profiles.id
+  audit_log.actor_id -> profiles.id
+  blocked_ips.blocked_by -> profiles.id
+  buyers.id -> profiles.id
+  buyers.influencer_id -> influencers.id
+  buyers.attributed_to_agency -> profiles.id
+  commissions.deal_id -> deals.id
+  commissions.agency_id -> agencies.id
+  commissions.released_by -> profiles.id
+  deal_allocations.seller_id -> sellers.id
+  deal_allocations.replaced_by_allocation_id -> deal_allocations.id
+  deal_allocations.deal_id -> deals.id
+  deal_allocations.seller_response_id -> seller_responses.id
+  deals.requirement_id -> requirements.id
+  deals.buyer_id -> buyers.id
+  deals.agency_id -> agencies.id
+  deals.payment_received_by -> profiles.id
+  disputes.deal_id -> deals.id
+  disputes.raised_by -> profiles.id
+  disputes.resolved_by -> profiles.id
+  exchange_rates.set_by -> profiles.id
+  influencer_commissions.deal_id -> deals.id
+  influencer_commissions.influencer_id -> influencers.id
+  influencer_commissions.buyer_id -> buyers.id
+  message_threads.participant_id -> profiles.id
+  message_threads.requirement_id -> requirements.id
+  message_threads.deal_id -> deals.id
+  message_threads.seller_response_id -> seller_responses.id
+  messages.sender_id -> profiles.id
+  messages.thread_id -> message_threads.id
+  notifications.recipient_id -> profiles.id
+  offer_rounds.offer_id -> requirement_seller_offers.id
+  profiles.approved_by -> profiles.id
+  requirement_seller_offers.requirement_id -> requirements.id
+  requirement_seller_offers.seller_id -> sellers.id
+  requirements.buyer_id -> buyers.id
+  requirements.category_id -> categories.id
+  seller_invites.invited_by -> profiles.id
+  seller_invites.used_by -> profiles.id
+  seller_responses.seller_id -> sellers.id
+  seller_responses.requirement_id -> requirements.id
+  sellers.id -> profiles.id
+  sellers.tier_updated_by -> profiles.id
