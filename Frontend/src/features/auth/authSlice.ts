@@ -12,6 +12,20 @@ interface AuthSession {
   email: string
 }
 
+interface CurrentUserResponse {
+  id: string
+  email: string
+  fullName: string
+  role: AuthUser['role']
+  approvalStatus: string
+  isActive: boolean
+}
+
+interface ResolvedSession {
+  session: AuthSession
+  user: CurrentUserResponse
+}
+
 interface AuthState {
   user: AuthUser | null
   accessToken: string | null
@@ -34,18 +48,26 @@ function persistRefreshToken(refreshToken: string | null) {
   }
 }
 
+/** Fetches /auth/me right after obtaining tokens — the only way the frontend learns its own role. */
+async function resolveSession(session: AuthSession): Promise<ResolvedSession> {
+  const user = await apiClient.get<CurrentUserResponse>('/api/v1/auth/me', { accessToken: session.accessToken })
+  return { session, user }
+}
+
 /** Restores a session from the refresh token persisted in localStorage — call once at boot. */
-export const restoreSession = createAsyncThunk<AuthSession | null>('auth/restoreSession', async () => {
+export const restoreSession = createAsyncThunk<ResolvedSession | null>('auth/restoreSession', async () => {
   const refreshToken = window.localStorage.getItem(STORAGE_KEY_REFRESH_TOKEN)
   if (!refreshToken) return null
 
-  return apiClient.post<AuthSession>('/api/v1/auth/refresh', { refreshToken })
+  const session = await apiClient.post<AuthSession>('/api/v1/auth/refresh', { refreshToken })
+  return resolveSession(session)
 })
 
 export const signIn = createAsyncThunk(
   'auth/signIn',
   async ({ email, password }: { email: string; password: string }) => {
-    return apiClient.post<AuthSession>('/api/v1/auth/login', { email, password })
+    const session = await apiClient.post<AuthSession>('/api/v1/auth/login', { email, password })
+    return resolveSession(session)
   },
 )
 
@@ -98,14 +120,15 @@ const authSlice = createSlice({
   },
 })
 
-function applySession(state: AuthState, session: AuthSession | null) {
-  if (!session) {
+function applySession(state: AuthState, resolved: ResolvedSession | null) {
+  if (!resolved) {
     state.status = 'unauthenticated'
     return
   }
 
+  const { session, user } = resolved
   persistRefreshToken(session.refreshToken)
-  state.user = { id: session.userId, email: session.email, role: null }
+  state.user = { id: user.id, email: user.email, role: user.role }
   state.accessToken = session.accessToken
   state.status = 'authenticated'
 }

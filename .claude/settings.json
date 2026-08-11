@@ -19,11 +19,24 @@
       "Bash(node -e \"const m = require\\('lucide-react'\\); console.log\\(Object.keys\\(m\\).filter\\(k => /facebook|instagram|twitter|x$/i.test\\(k\\)\\)\\)\")",
       "Bash(node -e ' *)",
       "Bash(node check-landing.mjs)",
-      "Bash(sed -i \"s/await page.waitForTimeout\\(1800\\); \\\\/\\\\/ let loader finish + hero reveal play/await page.waitForTimeout\\(3200\\);/\" check-landing.mjs)"
+      "Bash(sed -i \"s/await page.waitForTimeout\\(1800\\); \\\\/\\\\/ let loader finish + hero reveal play/await page.waitForTimeout\\(3200\\);/\" check-landing.mjs)",
+      "Bash(export ConnectionStrings__Default=\"Host=localhost;Database=dummy;Username=postgres;Password=postgres\")",
+      "Bash(export Supabase__Url=\"https://dummy.supabase.co\")",
+      "Bash(export Supabase__JwtSecret=\"dummy-jwt-secret-at-least-32-characters-long\")",
+      "Bash(export Supabase__AnonKey=\"dummy-anon-key\")",
+      "Bash(export Resend__ApiKey=\"dummy\")",
+      "Bash(grep -o '\"/api/v1/[a-zA-Z0-9/{}_-]*\"' /tmp/openapi.json | sort -u | wc -l *)",
+      "Read(//tmp/**)",
+      "Bash(ls -la /tmp/*.json)",
+      "Read(//d//**)",
+      "Bash(SCRATCH=\"/c/Users/HAROON TRADERS/AppData/Local/Temp/claude/d--thrivts/9132ae9a-03cc-403e-802b-bade7b5c2998/scratchpad\"; cp /tmp/openapi.json \"$SCRATCH/openapi.json\"; ls -la \"$SCRATCH/openapi.json\")",
+      "Bash(powershell -Command \"Get-Process -Name 'Thrivts.Api' -ErrorAction SilentlyContinue | Stop-Process -Force\")",
+      "Bash(awk '{ print length, NR }' \"thrivts/01_deploy_to_netlify/admin.html\")"
     ],
     "additionalDirectories": [
       "c:\\Users\\anwar.islam\\Desktop\\Projects\\test\\thrivts\\Backend\\.vs",
-      "d:\\thrivts\\.scratch_docx1\\extracted"
+      "d:\\thrivts\\.scratch_docx1\\extracted",
+      "\\tmp"
     ]
   }
 }

@@ -87,6 +87,24 @@ public class Requirement : BaseEntity, IAggregateRoot
     {
         Status = RequirementStatus.Posted;
         PostedAt = occurredAt;
+        PublicDisplay = true;
+    }
+
+    public void SetPublicDisplay(bool publicDisplay) => PublicDisplay = publicDisplay;
+
+    /// <summary>Admin edit of the core listing fields (replaces the direct requirements.update call).</summary>
+    public void UpdateDetails(string itemName, int quantityPcs, GradeType grade, string destinationCountry,
+        decimal buyerTargetPriceUsd, string? adminNotes)
+    {
+        if (quantityPcs <= 0)
+            throw new DomainException("Requirement quantity must be greater than zero.");
+
+        ItemName = itemName;
+        QuantityPcs = quantityPcs;
+        Grade = grade;
+        DestinationCountry = destinationCountry;
+        BuyerTargetPriceUsd = buyerTargetPriceUsd;
+        AdminNotes = adminNotes;
     }
 
     /// <summary>Called after a bid is accepted: fully committed -> ready_to_order, otherwise -> matching.</summary>

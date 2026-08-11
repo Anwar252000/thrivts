@@ -7,11 +7,12 @@ interface LogoProps {
   animateSpark?: boolean
 }
 
-/** The "thriv✦ts" wordmark — used in the nav, footer, and loader at different sizes. */
+/** The "thrivt✦s" wordmark — used in the nav, footer, loader, and login screen at different sizes.
+ * Split is "thrivt" + spark + "s" (matches thrivts/01_deploy_to_netlify/*.html's .brand-mark/.lockup exactly). */
 export function Logo({ className, sparkClassName, animateSpark }: LogoProps) {
   return (
     <span className={cn('inline-flex items-start font-black lowercase leading-none tracking-tight', className)}>
-      thriv
+      thrivt
       {animateSpark ? (
         <motion.span
           className={cn('mt-[0.16em] text-[0.4em] text-[var(--color-sage)]', sparkClassName)}
@@ -23,7 +24,7 @@ export function Logo({ className, sparkClassName, animateSpark }: LogoProps) {
       ) : (
         <span className={cn('mt-[0.16em] text-[0.4em] text-[var(--color-sage)]', sparkClassName)}>✦</span>
       )}
-      ts
+      s
     </span>
   )
 }

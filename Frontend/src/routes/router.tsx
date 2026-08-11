@@ -1,5 +1,4 @@
 import { createBrowserRouter } from 'react-router-dom'
-import { PublicLayout } from '@/layouts/PublicLayout'
 import { BuyerLayout } from '@/layouts/BuyerLayout'
 import { SellerLayout } from '@/layouts/SellerLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
@@ -8,17 +7,26 @@ import { Login } from '@/pages/auth/Login'
 import { BuyerDashboard } from '@/pages/buyer/Dashboard'
 import { SellerDashboard } from '@/pages/seller/Dashboard'
 import { AdminDashboard } from '@/pages/admin/Dashboard'
+import { AdminApprovals } from '@/pages/admin/Approvals'
+import { AdminBuyers } from '@/pages/admin/buyers/Buyers'
+import { AdminSellers } from '@/pages/admin/sellers/Sellers'
+import { AdminAgencies } from '@/pages/admin/agencies/Agencies'
+import { AdminRequirements } from '@/pages/admin/requirements/Requirements'
+import { AdminDeals } from '@/pages/admin/deals/Deals'
+import { AdminCommissions } from '@/pages/admin/Commissions'
+import { AdminDisputes } from '@/pages/admin/disputes/Disputes'
+import { AdminMessages } from '@/pages/admin/Messages'
+import { AdminSettings } from '@/pages/admin/Settings'
+import { AdminAudit } from '@/pages/admin/Audit'
 import { Placeholder } from '@/components/dashboard/Placeholder'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 export const router = createBrowserRouter([
-  // The marketing homepage brings its own nav/footer (MarketingNav/MarketingFooter) —
-  // it must NOT be nested in PublicLayout, which renders a second, conflicting header.
+  // The marketing homepage and the login screen each bring their own full-bleed chrome
+  // (MarketingNav/MarketingFooter, and admin.html's centered .login-screen respectively) —
+  // neither is nested in PublicLayout, which would render a second, conflicting header.
   { path: '/', element: <Landing /> },
-  {
-    element: <PublicLayout />,
-    children: [{ path: '/login', element: <Login /> }],
-  },
+  { path: '/login', element: <Login /> },
   {
     path: '/buyer',
     element: (
@@ -55,10 +63,17 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <AdminDashboard /> },
-      { path: 'buyers', element: <Placeholder title="Buyers" /> },
-      { path: 'sellers', element: <Placeholder title="Sellers" /> },
-      { path: 'deals', element: <Placeholder title="Deals" /> },
-      { path: 'settings', element: <Placeholder title="Settings" /> },
+      { path: 'approvals', element: <AdminApprovals /> },
+      { path: 'buyers', element: <AdminBuyers /> },
+      { path: 'sellers', element: <AdminSellers /> },
+      { path: 'agencies', element: <AdminAgencies /> },
+      { path: 'requirements', element: <AdminRequirements /> },
+      { path: 'deals', element: <AdminDeals /> },
+      { path: 'commissions', element: <AdminCommissions /> },
+      { path: 'disputes', element: <AdminDisputes /> },
+      { path: 'messages', element: <AdminMessages /> },
+      { path: 'settings', element: <AdminSettings /> },
+      { path: 'audit', element: <AdminAudit /> },
     ],
   },
 ])

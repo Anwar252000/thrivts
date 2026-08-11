@@ -66,6 +66,18 @@ public class AuthController : ControllerBase
             errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
     }
 
+    /// <summary>The only place the frontend learns its own role — it never reads Supabase/profiles directly.</summary>
+    [HttpGet("me")]
+    [Authorize]
+    public async Task<IActionResult> Me(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new GetCurrentUserQuery(), cancellationToken);
+
+        return result.Match<IActionResult>(
+            user => Ok(CurrentUserResponse.From(user)),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
     private static int MapStatusCode(ErrorType errorType) => errorType switch
     {
         ErrorType.NotFound => StatusCodes.Status404NotFound,
@@ -83,4 +95,11 @@ public record AuthResponse(string AccessToken, string RefreshToken, int ExpiresI
 {
     public static AuthResponse From(SupabaseSession session) =>
         new(session.AccessToken, session.RefreshToken, session.ExpiresIn, session.UserId, session.Email);
+}
+
+public record CurrentUserResponse(Guid Id, string Email, string FullName, string Role, string ApprovalStatus, bool IsActive)
+{
+    public static CurrentUserResponse From(CurrentUserDto user) =>
+        new(user.Id, user.Email, user.FullName, user.Role.ToString().ToLowerInvariant(),
+            user.ApprovalStatus.ToString().ToLowerInvariant(), user.IsActive);
 }

@@ -6,7 +6,7 @@ import { Spinner } from '@/components/ui'
 
 interface ProtectedRouteProps {
   children: ReactNode
-  /** Restrict to a role once role resolution is wired up (see authTypes.ts AuthUser.role). */
+  /** Restricts access to a single role — resolved from GET /api/v1/auth/me on sign-in/restore. */
   role?: UserRole
 }
 
@@ -26,9 +26,7 @@ export function ProtectedRoute({ children, role }: ProtectedRouteProps) {
     return <Navigate to="/login" replace state={{ from: location }} />
   }
 
-  // Role hasn't resolved yet (no /me endpoint wired up) — let an authenticated user through
-  // rather than dead-end them. Once user.role is populated this becomes a real gate.
-  if (role && user.role && user.role !== role) {
+  if (role && user.role !== role) {
     return <Navigate to="/login" replace />
   }
 

@@ -50,11 +50,14 @@ public class Profile : BaseEntity, IAggregateRoot
         RejectionReason = null;
     }
 
-    /// <summary>Replaces reject_seller.</summary>
+    /// <summary>Replaces reject_seller / rejectUser — a rejected profile is also deactivated
+    /// (matches the live admin.html rejectUser(), which sets is_active: false alongside the
+    /// rejected status; a rejected applicant should not be able to sign back in).</summary>
     public void Reject(string reason)
     {
         ApprovalStatus = ApprovalStatus.Rejected;
         RejectionReason = reason;
+        IsActive = false;
     }
 
     /// <summary>Replaces block_seller / admin_block_buyer.</summary>

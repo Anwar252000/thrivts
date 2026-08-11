@@ -13,7 +13,10 @@ builder.Host.UseSerilog((context, services, configuration) => configuration
     .Enrich.FromLogContext());
 
 // Add services to the container.
-builder.Services.AddControllers();
+// Enums serialize as their C# member name (e.g. "Confirmed"), not the default int — the frontend
+// never has to hardcode a numeric mapping that silently drifts if an enum is reordered.
+builder.Services.AddControllers()
+    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
 builder.Services.AddOpenApi();
 
 builder.Services.AddApplication();
