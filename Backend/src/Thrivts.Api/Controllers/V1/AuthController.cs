@@ -78,6 +78,28 @@ public class AuthController : ControllerBase
             errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
     }
 
+    /// <summary>Always responds 204 whether or not the email is registered — never reveals account existence.</summary>
+    [HttpPost("forgot-password")]
+    public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new ForgotPasswordCommand(request.Email), cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => NoContent(),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
+    /// <summary>AccessToken is the recovery token from the emailed link's URL fragment, not a login session.</summary>
+    [HttpPost("reset-password")]
+    public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new ResetPasswordCommand(request.AccessToken, request.NewPassword), cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => NoContent(),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
     private static int MapStatusCode(ErrorType errorType) => errorType switch
     {
         ErrorType.NotFound => StatusCodes.Status404NotFound,
@@ -90,6 +112,8 @@ public class AuthController : ControllerBase
 
 public record LoginRequest(string Email, string Password);
 public record RefreshRequest(string RefreshToken);
+public record ForgotPasswordRequest(string Email);
+public record ResetPasswordRequest(string AccessToken, string NewPassword);
 
 public record AuthResponse(string AccessToken, string RefreshToken, int ExpiresIn, Guid UserId, string Email)
 {

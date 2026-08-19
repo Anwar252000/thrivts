@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
-using Thrivts.Domain.Enums;
-using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -14,8 +12,8 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
 
         builder.HasKey(m => m.Id);
 
-        builder.Property(m => m.SenderType)
-            .HasConversion(new SnakeCaseEnumConverter<MessageSenderType>());
+        // SenderType maps to the native message_sender_type Postgres enum via Npgsql's own enum
+        // support — see NpgsqlEnumMapping.Configure.
 
         builder.Property(m => m.AttachmentsJson).HasColumnName("attachments").HasColumnType("jsonb");
 

@@ -14,8 +14,8 @@ public class SellerResponseConfiguration : IEntityTypeConfiguration<SellerRespon
 
         builder.HasKey(sr => sr.Id);
 
-        builder.Property(sr => sr.Status)
-            .HasConversion(new SnakeCaseEnumConverter<BidStatus>());
+        // Status maps to the native seller_response_status Postgres enum via Npgsql's own enum
+        // support — see NpgsqlEnumMapping.Configure.
 
         builder.Property(sr => sr.NegotiationState)
             .HasConversion(new SnakeCaseEnumConverter<NegotiationState>());

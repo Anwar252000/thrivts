@@ -14,5 +14,8 @@ public class SellerInviteConfiguration : IEntityTypeConfiguration<SellerInvite>
 
         builder.HasIndex(i => i.Token)
             .IsUnique();
+
+        // The live table has created_at but no updated_at.
+        builder.Ignore(i => i.UpdatedAt);
     }
 }

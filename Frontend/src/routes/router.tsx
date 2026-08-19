@@ -4,10 +4,13 @@ import { SellerLayout } from '@/layouts/SellerLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { Landing } from '@/pages/Landing'
 import { Login } from '@/pages/auth/Login'
+import { ForgotPassword } from '@/pages/auth/ForgotPassword'
+import { ResetPassword } from '@/pages/auth/ResetPassword'
 import { BuyerDashboard } from '@/pages/buyer/Dashboard'
 import { SellerDashboard } from '@/pages/seller/Dashboard'
 import { AdminDashboard } from '@/pages/admin/Dashboard'
 import { AdminApprovals } from '@/pages/admin/Approvals'
+import { AdminUsers } from '@/pages/admin/users/Users'
 import { AdminBuyers } from '@/pages/admin/buyers/Buyers'
 import { AdminSellers } from '@/pages/admin/sellers/Sellers'
 import { AdminAgencies } from '@/pages/admin/agencies/Agencies'
@@ -27,6 +30,8 @@ export const router = createBrowserRouter([
   // neither is nested in PublicLayout, which would render a second, conflicting header.
   { path: '/', element: <Landing /> },
   { path: '/login', element: <Login /> },
+  { path: '/forgot-password', element: <ForgotPassword /> },
+  { path: '/reset-password', element: <ResetPassword /> },
   {
     path: '/buyer',
     element: (
@@ -64,6 +69,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminDashboard /> },
       { path: 'approvals', element: <AdminApprovals /> },
+      { path: 'users', element: <AdminUsers /> },
       { path: 'buyers', element: <AdminBuyers /> },
       { path: 'sellers', element: <AdminSellers /> },
       { path: 'agencies', element: <AdminAgencies /> },

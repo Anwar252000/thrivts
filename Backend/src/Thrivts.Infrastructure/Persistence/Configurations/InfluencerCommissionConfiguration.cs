@@ -16,5 +16,8 @@ public class InfluencerCommissionConfiguration : IEntityTypeConfiguration<Influe
 
         builder.Property(c => c.Status)
             .HasConversion(new SnakeCaseEnumConverter<InfluencerCommissionStatus>());
+
+        // The live table has created_at but no updated_at.
+        builder.Ignore(c => c.UpdatedAt);
     }
 }

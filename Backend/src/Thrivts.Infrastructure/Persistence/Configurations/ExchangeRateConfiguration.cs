@@ -13,7 +13,7 @@ public class ExchangeRateConfiguration : IEntityTypeConfiguration<ExchangeRate>
         builder.HasKey(r => r.Id);
         builder.Property(r => r.Id).ValueGeneratedOnAdd(); // plain integer identity, not a uuid.
 
-        builder.Property(r => r.Currency)
-            .HasConversion<string>(); // CurrencyType member names ARE the DB labels (USD/GBP/EUR/PKR).
+        // Currency maps to the native currency_type Postgres enum via Npgsql's own enum support
+        // (identity name translator — member names ARE the DB labels) — see NpgsqlEnumMapping.Configure.
     }
 }

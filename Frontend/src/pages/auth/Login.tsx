@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useLocation, useNavigate, type Location } from 'react-router-dom'
+import { useLocation, useNavigate, Link, type Location } from 'react-router-dom'
 import { AlertCircle, Eye, EyeOff } from 'lucide-react'
 import { Button, Card, Input } from '@/components/ui'
 import { Logo } from '@/components/marketing/Logo'
@@ -105,6 +105,11 @@ export function Login() {
                 </button>
               </div>
               {errors.password && <p className="mt-1.5 text-xs text-[var(--color-danger)]">{errors.password.message}</p>}
+              <div className="mt-1.5 text-right">
+                <Link to="/forgot-password" className="text-xs text-[var(--color-ink-faint)] underline hover:text-[var(--color-ink)]">
+                  Forgot password?
+                </Link>
+              </div>
             </div>
 
             {error && (

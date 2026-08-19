@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '@/app/store'
 import type {
-  PagedResult, BuyerListItem, BuyerDetail, SellerListItem, SellerDetail, AgencyListItem, AgencyDetail,
+  PagedResult, UserListItem, BuyerListItem, BuyerDetail, SellerListItem, SellerDetail, AgencyListItem, AgencyDetail,
   RequirementListItem, RequirementDetail, AdminBidBoardRow, DealListItem, DealDetail, DealAllocation, CommissionListItem,
   PlatformFeeRevenueMonth, DisputeListItem, MessageThreadListItem, AdminMessage, PendingApproval,
   AuditLogEntry, Category, ShippingRate, ExchangeRate, InfluencerListItem, PartnerApplication,
@@ -23,7 +23,7 @@ export const adminApi = createApi({
     },
   }),
   tagTypes: [
-    'Buyer', 'Seller', 'Agency', 'Requirement', 'BidBoard', 'Deal', 'DealAllocation', 'Commission',
+    'User', 'Buyer', 'Seller', 'Agency', 'Requirement', 'BidBoard', 'Deal', 'DealAllocation', 'Commission',
     'Dispute', 'MessageThread', 'Message', 'Approval', 'Audit', 'Category', 'ShippingRate',
     'ExchangeRate', 'Influencer', 'PartnerApplication', 'FeeConfig', 'Offer', 'OfferRound', 'Dashboard',
   ],
@@ -32,6 +32,34 @@ export const adminApi = createApi({
     getDashboardStats: builder.query<DashboardStats, void>({
       query: () => '/api/v1/admin/dashboard/stats',
       providesTags: ['Dashboard'],
+    }),
+
+    // ---- Users (role-agnostic) ----
+    getUsers: builder.query<PagedResult<UserListItem>, { role?: UserRoleEnum; search?: string; page?: number; pageSize?: number } | void>({
+      query: (args) => ({
+        url: '/api/v1/admin/users',
+        params: { role: args?.role, search: args?.search, page: args?.page ?? 1, pageSize: args?.pageSize ?? 25 },
+      }),
+      providesTags: (result) =>
+        result
+          ? [...result.items.map((u) => ({ type: 'User' as const, id: u.id })), { type: 'User' as const, id: 'LIST' }]
+          : [{ type: 'User' as const, id: 'LIST' }],
+    }),
+    createUser: builder.mutation<{ id: string }, {
+      email: string; password: string; fullName: string; role: UserRoleEnum; phone?: string; whatsApp?: string
+      companyName?: string; country?: string; publicAlias?: string; locationCity?: string; locationCountry?: string
+      agencyName?: string; commissionRate?: number
+    }>({
+      query: (body) => ({ url: '/api/v1/admin/users', method: 'POST', body }),
+      invalidatesTags: [{ type: 'User', id: 'LIST' }, 'Dashboard'],
+    }),
+    updateUser: builder.mutation<void, { userId: string; fullName: string; phone?: string; whatsApp?: string }>({
+      query: ({ userId, ...body }) => ({ url: `/api/v1/admin/users/${userId}`, method: 'PUT', body }),
+      invalidatesTags: (_r, _e, { userId }) => [{ type: 'User', id: userId }, { type: 'User', id: 'LIST' }],
+    }),
+    deleteUser: builder.mutation<void, string>({
+      query: (id) => ({ url: `/api/v1/admin/users/${id}`, method: 'DELETE' }),
+      invalidatesTags: [{ type: 'User', id: 'LIST' }, 'Dashboard'],
     }),
 
     // ---- Approvals ----
@@ -369,6 +397,7 @@ export const adminApi = createApi({
 
 export const {
   useGetDashboardStatsQuery,
+  useGetUsersQuery, useCreateUserMutation, useUpdateUserMutation, useDeleteUserMutation,
   useGetPendingApprovalsQuery,
   useGetBuyersQuery, useGetBuyerByIdQuery, useSetBuyerApprovalMutation, useUpdateBuyerMutation, useDeleteBuyerMutation,
   useGetSellersQuery, useGetSellerByIdQuery, useSetSellerApprovalMutation, useSetSellerKycMutation, useUpdateSellerMutation, useDeleteSellerMutation,

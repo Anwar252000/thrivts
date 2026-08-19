@@ -11,6 +11,14 @@ public interface ISupabaseAuthClient
     Task<SupabaseSession> SignInWithPasswordAsync(string email, string password, CancellationToken cancellationToken = default);
     Task<SupabaseSession> RefreshTokenAsync(string refreshToken, CancellationToken cancellationToken = default);
     Task SignOutAsync(string accessToken, CancellationToken cancellationToken = default);
+
+    /// <summary>Sends a password-recovery email via GoTrue. Always succeeds regardless of whether
+    /// the email is registered — GoTrue never reveals account existence through this endpoint.</summary>
+    Task RequestPasswordResetAsync(string email, string redirectTo, CancellationToken cancellationToken = default);
+
+    /// <summary>Sets a new password for the user identified by a recovery access token — the token
+    /// from the link GoTrue emailed, not a normal login session.</summary>
+    Task ResetPasswordAsync(string recoveryAccessToken, string newPassword, CancellationToken cancellationToken = default);
 }
 
 public record SupabaseSession(string AccessToken, string RefreshToken, int ExpiresIn, Guid UserId, string Email);

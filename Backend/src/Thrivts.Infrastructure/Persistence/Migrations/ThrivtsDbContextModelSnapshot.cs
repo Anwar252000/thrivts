@@ -1716,7 +1716,7 @@ namespace Thrivts.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("WhatsApp")
                         .HasColumnType("text")
-                        .HasColumnName("whats_app");
+                        .HasColumnName("whatsapp");
 
                     b.HasKey("Id")
                         .HasName("pk_profiles");
@@ -2204,7 +2204,7 @@ namespace Thrivts.Infrastructure.Persistence.Migrations
 
                     b.Property<string>("WhatsApp")
                         .HasColumnType("text")
-                        .HasColumnName("whats_app");
+                        .HasColumnName("whatsapp");
 
                     b.Property<int?>("YearsInBusiness")
                         .HasColumnType("integer")

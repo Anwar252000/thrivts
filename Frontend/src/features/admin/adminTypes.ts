@@ -31,6 +31,19 @@ export interface PagedResult<T> {
   pageSize: number
 }
 
+// ---- Users (role-agnostic) ----
+export interface UserListItem {
+  id: string
+  email: string
+  fullName: string
+  role: UserRoleEnum
+  phone: string | null
+  whatsApp: string | null
+  approvalStatus: ApprovalStatus
+  isActive: boolean
+  createdAt: string
+}
+
 // ---- Buyers ----
 export interface BuyerListItem {
   id: string
@@ -434,19 +447,19 @@ export interface OfferRound {
 }
 
 // ---- Dashboard ----
+// Mirrors admin.html's loadDashboard() exactly — every figure is a live count/sum against the
+// real tables, computed on each request (there is no cached platform-stats row to go stale).
 export interface DashboardStats {
-  totalRequirementsPosted: number
-  totalDealsClosed: number
-  totalPcsMoved: number
-  totalVolumeUsd: number
-  activeBuyers: number
-  activeSellers: number
+  totalBuyers: number
+  pendingBuyers: number
+  totalSellers: number
+  pendingSellers: number
   activeAgencies: number
-  countriesServed: number
-  todayRequirements: number
-  todayMatches: number
-  todayDispatched: number
-  thisMonthDeals: number
-  thisMonthVolumeUsd: number
-  lastUpdatedAt: string
+  pendingAgencies: number
+  liveRequirements: number
+  requirementsAwaitingReview: number
+  openDisputes: number
+  totalVolumeUsd: number
+  pendingCommissionsUsd: number
+  commissionsReadyToRelease: number
 }

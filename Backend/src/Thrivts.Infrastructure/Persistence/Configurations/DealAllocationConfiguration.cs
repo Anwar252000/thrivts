@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
-using Thrivts.Domain.Enums;
-using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -14,7 +12,7 @@ public class DealAllocationConfiguration : IEntityTypeConfiguration<DealAllocati
 
         builder.HasKey(a => a.Id);
 
-        builder.Property(a => a.Status)
-            .HasConversion(new SnakeCaseEnumConverter<BidStatus>());
+        // Status maps to the native seller_response_status Postgres enum via Npgsql's own enum
+        // support — see NpgsqlEnumMapping.Configure.
     }
 }

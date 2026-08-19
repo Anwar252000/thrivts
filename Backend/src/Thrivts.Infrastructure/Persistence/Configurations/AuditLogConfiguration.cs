@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
-using Thrivts.Domain.Enums;
-using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -15,11 +13,14 @@ public class AuditLogConfiguration : IEntityTypeConfiguration<AuditLog>
 
         builder.HasKey(a => a.Id);
 
-        builder.Property(a => a.ActorRole)
-            .HasConversion(
-                v => v == null ? null : EnumSnakeCase.ToSnakeCase(v.Value.ToString()),
-                v => v == null ? null : EnumSnakeCase.FromSnakeCase<UserRole>(v));
+        // ActorRole maps to the native user_role Postgres enum via Npgsql's own enum support —
+        // see NpgsqlEnumMapping.Configure.
 
         builder.Property(a => a.DetailsJson).HasColumnName("details").HasColumnType("jsonb");
+
+        // The live table has created_at but no updated_at (audit entries are append-only, never
+        // modified) — BaseEntity always declares both, so this must be ignored per entity that
+        // maps to a table missing the column.
+        builder.Ignore(a => a.UpdatedAt);
     }
 }

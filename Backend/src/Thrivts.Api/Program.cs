@@ -52,8 +52,16 @@ if (app.Environment.IsDevelopment())
     app.MapScalarApiReference(); // Scalar UI at /scalar — the modern replacement for Swagger UI.
 }
 
-app.UseHttpsRedirection();
-app.UseHsts();
+// HTTPS redirection must never run before CORS: a browser's preflight OPTIONS request to
+// http://localhost:5275 would otherwise hit a 307 to the https port before CORS headers are
+// added, and browsers refuse to follow a redirect for a preflight — every POST/PUT from the
+// frontend would fail CORS. Skip it entirely in Development, where we deliberately serve over
+// plain HTTP to sidestep the local self-signed-cert trust dance.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();
+    app.UseHsts();
+}
 
 app.UseCors("ThrivtsApps");
 

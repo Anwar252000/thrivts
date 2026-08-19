@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
-using Thrivts.Domain.Enums;
-using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -14,7 +12,8 @@ public class CommissionConfiguration : IEntityTypeConfiguration<Commission>
 
         builder.HasKey(c => c.Id);
 
-        builder.Property(c => c.Status)
-            .HasConversion(new SnakeCaseEnumConverter<CommissionStatus>());
+        // Status maps to the native commission_status Postgres enum via Npgsql's own enum
+        // support — see NpgsqlEnumMapping.Configure. No HasConversion here: a string converter
+        // reads fine but breaks any WHERE-clause filter ("42883: operator does not exist").
     }
 }

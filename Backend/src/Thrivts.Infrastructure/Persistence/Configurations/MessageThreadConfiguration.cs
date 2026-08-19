@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
-using Thrivts.Domain.Enums;
-using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -14,7 +12,7 @@ public class MessageThreadConfiguration : IEntityTypeConfiguration<MessageThread
 
         builder.HasKey(t => t.Id);
 
-        builder.Property(t => t.ParticipantRole)
-            .HasConversion(new SnakeCaseEnumConverter<UserRole>());
+        // ParticipantRole maps to the native user_role Postgres enum via Npgsql's own enum
+        // support — see NpgsqlEnumMapping.Configure.
     }
 }

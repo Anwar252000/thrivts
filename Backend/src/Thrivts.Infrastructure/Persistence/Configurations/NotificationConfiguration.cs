@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
-using Thrivts.Domain.Enums;
-using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -14,12 +12,12 @@ public class NotificationConfiguration : IEntityTypeConfiguration<Notification>
 
         builder.HasKey(n => n.Id);
 
-        builder.Property(n => n.Channel)
-            .HasConversion(new SnakeCaseEnumConverter<NotificationChannel>());
-
-        builder.Property(n => n.Language)
-            .HasConversion(new SnakeCaseEnumConverter<LanguagePref>());
+        // Channel and Language map to the native notification_channel/language_pref Postgres
+        // enums via Npgsql's own enum support — see NpgsqlEnumMapping.Configure.
 
         builder.HasIndex(n => new { n.RecipientId, n.IsRead, n.CreatedAt });
+
+        // The live table has created_at but no updated_at.
+        builder.Ignore(n => n.UpdatedAt);
     }
 }

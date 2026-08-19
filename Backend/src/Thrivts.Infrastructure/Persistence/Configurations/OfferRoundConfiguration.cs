@@ -17,5 +17,8 @@ public class OfferRoundConfiguration : IEntityTypeConfiguration<OfferRound>
         builder.Property(o => o.Party)
             .HasConversion(new SnakeCaseEnumConverter<NegotiationActor>())
             .HasColumnName("party");
+
+        // The live table has created_at but no updated_at.
+        builder.Ignore(o => o.UpdatedAt);
     }
 }

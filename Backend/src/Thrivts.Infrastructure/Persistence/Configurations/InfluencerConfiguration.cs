@@ -19,5 +19,8 @@ public class InfluencerConfiguration : IEntityTypeConfiguration<Influencer>
 
         builder.HasIndex(i => i.InfluencerCode)
             .IsUnique();
+
+        // The live table has created_at but no updated_at.
+        builder.Ignore(i => i.UpdatedAt);
     }
 }

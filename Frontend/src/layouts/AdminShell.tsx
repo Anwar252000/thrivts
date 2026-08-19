@@ -1,7 +1,7 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  LayoutDashboard, UserCheck, ShoppingBag, Package, Handshake, ClipboardList, Briefcase,
+  LayoutDashboard, UserCheck, Users, ShoppingBag, Package, Handshake, ClipboardList, Briefcase,
   Percent, MessageSquare, AlertTriangle, Settings, FileText, RefreshCw, LogOut,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
@@ -48,6 +48,7 @@ export function AdminShell() {
     {
       label: 'Users',
       items: [
+        { to: '/admin/users', label: 'All users', icon: Users },
         { to: '/admin/buyers', label: 'Buyers', icon: ShoppingBag },
         { to: '/admin/sellers', label: 'Sellers', icon: Package },
         { to: '/admin/agencies', label: 'Agencies', icon: Handshake },

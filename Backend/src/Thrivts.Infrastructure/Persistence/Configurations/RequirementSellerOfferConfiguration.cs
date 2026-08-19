@@ -18,5 +18,8 @@ public class RequirementSellerOfferConfiguration : IEntityTypeConfiguration<Requ
             .HasConversion(new SnakeCaseEnumConverter<OfferStatus>());
 
         builder.Property(o => o.ExchangeRateSnapshotJson).HasColumnName("exchange_rate_snapshot").HasColumnType("jsonb");
+
+        // The live table has created_at but no updated_at.
+        builder.Ignore(o => o.UpdatedAt);
     }
 }

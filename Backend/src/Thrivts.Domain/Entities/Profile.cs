@@ -82,5 +82,7 @@ public class Profile : BaseEntity, IAggregateRoot
         WhatsApp = whatsApp;
     }
 
+    public void UpdateFullName(string fullName) => FullName = fullName;
+
     public void SetLanguagePreference(LanguagePref languagePref) => LanguagePref = languagePref;
 }

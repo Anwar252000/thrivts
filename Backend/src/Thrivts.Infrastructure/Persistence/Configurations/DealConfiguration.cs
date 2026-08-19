@@ -1,8 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Thrivts.Domain.Entities;
-using Thrivts.Domain.Enums;
-using Thrivts.Infrastructure.Persistence.Conversions;
 
 namespace Thrivts.Infrastructure.Persistence.Configurations;
 
@@ -17,8 +15,8 @@ public class DealConfiguration : IEntityTypeConfiguration<Deal>
         builder.Property(d => d.DealNumber).IsRequired();
         builder.HasIndex(d => d.DealNumber).IsUnique();
 
-        builder.Property(d => d.Status)
-            .HasConversion(new SnakeCaseEnumConverter<DealStatus>());
+        // Status maps to the native deal_status Postgres enum via Npgsql's own enum support —
+        // see NpgsqlEnumMapping.Configure.
 
         builder.Property(d => d.ExchangeRateSnapshotJson).HasColumnName("exchange_rate_snapshot").HasColumnType("jsonb");
     }

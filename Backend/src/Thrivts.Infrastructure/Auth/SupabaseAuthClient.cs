@@ -57,6 +57,38 @@ public class SupabaseAuthClient : ISupabaseAuthClient
             response.EnsureSuccessStatusCode();
     }
 
+    public async Task RequestPasswordResetAsync(string email, string redirectTo, CancellationToken cancellationToken = default)
+    {
+        var response = await _httpClient.PostAsJsonAsync(
+            $"recover?redirect_to={Uri.EscapeDataString(redirectTo)}",
+            new { email },
+            cancellationToken);
+
+        // GoTrue returns 200 whether or not the email is registered (never leaks account
+        // existence) — only a genuine transport/config failure should surface here.
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadFromJsonAsync<SupabaseErrorResponse>((System.Text.Json.JsonSerializerOptions?)null, cancellationToken);
+            throw new SupabaseAuthException(error?.ErrorDescription ?? error?.Msg ?? "Could not send the password reset email.");
+        }
+    }
+
+    public async Task ResetPasswordAsync(string recoveryAccessToken, string newPassword, CancellationToken cancellationToken = default)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Put, "user")
+        {
+            Content = JsonContent.Create(new { password = newPassword }),
+        };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", recoveryAccessToken);
+
+        var response = await _httpClient.SendAsync(request, cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadFromJsonAsync<SupabaseErrorResponse>((System.Text.Json.JsonSerializerOptions?)null, cancellationToken);
+            throw new SupabaseAuthException(error?.ErrorDescription ?? error?.Msg ?? "Could not reset the password — the link may have expired.");
+        }
+    }
+
     private static async Task<SupabaseSession> ParseSessionAsync(HttpResponseMessage response, CancellationToken cancellationToken)
     {
         if (!response.IsSuccessStatusCode)

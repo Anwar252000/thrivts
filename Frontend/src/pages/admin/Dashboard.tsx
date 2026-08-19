@@ -2,8 +2,7 @@ import { Link } from 'react-router-dom'
 import { Users, Store, Handshake, ClipboardList, AlertTriangle, Bell, Activity } from 'lucide-react'
 import { Card, Badge, PageTransition, Skeleton } from '@/components/ui'
 import {
-  useGetDashboardStatsQuery, useGetPendingApprovalsQuery, useGetDisputesQuery,
-  useGetCommissionsQuery, useGetAuditLogQuery, useGetRequirementsQuery,
+  useGetDashboardStatsQuery, useGetPendingApprovalsQuery, useGetAuditLogQuery,
 } from '@/features/admin/adminApi'
 import { formatUsd, formatNumber, formatDateTime } from '@/lib/utils'
 import { humanizeStatus } from '@/features/admin/statusTone'
@@ -11,25 +10,17 @@ import { humanizeStatus } from '@/features/admin/statusTone'
 export function AdminDashboard() {
   const { data: stats, isLoading: statsLoading } = useGetDashboardStatsQuery()
   const { data: approvals } = useGetPendingApprovalsQuery()
-  const { data: openDisputes } = useGetDisputesQuery({ status: 'Open' })
-  const { data: readyCommissions } = useGetCommissionsQuery({ status: 'ReadyToRelease' })
-  const { data: liveRequirements } = useGetRequirementsQuery({ status: 'Posted', pageSize: 1 })
   const { data: auditLog } = useGetAuditLogQuery({ take: 15 })
-
-  const pendingBuyers = approvals?.filter((a) => a.role === 'Buyer').length ?? 0
-  const pendingSellers = approvals?.filter((a) => a.role === 'Seller').length ?? 0
-  const pendingAgencies = approvals?.filter((a) => a.role === 'Agency').length ?? 0
-  const pendingCommissionUsd = readyCommissions?.reduce((sum, c) => sum + c.commissionAmountUsd, 0) ?? 0
 
   const pendingActions = [
     approvals && approvals.length > 0
       ? { to: '/admin/approvals', label: `${approvals.length} pending approval${approvals.length === 1 ? '' : 's'}`, tone: 'warning' as const }
       : null,
-    openDisputes && openDisputes.length > 0
-      ? { to: '/admin/disputes', label: `${openDisputes.length} open dispute${openDisputes.length === 1 ? '' : 's'} need resolution`, tone: 'danger' as const }
+    stats && stats.openDisputes > 0
+      ? { to: '/admin/disputes', label: `${stats.openDisputes} open dispute${stats.openDisputes === 1 ? '' : 's'} need resolution`, tone: 'danger' as const }
       : null,
-    readyCommissions && readyCommissions.length > 0
-      ? { to: '/admin/commissions', label: `${readyCommissions.length} commission${readyCommissions.length === 1 ? '' : 's'} ready to release`, tone: 'info' as const }
+    stats && stats.commissionsReadyToRelease > 0
+      ? { to: '/admin/commissions', label: `${stats.commissionsReadyToRelease} commission${stats.commissionsReadyToRelease === 1 ? '' : 's'} ready to release`, tone: 'info' as const }
       : null,
   ].filter((x): x is NonNullable<typeof x> => x !== null)
 
@@ -38,10 +29,10 @@ export function AdminDashboard() {
       <h1 className="mb-6 text-2xl font-semibold">Platform overview</h1>
 
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SummaryCard label="Total buyers" value={stats?.activeBuyers} sub={`${pendingBuyers} pending approval`} icon={Users} loading={statsLoading} />
-        <SummaryCard label="Total sellers" value={stats?.activeSellers} sub={`${pendingSellers} pending approval`} icon={Store} loading={statsLoading} />
-        <SummaryCard label="Active agencies" value={stats?.activeAgencies} sub={`${pendingAgencies} pending`} icon={Handshake} loading={statsLoading} />
-        <SummaryCard label="Live requirements" value={liveRequirements?.totalCount} sub="Posted to sellers" icon={ClipboardList} loading={statsLoading} />
+        <SummaryCard label="Total buyers" value={stats?.totalBuyers} sub={`${stats?.pendingBuyers ?? 0} pending approval`} icon={Users} loading={statsLoading} />
+        <SummaryCard label="Total sellers" value={stats?.totalSellers} sub={`${stats?.pendingSellers ?? 0} pending approval`} icon={Store} loading={statsLoading} />
+        <SummaryCard label="Active agencies" value={stats?.activeAgencies} sub={`${stats?.pendingAgencies ?? 0} pending`} icon={Handshake} loading={statsLoading} />
+        <SummaryCard label="Live requirements" value={stats?.liveRequirements} sub={`${stats?.requirementsAwaitingReview ?? 0} awaiting review`} icon={ClipboardList} loading={statsLoading} />
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
@@ -54,12 +45,16 @@ export function AdminDashboard() {
         </Card>
         <Card className="flex flex-col gap-2">
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[var(--color-sage)]">Pending commissions</p>
-          <p className="text-[2.2rem] font-black leading-none tracking-tight">{formatUsd(pendingCommissionUsd)}</p>
-          <p className="text-sm font-normal text-[var(--color-ink-soft)]">{readyCommissions?.length ?? 0} ready to release</p>
+          <p className="text-[2.2rem] font-black leading-none tracking-tight">
+            {statsLoading ? <Skeleton className="h-9 w-24" /> : formatUsd(stats?.pendingCommissionsUsd ?? 0)}
+          </p>
+          <p className="text-sm font-normal text-[var(--color-ink-soft)]">{stats?.commissionsReadyToRelease ?? 0} ready to release</p>
         </Card>
         <Card className="flex flex-col gap-2">
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[var(--color-sage)]">Open disputes</p>
-          <p className="text-[2.2rem] font-black leading-none tracking-tight">{openDisputes?.length ?? 0}</p>
+          <p className="text-[2.2rem] font-black leading-none tracking-tight">
+            {statsLoading ? <Skeleton className="h-9 w-12" /> : (stats?.openDisputes ?? 0)}
+          </p>
           <p className="text-sm font-normal text-[var(--color-ink-soft)]">Need resolution</p>
         </Card>
       </div>
