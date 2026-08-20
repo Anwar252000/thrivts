@@ -2,13 +2,13 @@ import { useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { Check, X, ShieldOff, ShieldCheck, Trash2 } from 'lucide-react'
+import { Check, X, ShieldOff, ShieldCheck, Trash2, Star } from 'lucide-react'
 import { Modal, ConfirmDialog } from '@/components/admin'
 import { Badge, Button, Input, Spinner } from '@/components/ui'
 import { statusTone } from '@/features/admin/statusTone'
 import { formatDate, formatUsd, formatNumber } from '@/lib/utils'
 import {
-  useGetBuyerByIdQuery, useSetBuyerApprovalMutation, useUpdateBuyerMutation, useDeleteBuyerMutation,
+  useGetBuyerByIdQuery, useSetBuyerApprovalMutation, useUpdateBuyerMutation, useDeleteBuyerMutation, useSetBuyerPremiumMutation,
 } from '@/features/admin/adminApi'
 
 const editSchema = z.object({
@@ -30,6 +30,7 @@ export function BuyerDetailModal({ buyerId, onClose }: BuyerDetailModalProps) {
   const [setApproval] = useSetBuyerApprovalMutation()
   const [updateBuyer, { isLoading: saving }] = useUpdateBuyerMutation()
   const [deleteBuyer] = useDeleteBuyerMutation()
+  const [setPremium] = useSetBuyerPremiumMutation()
   const [rejecting, setRejecting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -119,6 +120,9 @@ export function BuyerDetailModal({ buyerId, onClose }: BuyerDetailModalProps) {
                 <ShieldCheck size={14} /> Unblock
               </Button>
             )}
+            <Button size="sm" variant="outline" onClick={() => setPremium({ buyerId, isPremium: !buyer.isPremium })}>
+              <Star size={14} /> {buyer.isPremium ? 'Remove premium' : 'Mark premium'}
+            </Button>
             <Button size="sm" variant="danger" className="ml-auto" onClick={() => setConfirmDelete(true)}>
               <Trash2 size={14} /> Delete
             </Button>

@@ -93,6 +93,15 @@
   --color-line-soft: rgb(34 40 37 / 0.06);
   --color-line-strong: rgb(34 40 37 / 0.16);
 
+  /* Fixed (never theme-flipped) text for permanently-dark surfaces — the admin sidebar and any
+     bg-[var(--color-sage-darker)] accent card (dashboard's Total Volume / Recent Activity, etc).
+     Those backgrounds stay dark sage in both light and dark mode (matching admin.html, which has
+     no separate dark mode of its own), so their text must NOT use --color-cream/--color-sage-soft:
+     those flip to near-black in dark mode and go invisible against a background that never
+     changes. Defined once here only — never redefined under [data-theme='dark']. */
+  --color-sidebar-text: #fcfbf7;
+  --color-sidebar-text-muted: #aeb8b1;
+
   --radius-xl: 34px;
   --radius-lg: 24px;
   --radius-md: 16px;
@@ -183,6 +192,26 @@
   --shadow-md: 0 20px 44px -26px rgb(0 0 0 / 0.45);
   --shadow-sm: 0 10px 30px -18px rgb(0 0 0 / 0.4);
   --shadow-xs: 0 2px 8px -4px rgb(0 0 0 / 0.35);
+}
+
+/* Thin, on-brand scrollbar for the always-dark admin sidebar — without this it falls back to the
+   browser's default (usually stark white), which reads as broken against the dark sage panel. */
+.sidebar-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 0.18) transparent;
+}
+.sidebar-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+.sidebar-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb {
+  background: rgb(255 255 255 / 0.18);
+  border-radius: 3px;
+}
+.sidebar-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgb(255 255 255 / 0.3);
 }
 
 @layer base {

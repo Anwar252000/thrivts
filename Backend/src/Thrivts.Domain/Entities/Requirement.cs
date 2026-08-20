@@ -107,6 +107,14 @@ public class Requirement : BaseEntity, IAggregateRoot
         AdminNotes = adminNotes;
     }
 
+    /// <summary>Replaces editRequirementTagsAndTier() — controls which sellers see this
+    /// requirement at all (empty/null tags = matched by tier alone).</summary>
+    public void SetMatchingFilters(SellerTier minSellerTier, string[]? restrictedToTags)
+    {
+        MinSellerTier = minSellerTier;
+        RestrictedToTags = restrictedToTags;
+    }
+
     /// <summary>Called after a bid is accepted: fully committed -> ready_to_order, otherwise -> matching.</summary>
     public void AdvanceOnAcceptedQuantity(int remainingAfterAcceptance, DateTimeOffset occurredAt)
     {

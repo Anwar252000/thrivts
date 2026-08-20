@@ -6,6 +6,7 @@ import {
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 import { ThemeToggle } from '@/components/ui'
+import { NotificationBell } from '@/components/admin'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { signOut } from '@/features/auth/authSlice'
 import {
@@ -27,7 +28,11 @@ interface NavGroup {
 }
 
 /** The admin portal chrome — dark sage sidebar with nav groups/counts, sticky blurred header with
- * a Refresh action, matching thrivts/01_deploy_to_netlify/admin.html's .sidebar/.main-head 1:1. */
+ * a Refresh action, matching thrivts/01_deploy_to_netlify/admin.html's .sidebar/.main-head 1:1.
+ * The sidebar is ALWAYS dark sage (light and dark app-theme alike — admin.html has no dark mode
+ * of its own), so its text uses the fixed --color-sidebar-text(-muted) tokens, never
+ * --color-cream/--color-sage-soft — those flip to near-black under [data-theme='dark'] and go
+ * invisible against a background that never changes. See index.css for the token definitions. */
 export function AdminShell() {
   const dispatch = useAppDispatch()
   const navigate = useNavigate()
@@ -90,19 +95,19 @@ export function AdminShell() {
   return (
     <div className="grid min-h-screen grid-cols-[260px_1fr] max-[900px]:grid-cols-[220px_1fr] max-[760px]:grid-cols-1">
       {/* SIDEBAR */}
-      <aside className="sticky top-0 flex h-screen flex-col overflow-hidden bg-[var(--color-sage-darker)] text-[var(--color-cream)] max-[760px]:hidden">
+      <aside className="sticky top-0 flex h-screen flex-col overflow-hidden bg-[var(--color-sage-darker)] text-[var(--color-sidebar-text)] max-[760px]:hidden">
         <div className="border-b border-white/[0.06] px-5 py-5">
           <div className="flex items-start text-[1.4rem] font-black leading-none tracking-[-0.045em] lowercase">
-            thrivt<span className="ml-0.5 mt-[0.18em] text-[0.4em] text-[var(--color-sage-soft)]">✦</span>s
+            thrivt<span className="ml-0.5 mt-[0.18em] text-[0.4em] text-[var(--color-sidebar-text-muted)]">✦</span>s
           </div>
-          <div className="mt-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-sage-soft)]">Admin Panel</div>
+          <div className="mt-2 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-sidebar-text-muted)]">Admin Panel</div>
         </div>
 
-        <nav className="flex-1 overflow-y-auto p-3">
+        <nav className="sidebar-scroll flex-1 overflow-y-auto p-3">
           {groups.map((group, gi) => (
             <div key={gi} className={gi > 0 ? 'mt-2' : undefined}>
               {group.label && (
-                <div className="px-3 pb-2 pt-3 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-sage-soft)]">
+                <div className="px-3 pb-2 pt-3 text-[0.6rem] font-semibold uppercase tracking-[0.3em] text-[var(--color-sidebar-text-muted)]">
                   {group.label}
                 </div>
               )}
@@ -113,8 +118,8 @@ export function AdminShell() {
                   end={item.to === '/admin'}
                   className={({ isActive }) =>
                     cn(
-                      'relative flex w-full items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-[9px] text-[0.84rem] font-medium text-[var(--color-sage-soft)] transition-colors',
-                      isActive ? 'bg-white/10 text-[var(--color-cream)]' : 'hover:bg-white/[0.06] hover:text-[var(--color-cream)]',
+                      'relative flex w-full items-center gap-2.5 rounded-[var(--radius-sm)] px-3 py-[9px] text-[0.84rem] font-medium text-[var(--color-sidebar-text-muted)] transition-colors',
+                      isActive ? 'bg-white/10 text-[var(--color-sidebar-text)]' : 'hover:bg-white/[0.06] hover:text-[var(--color-sidebar-text)]',
                     )
                   }
                 >
@@ -132,7 +137,7 @@ export function AdminShell() {
                       {!!item.count && (
                         <span
                           className={cn(
-                            'ml-auto flex h-[18px] min-w-[18px] shrink-0 items-center justify-center rounded-full px-1.5 text-[0.62rem] font-bold text-[var(--color-cream)]',
+                            'ml-auto flex h-[18px] min-w-[18px] shrink-0 items-center justify-center rounded-full px-1.5 text-[0.62rem] font-bold text-[var(--color-sidebar-text)]',
                             item.countTone === 'danger' && 'bg-[var(--color-danger)]',
                             item.countTone === 'warning' && 'bg-[var(--color-warning)]',
                             !item.countTone && 'bg-[var(--color-accent)]',
@@ -151,18 +156,18 @@ export function AdminShell() {
 
         <div className="border-t border-white/[0.06] p-3">
           <div className="flex items-center gap-2.5 rounded-[var(--radius-md)] bg-white/[0.06] px-2.5 py-2">
-            <div className="flex size-[34px] shrink-0 items-center justify-center rounded-full border border-white/10 bg-[var(--color-sage-dark)] text-[0.78rem] font-bold tracking-wide text-[var(--color-cream)]">
-              {user?.email?.[0]?.toUpperCase() ?? 'A'}
+            <div className="flex size-[34px] shrink-0 items-center justify-center rounded-full border border-white/10 bg-[var(--color-sage-dark)] text-[0.78rem] font-bold tracking-wide text-[var(--color-sidebar-text)]">
+              {(user?.fullName ?? user?.email)?.[0]?.toUpperCase() ?? 'A'}
             </div>
             <div className="min-w-0 flex-1">
-              <div className="truncate text-[0.82rem] font-semibold text-[var(--color-cream)]">Admin</div>
-              <div className="truncate text-[0.7rem] text-[var(--color-sage-soft)]">{user?.email ?? '—'}</div>
+              <div className="truncate text-[0.82rem] font-semibold text-[var(--color-sidebar-text)]">{user?.fullName ?? 'Admin'}</div>
+              <div className="truncate text-[0.7rem] text-[var(--color-sidebar-text-muted)]">{user?.email ?? '—'}</div>
             </div>
             <button
               onClick={handleSignOut}
               title="Sign out"
               aria-label="Sign out"
-              className="flex size-7 shrink-0 items-center justify-center rounded-full text-[var(--color-sage-soft)] transition-colors hover:bg-white/10 hover:text-[var(--color-cream)]"
+              className="flex size-7 shrink-0 items-center justify-center rounded-full text-[var(--color-sidebar-text-muted)] transition-colors hover:bg-white/10 hover:text-[var(--color-sidebar-text)]"
             >
               <LogOut size={14} />
             </button>
@@ -175,7 +180,7 @@ export function AdminShell() {
         <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-[var(--color-cream)]/92 px-5 py-4 backdrop-blur-xl">
           <div className="flex items-center justify-between gap-4">
             <div>
-              <h1 className="text-[1.4rem] font-black uppercase leading-none tracking-[-0.025em]">Admin</h1>
+              <h1 className="text-[1.4rem] font-black uppercase leading-none tracking-[-0.025em]">{user?.fullName ?? 'Admin'}</h1>
               <div className="mt-0.5 text-[0.85rem] font-normal text-[var(--color-ink-soft)]">Thrivts platform control</div>
             </div>
             <div className="flex items-center gap-3">
@@ -192,6 +197,7 @@ export function AdminShell() {
               >
                 <RefreshCw size={14} /> Refresh
               </button>
+              <NotificationBell />
               <ThemeToggle />
             </div>
           </div>

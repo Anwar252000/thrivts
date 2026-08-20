@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -11,12 +11,14 @@ import {
   useGetSellerByIdQuery, useSetSellerApprovalMutation, useSetSellerKycMutation, useUpdateSellerMutation, useDeleteSellerMutation,
 } from '@/features/admin/adminApi'
 import type { SellerTier } from '@/features/admin/adminTypes'
+import { ApproveSellerModal } from './ApproveSellerModal'
 
 const editSchema = z.object({
   tier: z.enum(['Bronze', 'Silver', 'Gold', 'Platinum']),
   phone: z.string().optional(),
   whatsApp: z.string().optional(),
   referenceContact: z.string().optional(),
+  tags: z.string().optional(),
 })
 type EditForm = z.infer<typeof editSchema>
 
@@ -33,17 +35,27 @@ export function SellerDetailModal({ sellerId, onClose }: SellerDetailModalProps)
   const [deleteSeller] = useDeleteSellerMutation()
   const [rejecting, setRejecting] = useState(false)
   const [confirmDelete, setConfirmDelete] = useState(false)
+  const [approving, setApproving] = useState(false)
 
   const { register, handleSubmit, reset, formState: { isDirty } } = useForm<EditForm>({ resolver: zodResolver(editSchema) })
 
   useEffect(() => {
-    if (seller) reset({ tier: seller.tier, phone: seller.phone ?? '', whatsApp: seller.whatsApp ?? '', referenceContact: seller.referenceContact ?? '' })
+    if (seller) {
+      reset({
+        tier: seller.tier,
+        phone: seller.phone ?? '',
+        whatsApp: seller.whatsApp ?? '',
+        referenceContact: seller.referenceContact ?? '',
+        tags: (seller.tags ?? []).join(', '),
+      })
+    }
   }, [seller, reset])
 
   if (!sellerId) return null
 
   const onSave = (values: EditForm) => {
-    updateSeller({ sellerId, tier: values.tier as SellerTier, phone: values.phone, whatsApp: values.whatsApp, referenceContact: values.referenceContact })
+    const tags = values.tags?.split(',').map((t) => t.trim()).filter(Boolean)
+    updateSeller({ sellerId, tier: values.tier as SellerTier, phone: values.phone, whatsApp: values.whatsApp, referenceContact: values.referenceContact, tags })
   }
 
   const handleDelete = async () => {
@@ -53,6 +65,7 @@ export function SellerDetailModal({ sellerId, onClose }: SellerDetailModalProps)
   }
 
   return (
+    <Fragment>
     <Modal open={!!sellerId} onClose={onClose} title={seller?.companyName ?? seller?.publicAlias ?? 'Seller'} subtitle={seller?.email}>
       {isLoading || !seller ? (
         <div className="flex justify-center py-10">
@@ -105,6 +118,9 @@ export function SellerDetailModal({ sellerId, onClose }: SellerDetailModalProps)
               <LabeledInput label="Phone" {...register('phone')} />
               <LabeledInput label="WhatsApp" {...register('whatsApp')} />
               <LabeledInput label="Reference contact" {...register('referenceContact')} />
+              <div className="col-span-2">
+                <LabeledInput label="Tags (comma-separated — controls which requirements this seller sees)" {...register('tags')} />
+              </div>
             </div>
             <Button type="submit" size="sm" className="self-start" disabled={!isDirty || saving}>
               {saving ? 'Saving…' : 'Save changes'}
@@ -114,7 +130,7 @@ export function SellerDetailModal({ sellerId, onClose }: SellerDetailModalProps)
           <div className="flex flex-wrap gap-2 border-t border-[var(--color-line)] pt-5">
             {seller.approvalStatus === 'Pending' && (
               <>
-                <Button size="sm" onClick={() => setApproval({ sellerId, action: 'Approve' })}>
+                <Button size="sm" onClick={() => setApproving(true)}>
                   <Check size={14} /> Approve
                 </Button>
                 <Button size="sm" variant="outline" onClick={() => setRejecting(true)}>
@@ -122,7 +138,11 @@ export function SellerDetailModal({ sellerId, onClose }: SellerDetailModalProps)
                 </Button>
               </>
             )}
-            {!seller.kycVerified && (
+            {seller.kycVerified ? (
+              <Button size="sm" variant="outline" onClick={() => setKyc({ sellerId, verified: false })}>
+                <BadgeCheck size={14} /> Un-verify KYC
+              </Button>
+            ) : (
               <Button size="sm" variant="outline" onClick={() => setKyc({ sellerId, verified: true })}>
                 <BadgeCheck size={14} /> Verify KYC
               </Button>
@@ -164,6 +184,8 @@ export function SellerDetailModal({ sellerId, onClose }: SellerDetailModalProps)
         confirmLabel="Delete"
       />
     </Modal>
+    <ApproveSellerModal sellerId={approving ? sellerId : null} onClose={() => setApproving(false)} />
+    </Fragment>
   )
 }
 

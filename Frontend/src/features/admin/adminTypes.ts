@@ -23,6 +23,7 @@ export type DisputeStatus = 'Open' | 'Investigating' | 'Resolved' | 'Rejected' |
 export type OfferStatus = 'Sent' | 'Viewed' | 'Accepted' | 'Declined' | 'Countered' | 'Expired' | 'Withdrawn'
 export type MessageSenderType = 'Admin' | 'Buyer' | 'Seller' | 'Agency'
 export type NegotiationActor = 'Buyer' | 'Seller' | 'Admin'
+export type NotificationChannel = 'Email' | 'Whatsapp' | 'InApp'
 
 export interface PagedResult<T> {
   items: T[]
@@ -195,6 +196,8 @@ export interface RequirementDetail {
   status: RequirementStatus
   publicDisplay: boolean
   createdAt: string
+  minSellerTier: SellerTier
+  restrictedToTags: string[] | null
 }
 
 export interface AdminBidBoardRow {
@@ -392,6 +395,18 @@ export interface ExchangeRate {
   rateToUsd: number
   effectiveFrom: string
   notes: string | null
+}
+
+export interface NotificationItem {
+  id: string
+  channel: NotificationChannel
+  title: string
+  body: string
+  refType: string | null
+  refId: string | null
+  isRead: boolean
+  readAt: string | null
+  createdAt: string
 }
 
 export interface InfluencerListItem {

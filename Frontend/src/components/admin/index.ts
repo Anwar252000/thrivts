@@ -1,4 +1,5 @@
 export * from './Modal'
+export * from './NotificationBell'
 export * from './Tabs'
 export * from './SearchField'
 export * from './EmptyState'

@@ -1,10 +1,10 @@
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus, Download } from 'lucide-react'
 import { PageTransition, Badge, Button } from '@/components/ui'
 import { DataTable, SearchField, type Column } from '@/components/admin'
 import { useGetAgenciesQuery } from '@/features/admin/adminApi'
 import type { AgencyListItem } from '@/features/admin/adminTypes'
-import { formatUsd } from '@/lib/utils'
+import { formatUsd, exportToCsv } from '@/lib/utils'
 import { AgencyDetailModal } from './AgencyDetailModal'
 import { CreateAgencyModal } from './CreateAgencyModal'
 
@@ -41,8 +41,11 @@ export function AdminAgencies() {
         </Button>
       </div>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <SearchField placeholder="Search agencies…" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <Button size="sm" variant="outline" className="ml-auto" onClick={() => exportToCsv('agencies', rows)}>
+          <Download size={14} /> Export CSV
+        </Button>
       </div>
 
       <DataTable

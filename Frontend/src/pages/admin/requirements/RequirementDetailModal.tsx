@@ -9,9 +9,11 @@ import { statusTone } from '@/features/admin/statusTone'
 import { formatUsd } from '@/lib/utils'
 import {
   useGetRequirementByIdQuery, useUpdateRequirementMutation, useDeleteRequirementMutation,
-  usePostRequirementLiveMutation, useSetRequirementPublicDisplayMutation, useGetBidBoardQuery, useAcceptSellerResponseMutation,
+  usePostRequirementLiveMutation, useSetRequirementPublicDisplayMutation, useSetRequirementFiltersMutation,
+  useGetBidBoardQuery, useAcceptSellerResponseMutation,
 } from '@/features/admin/adminApi'
-import type { AdminBidBoardRow, GradeType } from '@/features/admin/adminTypes'
+import type { AdminBidBoardRow, GradeType, SellerTier } from '@/features/admin/adminTypes'
+import { OffersPanel } from './OffersPanel'
 
 const editSchema = z.object({
   itemName: z.string().min(1, 'Required'),
@@ -23,6 +25,12 @@ const editSchema = z.object({
 })
 type EditFormInput = z.input<typeof editSchema>
 type EditForm = z.infer<typeof editSchema>
+
+const filtersSchema = z.object({
+  minSellerTier: z.enum(['Bronze', 'Silver', 'Gold', 'Platinum']),
+  restrictedToTags: z.string().optional(),
+})
+type FiltersForm = z.infer<typeof filtersSchema>
 
 interface RequirementDetailModalProps {
   requirementId: string | null
@@ -37,10 +45,14 @@ export function RequirementDetailModal({ requirementId, onClose }: RequirementDe
   const [deleteRequirement] = useDeleteRequirementMutation()
   const [postLive] = usePostRequirementLiveMutation()
   const [setPublicDisplay] = useSetRequirementPublicDisplayMutation()
+  const [setFilters, { isLoading: savingFilters }] = useSetRequirementFiltersMutation()
   const [acceptBid] = useAcceptSellerResponseMutation()
   const [confirmDelete, setConfirmDelete] = useState(false)
 
   const { register, handleSubmit, reset, formState: { errors, isDirty } } = useForm<EditFormInput, unknown, EditForm>({ resolver: zodResolver(editSchema) })
+  const {
+    register: registerFilters, handleSubmit: handleSubmitFilters, reset: resetFilters, formState: { isDirty: filtersDirty },
+  } = useForm<FiltersForm>({ resolver: zodResolver(filtersSchema) })
 
   useEffect(() => {
     if (requirement) {
@@ -52,13 +64,22 @@ export function RequirementDetailModal({ requirementId, onClose }: RequirementDe
         buyerTargetPriceUsd: requirement.buyerTargetPriceUsd,
         adminNotes: requirement.adminNotes ?? '',
       })
+      resetFilters({
+        minSellerTier: requirement.minSellerTier,
+        restrictedToTags: (requirement.restrictedToTags ?? []).join(', '),
+      })
     }
-  }, [requirement, reset])
+  }, [requirement, reset, resetFilters])
 
   if (!requirementId) return null
 
   const onSave = (values: EditForm) => {
     updateRequirement({ requirementId, ...values, grade: values.grade as GradeType })
+  }
+
+  const onSaveFilters = (values: FiltersForm) => {
+    const restrictedToTags = values.restrictedToTags?.split(',').map((t) => t.trim()).filter(Boolean)
+    setFilters({ requirementId, minSellerTier: values.minSellerTier as SellerTier, restrictedToTags: restrictedToTags?.length ? restrictedToTags : null })
   }
 
   const handleDelete = async (confirmCascade?: boolean) => {
@@ -127,9 +148,32 @@ export function RequirementDetailModal({ requirementId, onClose }: RequirementDe
             </Button>
           </form>
 
+          <form onSubmit={handleSubmitFilters(onSaveFilters)} className="flex flex-col gap-3 border-t border-[var(--color-line)] pt-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Matching filters (who can see this requirement)</p>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="mb-1 block text-xs font-medium text-[var(--color-ink-soft)]">Minimum seller tier</label>
+                <Select {...registerFilters('minSellerTier')}>
+                  <option value="Bronze">Bronze</option>
+                  <option value="Silver">Silver</option>
+                  <option value="Gold">Gold</option>
+                  <option value="Platinum">Platinum</option>
+                </Select>
+              </div>
+              <Field label="Restricted to tags (comma-separated, blank = tier only)" {...registerFilters('restrictedToTags')} />
+            </div>
+            <Button type="submit" size="sm" className="self-start" disabled={!filtersDirty || savingFilters}>
+              {savingFilters ? 'Saving…' : 'Save matching filters'}
+            </Button>
+          </form>
+
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Bid board</p>
             <DataTable columns={bidColumns} rows={bidBoard ?? []} keyFor={(b) => b.bidId} loading={bidsLoading} emptyTitle="No bids yet" />
+          </div>
+
+          <div className="border-t border-[var(--color-line)] pt-5">
+            <OffersPanel requirementId={requirementId} requirementSellerCost={requirement.buyerTargetPriceUsd} />
           </div>
 
           <div className="flex flex-wrap gap-2 border-t border-[var(--color-line)] pt-5">

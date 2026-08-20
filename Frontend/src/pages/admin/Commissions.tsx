@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { PageTransition, Badge, Card } from '@/components/ui'
+import { Download } from 'lucide-react'
+import { PageTransition, Badge, Button, Card } from '@/components/ui'
 import { DataTable, Tabs, type Column } from '@/components/admin'
 import { useGetCommissionsQuery, useGetFeeRevenueQuery } from '@/features/admin/adminApi'
 import type { CommissionListItem, CommissionStatus } from '@/features/admin/adminTypes'
 import { statusTone } from '@/features/admin/statusTone'
-import { formatDate, formatUsd, formatNumber } from '@/lib/utils'
+import { formatDate, formatUsd, formatNumber, exportToCsv } from '@/lib/utils'
 
 type TabValue = 'all' | 'Pending' | 'ReadyToRelease' | 'Released'
 
@@ -42,7 +43,7 @@ export function AdminCommissions() {
         </div>
       )}
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <Tabs
           value={tab}
           onChange={setTab}
@@ -53,6 +54,9 @@ export function AdminCommissions() {
             { value: 'Released', label: 'Released' },
           ]}
         />
+        <Button size="sm" variant="outline" className="ml-auto" onClick={() => exportToCsv('commissions', commissions ?? [])}>
+          <Download size={14} /> Export CSV
+        </Button>
       </div>
 
       <DataTable columns={columns} rows={commissions ?? []} keyFor={(c) => c.id} loading={isLoading} emptyTitle="No commissions found" />

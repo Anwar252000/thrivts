@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { PageTransition, Badge } from '@/components/ui'
+import { Download } from 'lucide-react'
+import { PageTransition, Badge, Button } from '@/components/ui'
 import { DataTable, SearchField, Pagination, type Column } from '@/components/admin'
 import { useGetSellersQuery } from '@/features/admin/adminApi'
 import type { SellerListItem } from '@/features/admin/adminTypes'
 import { statusTone } from '@/features/admin/statusTone'
-import { formatDate, formatUsd } from '@/lib/utils'
+import { formatDate, formatUsd, exportToCsv } from '@/lib/utils'
 import { SellerDetailModal } from './SellerDetailModal'
 
 export function AdminSellers() {
@@ -38,8 +39,11 @@ export function AdminSellers() {
       <h1 className="mb-1 text-2xl font-semibold">Sellers</h1>
       <p className="mb-6 text-sm text-[var(--color-ink-faint)]">{data?.totalCount ?? 0} registered sellers.</p>
 
-      <div className="mb-4">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <SearchField placeholder="Search sellers…" value={search} onChange={(e) => setSearch(e.target.value)} />
+        <Button size="sm" variant="outline" className="ml-auto" onClick={() => exportToCsv('sellers', rows)}>
+          <Download size={14} /> Export CSV
+        </Button>
       </div>
 
       <DataTable

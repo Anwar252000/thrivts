@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { PageTransition, Badge, Select } from '@/components/ui'
+import { Download } from 'lucide-react'
+import { PageTransition, Badge, Button, Select } from '@/components/ui'
 import { DataTable, SearchField, Pagination, type Column } from '@/components/admin'
 import { useGetRequirementsQuery } from '@/features/admin/adminApi'
 import type { RequirementListItem, RequirementStatus } from '@/features/admin/adminTypes'
 import { statusTone } from '@/features/admin/statusTone'
-import { formatDate } from '@/lib/utils'
+import { formatDate, exportToCsv } from '@/lib/utils'
 import { RequirementDetailModal } from './RequirementDetailModal'
 
 const STATUS_OPTIONS: RequirementStatus[] = [
@@ -46,6 +47,9 @@ export function AdminRequirements() {
             <option key={s} value={s}>{s}</option>
           ))}
         </Select>
+        <Button size="sm" variant="outline" className="ml-auto" onClick={() => exportToCsv('requirements', rows)}>
+          <Download size={14} /> Export CSV
+        </Button>
       </div>
 
       <DataTable

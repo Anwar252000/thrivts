@@ -3,6 +3,7 @@ import { Cursor } from '@/components/marketing/Cursor'
 import { Loader } from '@/components/marketing/Loader'
 import { MarketingNav } from '@/components/marketing/MarketingNav'
 import { Ticker } from '@/components/marketing/Ticker'
+import { BackToTop } from '@/components/marketing/BackToTop'
 import { Hero } from './landing/sections/Hero'
 import { IntroLine } from './landing/sections/IntroLine'
 import { TrustStats } from './landing/sections/TrustStats'
@@ -46,6 +47,7 @@ export function Landing() {
       <AppTeaser />
       <Contact />
       <MarketingFooter />
+      <BackToTop />
     </div>
   )
 }

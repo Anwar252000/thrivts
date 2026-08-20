@@ -63,8 +63,16 @@ public class AdminRequirementsController : AdminControllerBase
         var result = await Mediator.Send(new ToggleRequirementPublicCommand(requirementId, request.Public), cancellationToken);
         return ToNoContentResponse(result);
     }
+
+    [HttpPost("{requirementId:guid}/matching-filters")]
+    public async Task<IActionResult> SetMatchingFilters(Guid requirementId, [FromBody] SetRequirementFiltersRequest request, CancellationToken cancellationToken)
+    {
+        var result = await Mediator.Send(new SetRequirementFiltersCommand(requirementId, request.MinSellerTier, request.RestrictedToTags), cancellationToken);
+        return ToNoContentResponse(result);
+    }
 }
 
 public record UpdateRequirementRequest(
     string ItemName, int QuantityPcs, GradeType Grade, string DestinationCountry, decimal BuyerTargetPriceUsd, string? AdminNotes);
 public record ToggleRequirementPublicRequest(bool Public);
+public record SetRequirementFiltersRequest(SellerTier MinSellerTier, string[]? RestrictedToTags);

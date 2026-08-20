@@ -48,7 +48,15 @@ public class AdminBuyersController : AdminControllerBase
         var result = await Mediator.Send(new DeleteBuyerCommand(buyerId), cancellationToken);
         return ToNoContentResponse(result);
     }
+
+    [HttpPost("{buyerId:guid}/premium")]
+    public async Task<IActionResult> SetPremium(Guid buyerId, [FromBody] SetBuyerPremiumRequest request, CancellationToken cancellationToken)
+    {
+        var result = await Mediator.Send(new SetBuyerPremiumCommand(buyerId, request.IsPremium), cancellationToken);
+        return ToNoContentResponse(result);
+    }
 }
 
 public record SetApprovalStatusRequest(ProfileApprovalAction Action, string? Reason = null);
 public record UpdateBuyerRequest(string CompanyName, string Country, string? City, string? Website, string? Instagram);
+public record SetBuyerPremiumRequest(bool IsPremium);

@@ -5,7 +5,7 @@ import type {
   RequirementListItem, RequirementDetail, AdminBidBoardRow, DealListItem, DealDetail, DealAllocation, CommissionListItem,
   PlatformFeeRevenueMonth, DisputeListItem, MessageThreadListItem, AdminMessage, PendingApproval,
   AuditLogEntry, Category, ShippingRate, ExchangeRate, InfluencerListItem, PartnerApplication,
-  PlatformFeeConfig, OfferListItem, OfferRound, DashboardStats,
+  PlatformFeeConfig, OfferListItem, OfferRound, DashboardStats, NotificationItem,
   ProfileApprovalAction, UserRoleEnum, SellerTier, GradeType, CurrencyType,
   RequirementStatus, DealStatus, CommissionStatus, DisputeStatus, OfferStatus,
 } from './adminTypes'
@@ -25,13 +25,23 @@ export const adminApi = createApi({
   tagTypes: [
     'User', 'Buyer', 'Seller', 'Agency', 'Requirement', 'BidBoard', 'Deal', 'DealAllocation', 'Commission',
     'Dispute', 'MessageThread', 'Message', 'Approval', 'Audit', 'Category', 'ShippingRate',
-    'ExchangeRate', 'Influencer', 'PartnerApplication', 'FeeConfig', 'Offer', 'OfferRound', 'Dashboard',
+    'ExchangeRate', 'Influencer', 'PartnerApplication', 'FeeConfig', 'Offer', 'OfferRound', 'Dashboard', 'Notification',
   ],
   endpoints: (builder) => ({
     // ---- Dashboard ----
     getDashboardStats: builder.query<DashboardStats, void>({
       query: () => '/api/v1/admin/dashboard/stats',
       providesTags: ['Dashboard'],
+    }),
+
+    // ---- Notifications (own bell — any authenticated role, including admin) ----
+    getNotifications: builder.query<NotificationItem[], { unreadOnly?: boolean; take?: number } | void>({
+      query: (args) => ({ url: '/api/v1/notifications', params: { unreadOnly: args?.unreadOnly, take: args?.take ?? 50 } }),
+      providesTags: ['Notification'],
+    }),
+    markNotificationsRead: builder.mutation<void, string[] | undefined>({
+      query: (notificationIds) => ({ url: '/api/v1/notifications/mark-read', method: 'POST', body: { notificationIds: notificationIds ?? null } }),
+      invalidatesTags: ['Notification'],
     }),
 
     // ---- Users (role-agnostic) ----
@@ -88,6 +98,10 @@ export const adminApi = createApi({
       query: ({ buyerId, ...body }) => ({ url: `/api/v1/admin/buyers/${buyerId}`, method: 'PUT', body }),
       invalidatesTags: (_r, _e, { buyerId }) => [{ type: 'Buyer', id: buyerId }, { type: 'Buyer', id: 'LIST' }],
     }),
+    setBuyerPremium: builder.mutation<void, { buyerId: string; isPremium: boolean }>({
+      query: ({ buyerId, isPremium }) => ({ url: `/api/v1/admin/buyers/${buyerId}/premium`, method: 'POST', body: { isPremium } }),
+      invalidatesTags: (_r, _e, { buyerId }) => [{ type: 'Buyer', id: buyerId }, { type: 'Buyer', id: 'LIST' }],
+    }),
     deleteBuyer: builder.mutation<void, string>({
       query: (id) => ({ url: `/api/v1/admin/buyers/${id}`, method: 'DELETE' }),
       invalidatesTags: [{ type: 'Buyer', id: 'LIST' }, 'Dashboard'],
@@ -105,7 +119,7 @@ export const adminApi = createApi({
       query: (id) => `/api/v1/admin/sellers/${id}`,
       providesTags: (_r, _e, id) => [{ type: 'Seller', id }],
     }),
-    setSellerApproval: builder.mutation<void, { sellerId: string; action: ProfileApprovalAction; reason?: string }>({
+    setSellerApproval: builder.mutation<void, { sellerId: string; action: ProfileApprovalAction; reason?: string; tags?: string[] }>({
       query: ({ sellerId, ...body }) => ({ url: `/api/v1/admin/sellers/${sellerId}/approval`, method: 'POST', body }),
       invalidatesTags: (_r, _e, { sellerId }) => [{ type: 'Seller', id: sellerId }, { type: 'Seller', id: 'LIST' }, 'Approval', 'Dashboard'],
     }),
@@ -183,6 +197,10 @@ export const adminApi = createApi({
     }),
     setRequirementPublicDisplay: builder.mutation<void, { requirementId: string; public: boolean }>({
       query: ({ requirementId, public: isPublic }) => ({ url: `/api/v1/admin/requirements/${requirementId}/public-display`, method: 'POST', body: { public: isPublic } }),
+      invalidatesTags: (_r, _e, { requirementId }) => [{ type: 'Requirement', id: requirementId }],
+    }),
+    setRequirementFilters: builder.mutation<void, { requirementId: string; minSellerTier: SellerTier; restrictedToTags?: string[] | null }>({
+      query: ({ requirementId, ...body }) => ({ url: `/api/v1/admin/requirements/${requirementId}/matching-filters`, method: 'POST', body }),
       invalidatesTags: (_r, _e, { requirementId }) => [{ type: 'Requirement', id: requirementId }],
     }),
 
@@ -397,13 +415,14 @@ export const adminApi = createApi({
 
 export const {
   useGetDashboardStatsQuery,
+  useGetNotificationsQuery, useMarkNotificationsReadMutation,
   useGetUsersQuery, useCreateUserMutation, useUpdateUserMutation, useDeleteUserMutation,
   useGetPendingApprovalsQuery,
-  useGetBuyersQuery, useGetBuyerByIdQuery, useSetBuyerApprovalMutation, useUpdateBuyerMutation, useDeleteBuyerMutation,
+  useGetBuyersQuery, useGetBuyerByIdQuery, useSetBuyerApprovalMutation, useUpdateBuyerMutation, useDeleteBuyerMutation, useSetBuyerPremiumMutation,
   useGetSellersQuery, useGetSellerByIdQuery, useSetSellerApprovalMutation, useSetSellerKycMutation, useUpdateSellerMutation, useDeleteSellerMutation,
   useGetAgenciesQuery, useGetAgencyByIdQuery, useCreateAgencyMutation, useUpdateAgencyMutation, useSetAgencyApprovalMutation,
   useGetRequirementsQuery, useGetBidBoardQuery, useGetRequirementByIdQuery, useUpdateRequirementMutation, useDeleteRequirementMutation,
-  usePostRequirementLiveMutation, useSetRequirementPublicDisplayMutation,
+  usePostRequirementLiveMutation, useSetRequirementPublicDisplayMutation, useSetRequirementFiltersMutation,
   useGetDealsQuery, useGetDealByIdQuery, useCreateDealFromMatchMutation, useAdvanceDealStatusMutation,
   useRecordDealPaymentMutation, useSetDealShippingMutation, useSetDealTrackingMutation, useCancelDealMutation,
   useGetDealAllocationsQuery, useAcceptSellerResponseMutation,

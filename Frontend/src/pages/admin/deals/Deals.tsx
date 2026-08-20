@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import { PageTransition, Badge, Select } from '@/components/ui'
+import { Download } from 'lucide-react'
+import { PageTransition, Badge, Button, Select } from '@/components/ui'
 import { DataTable, SearchField, Pagination, type Column } from '@/components/admin'
 import { useGetDealsQuery } from '@/features/admin/adminApi'
 import type { DealListItem, DealStatus } from '@/features/admin/adminTypes'
 import { statusTone } from '@/features/admin/statusTone'
-import { formatDate, formatUsd } from '@/lib/utils'
+import { formatDate, formatUsd, exportToCsv } from '@/lib/utils'
 import { DealDetailModal } from './DealDetailModal'
 
 const STATUS_OPTIONS: DealStatus[] = ['Draft', 'Confirmed', 'AwaitingPayment', 'Paid', 'InFulfillment', 'Dispatched', 'Delivered', 'Settled', 'Cancelled', 'Disputed']
@@ -48,6 +49,9 @@ export function AdminDeals() {
             <option key={s} value={s}>{s}</option>
           ))}
         </Select>
+        <Button size="sm" variant="outline" className="ml-auto" onClick={() => exportToCsv('deals', rows)}>
+          <Download size={14} /> Export CSV
+        </Button>
       </div>
 
       <DataTable columns={columns} rows={rows} keyFor={(d) => d.id} onRowClick={(d) => setSelected(d.id)} loading={isLoading} emptyTitle="No deals found" />

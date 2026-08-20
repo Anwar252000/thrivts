@@ -128,7 +128,7 @@ function applySession(state: AuthState, resolved: ResolvedSession | null) {
 
   const { session, user } = resolved
   persistRefreshToken(session.refreshToken)
-  state.user = { id: user.id, email: user.email, role: user.role }
+  state.user = { id: user.id, email: user.email, fullName: user.fullName, role: user.role }
   state.accessToken = session.accessToken
   state.status = 'authenticated'
 }

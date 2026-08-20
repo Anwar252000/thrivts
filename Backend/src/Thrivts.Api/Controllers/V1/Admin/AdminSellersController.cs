@@ -27,9 +27,9 @@ public class AdminSellersController : AdminControllerBase
     }
 
     [HttpPost("{sellerId:guid}/approval")]
-    public async Task<IActionResult> SetApprovalStatus(Guid sellerId, [FromBody] SetApprovalStatusRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> SetApprovalStatus(Guid sellerId, [FromBody] SetSellerApprovalStatusRequest request, CancellationToken cancellationToken)
     {
-        var result = await Mediator.Send(new SetSellerApprovalStatusCommand(sellerId, request.Action, request.Reason), cancellationToken);
+        var result = await Mediator.Send(new SetSellerApprovalStatusCommand(sellerId, request.Action, request.Reason, request.Tags), cancellationToken);
         return ToNoContentResponse(result);
     }
 
@@ -57,5 +57,6 @@ public class AdminSellersController : AdminControllerBase
     }
 }
 
+public record SetSellerApprovalStatusRequest(ProfileApprovalAction Action, string? Reason = null, string[]? Tags = null);
 public record SetKycVerificationRequest(bool Verified, string? Notes = null);
 public record UpdateSellerRequest(SellerTier? Tier, string[]? Tags, string? Phone, string? WhatsApp, string? ReferenceContact, string? TierNotes);

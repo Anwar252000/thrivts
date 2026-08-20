@@ -36,12 +36,12 @@ export function AdminDashboard() {
       </div>
 
       <div className="mt-4 grid gap-4 sm:grid-cols-3">
-        <Card className="flex flex-col gap-2 bg-[var(--color-sage-darker)] text-[var(--color-cream)]">
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[var(--color-sage-soft)]">Total volume</p>
+        <Card className="flex flex-col gap-2 bg-[var(--color-sage-darker)] text-[var(--color-sidebar-text)]">
+          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[var(--color-sidebar-text-muted)]">Total volume</p>
           <p className="text-[2.2rem] font-black leading-none tracking-tight">
             {statsLoading ? <Skeleton className="h-9 w-32" /> : formatUsd(stats?.totalVolumeUsd ?? 0)}
           </p>
-          <p className="text-sm font-normal text-[var(--color-sage-soft)]">All-time settled deals</p>
+          <p className="text-sm font-normal text-[var(--color-sidebar-text-muted)]">All-time settled deals</p>
         </Card>
         <Card className="flex flex-col gap-2">
           <p className="text-[0.68rem] font-semibold uppercase tracking-[0.2em] text-[var(--color-sage)]">Pending commissions</p>
@@ -86,9 +86,9 @@ export function AdminDashboard() {
           )}
         </Card>
 
-        <Card className="bg-[var(--color-sage-darker)] text-[var(--color-cream)]">
+        <Card className="bg-[var(--color-sage-darker)] text-[var(--color-sidebar-text)]">
           <div className="mb-4 flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-sage-soft)]">Recent activity</p>
+            <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[var(--color-sidebar-text-muted)]">Recent activity</p>
             <span className="relative flex size-2">
               <span className="absolute inline-flex size-full animate-ping rounded-full bg-[var(--color-success)] opacity-75" />
               <span className="relative inline-flex size-2 rounded-full bg-[var(--color-success)]" />
@@ -96,14 +96,14 @@ export function AdminDashboard() {
           </div>
           <div className="flex max-h-[380px] flex-col overflow-y-auto">
             {!auditLog || auditLog.length === 0 ? (
-              <p className="py-3 text-sm text-[var(--color-sage-soft)]">No activity recorded yet.</p>
+              <p className="py-3 text-sm text-[var(--color-sidebar-text-muted)]">No activity recorded yet.</p>
             ) : (
               auditLog.map((entry) => (
                 <div key={entry.id} className="flex items-start gap-3 border-b border-white/10 py-3 text-sm font-normal last:border-b-0">
-                  <Activity size={14} className="mt-0.5 shrink-0 text-[var(--color-sage-soft)]" />
+                  <Activity size={14} className="mt-0.5 shrink-0 text-[var(--color-sidebar-text-muted)]" />
                   <div className="min-w-0">
-                    <p className="text-[var(--color-cream)]">{humanizeStatus(entry.action)}</p>
-                    <p className="mt-0.5 text-xs text-[var(--color-sage-soft)]">
+                    <p className="text-[var(--color-sidebar-text)]">{humanizeStatus(entry.action)}</p>
+                    <p className="mt-0.5 text-xs text-[var(--color-sidebar-text-muted)]">
                       {entry.entityType} · {formatDateTime(entry.createdAt)}
                     </p>
                   </div>

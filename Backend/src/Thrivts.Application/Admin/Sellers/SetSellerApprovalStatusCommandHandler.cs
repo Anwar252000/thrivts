@@ -37,6 +37,11 @@ public sealed class SetSellerApprovalStatusCommandHandler
         {
             case ProfileApprovalAction.Approve:
                 profile.Approve(_currentUser.UserId.Value, _clock.UtcNow);
+                if (command.Tags is not null)
+                {
+                    var seller = await _db.Sellers.FirstOrDefaultAsync(s => s.Id == command.SellerId, cancellationToken);
+                    seller?.SetTags(command.Tags);
+                }
                 break;
             case ProfileApprovalAction.Reject:
                 profile.Reject(command.Reason ?? "No reason given");

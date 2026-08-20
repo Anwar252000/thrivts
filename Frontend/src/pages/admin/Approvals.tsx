@@ -7,6 +7,7 @@ import {
 } from '@/features/admin/adminApi'
 import type { UserRoleEnum } from '@/features/admin/adminTypes'
 import { formatDate } from '@/lib/utils'
+import { ApproveSellerModal } from './sellers/ApproveSellerModal'
 
 type TabValue = 'all' | 'Buyer' | 'Seller' | 'Agency'
 
@@ -14,6 +15,7 @@ export function AdminApprovals() {
   const [tab, setTab] = useState<TabValue>('all')
   const [search, setSearch] = useState('')
   const [rejectTarget, setRejectTarget] = useState<{ id: string; role: UserRoleEnum } | null>(null)
+  const [approveSellerId, setApproveSellerId] = useState<string | null>(null)
 
   const { data: approvals, isLoading } = useGetPendingApprovalsQuery()
   const [approveBuyer] = useSetBuyerApprovalMutation()
@@ -39,7 +41,7 @@ export function AdminApprovals() {
 
   const approve = (id: string, role: UserRoleEnum) => {
     if (role === 'Buyer') approveBuyer({ buyerId: id, action: 'Approve' })
-    else if (role === 'Seller') approveSeller({ sellerId: id, action: 'Approve' })
+    else if (role === 'Seller') setApproveSellerId(id)
     else if (role === 'Agency') approveAgency({ agencyId: id, action: 'Approve' })
   }
 
@@ -110,6 +112,8 @@ export function AdminApprovals() {
         requireReason
         confirmLabel="Reject"
       />
+
+      <ApproveSellerModal sellerId={approveSellerId} onClose={() => setApproveSellerId(null)} />
     </PageTransition>
   )
 }

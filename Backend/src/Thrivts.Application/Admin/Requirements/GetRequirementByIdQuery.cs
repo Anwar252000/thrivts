@@ -15,7 +15,8 @@ public sealed record GetRequirementByIdQuery(Guid RequirementId) : IQuery<ErrorO
 public sealed record RequirementDetailDto(
     Guid Id, string RequirementNumber, Guid BuyerId, string ItemName, int QuantityPcs, GradeType Grade,
     string DestinationCountry, string? DestinationPort, decimal BuyerTargetPriceUsd, string? BuyerNotes,
-    string? AdminNotes, RequirementStatus Status, bool PublicDisplay, DateTimeOffset CreatedAt);
+    string? AdminNotes, RequirementStatus Status, bool PublicDisplay, DateTimeOffset CreatedAt,
+    SellerTier MinSellerTier, string[]? RestrictedToTags);
 
 public sealed class GetRequirementByIdQueryHandler : IQueryHandler<GetRequirementByIdQuery, ErrorOr<RequirementDetailDto>>
 {
@@ -40,6 +41,7 @@ public sealed class GetRequirementByIdQueryHandler : IQueryHandler<GetRequiremen
         return new RequirementDetailDto(
             requirement.Id, requirement.RequirementNumber, requirement.BuyerId, requirement.ItemName, requirement.QuantityPcs, requirement.Grade,
             requirement.DestinationCountry, requirement.DestinationPort, requirement.BuyerTargetPriceUsd, requirement.BuyerNotes,
-            requirement.AdminNotes, requirement.Status, requirement.PublicDisplay, requirement.CreatedAt);
+            requirement.AdminNotes, requirement.Status, requirement.PublicDisplay, requirement.CreatedAt,
+            requirement.MinSellerTier, requirement.RestrictedToTags);
     }
 }
