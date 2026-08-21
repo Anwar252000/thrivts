@@ -8,6 +8,7 @@ using Microsoft.Net.Http.Headers;
 using Thrivts.Api.Extensions;
 using Thrivts.Application.Auth;
 using Thrivts.Application.Common.Interfaces;
+using Thrivts.Domain.Enums;
 
 namespace Thrivts.Api.Controllers.V1;
 
@@ -29,6 +30,20 @@ public class AuthController : ControllerBase
     public AuthController(IMediator mediator)
     {
         _mediator = mediator;
+    }
+
+    [HttpPost("register/buyer")]
+    public async Task<IActionResult> RegisterBuyer([FromBody] RegisterBuyerRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new RegisterBuyerCommand(
+            request.Email, request.Password, request.FullName, request.Phone, request.WhatsApp, request.Language,
+            request.CompanyName, request.Website, request.Country, request.City, request.Instagram,
+            request.EstimatedMonthlyVolumePcs, request.TypicalRequirementType, request.CategoryIds,
+            request.AgencyRef, request.ReferralCode), cancellationToken);
+
+        return result.Match<IActionResult>(
+            session => Ok(AuthResponse.From(session)),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
     }
 
     [HttpPost("login")]
@@ -110,6 +125,11 @@ public class AuthController : ControllerBase
     };
 }
 
+public record RegisterBuyerRequest(
+    string Email, string Password, string FullName, string? Phone, string? WhatsApp, LanguagePref Language,
+    string CompanyName, string? Website, string Country, string? City, string? Instagram,
+    int? EstimatedMonthlyVolumePcs, string? TypicalRequirementType, int[]? CategoryIds,
+    string? AgencyRef, string? ReferralCode);
 public record LoginRequest(string Email, string Password);
 public record RefreshRequest(string RefreshToken);
 public record ForgotPasswordRequest(string Email);

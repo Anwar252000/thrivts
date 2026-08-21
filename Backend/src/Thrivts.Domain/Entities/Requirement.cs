@@ -68,7 +68,10 @@ public class Requirement : BaseEntity, IAggregateRoot
     }
 
     public Requirement(string requirementNumber, Guid buyerId, string itemName, int quantityPcs, GradeType grade,
-        decimal buyerTargetPriceUsd, string destinationCountry, int? categoryId = null)
+        decimal buyerTargetPriceUsd, string destinationCountry, int? categoryId = null,
+        CurrencyType buyerCurrency = CurrencyType.USD, decimal? buyerTargetPriceOriginal = null,
+        decimal? buyerExchangeRate = null, string? shippingMode = null, int? deliveryTimelineDays = null,
+        string? buyerNotes = null)
     {
         if (quantityPcs <= 0)
             throw new DomainException("Requirement quantity must be greater than zero.");
@@ -81,6 +84,12 @@ public class Requirement : BaseEntity, IAggregateRoot
         BuyerTargetPriceUsd = buyerTargetPriceUsd;
         DestinationCountry = destinationCountry;
         CategoryId = categoryId;
+        BuyerCurrency = buyerCurrency;
+        BuyerTargetPriceOriginal = buyerTargetPriceOriginal;
+        BuyerExchangeRate = buyerExchangeRate;
+        ShippingMode = shippingMode;
+        DeliveryTimelineDays = deliveryTimelineDays;
+        BuyerNotes = buyerNotes;
     }
 
     public void Post(DateTimeOffset occurredAt)

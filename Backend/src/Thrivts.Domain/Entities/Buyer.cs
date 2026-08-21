@@ -63,6 +63,19 @@ public class Buyer : BaseEntity, IAggregateRoot
         Instagram = instagram;
     }
 
+    /// <summary>Sets the signup-form fields the constructor doesn't cover — called once, right
+    /// after construction, by RegisterBuyerCommand.</summary>
+    public void CompleteSignupProfile(string? city, string? website, string? instagram,
+        int? estimatedMonthlyVolumePcs, string? typicalRequirementType, string[]? categoriesOfInterest)
+    {
+        City = city;
+        Website = website;
+        Instagram = instagram;
+        EstimatedMonthlyVolumePcs = estimatedMonthlyVolumePcs;
+        TypicalRequirementType = typicalRequirementType;
+        CategoriesOfInterest = categoriesOfInterest;
+    }
+
     public void AttributeToAgency(Guid agencyProfileId, string? agencyRef, DateTimeOffset occurredAt)
     {
         AttributedToAgency = agencyProfileId;
