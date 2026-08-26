@@ -123,6 +123,10 @@ export function Login() {
               {submitting ? 'Signing in…' : 'Sign in'}
             </Button>
           </form>
+
+          <p className="mt-6 text-center text-sm text-[var(--color-ink-soft)]">
+            Don't have an account? <Link to="/apply" className="font-medium text-[var(--color-accent)] underline">Apply as a buyer</Link>
+          </p>
         </Card>
       </motion.div>
     </div>

@@ -11,6 +11,9 @@ namespace Thrivts.Domain.Entities;
 /// </summary>
 public class Requirement : BaseEntity, IAggregateRoot
 {
+    /// <summary>Mirrors the live requirements_quantity_pcs_check constraint.</summary>
+    public const int MinQuantityPcs = 30;
+
     public string RequirementNumber { get; private set; } = default!;
     public Guid BuyerId { get; private set; }
     public int? CategoryId { get; private set; }
@@ -73,8 +76,9 @@ public class Requirement : BaseEntity, IAggregateRoot
         decimal? buyerExchangeRate = null, string? shippingMode = null, int? deliveryTimelineDays = null,
         string? buyerNotes = null)
     {
-        if (quantityPcs <= 0)
-            throw new DomainException("Requirement quantity must be greater than zero.");
+        // Live schema's requirements_quantity_pcs_check enforces the same floor at the DB level.
+        if (quantityPcs < MinQuantityPcs)
+            throw new DomainException($"Requirement quantity must be at least {MinQuantityPcs} pieces.");
 
         RequirementNumber = requirementNumber;
         BuyerId = buyerId;
@@ -105,8 +109,9 @@ public class Requirement : BaseEntity, IAggregateRoot
     public void UpdateDetails(string itemName, int quantityPcs, GradeType grade, string destinationCountry,
         decimal buyerTargetPriceUsd, string? adminNotes)
     {
-        if (quantityPcs <= 0)
-            throw new DomainException("Requirement quantity must be greater than zero.");
+        // Live schema's requirements_quantity_pcs_check enforces the same floor at the DB level.
+        if (quantityPcs < MinQuantityPcs)
+            throw new DomainException($"Requirement quantity must be at least {MinQuantityPcs} pieces.");
 
         ItemName = itemName;
         QuantityPcs = quantityPcs;

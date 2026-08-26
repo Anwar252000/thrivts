@@ -19,5 +19,9 @@ public class DealConfiguration : IEntityTypeConfiguration<Deal>
         // see NpgsqlEnumMapping.Configure.
 
         builder.Property(d => d.ExchangeRateSnapshotJson).HasColumnName("exchange_rate_snapshot").HasColumnType("jsonb");
+
+        // The live "deals" table has cancelled_at but no cancellation_reason column — Cancel()
+        // still sets the in-memory property (harmless), it just doesn't persist.
+        builder.Ignore(d => d.CancellationReason);
     }
 }

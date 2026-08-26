@@ -28,16 +28,19 @@ namespace Thrivts.Infrastructure.Persistence;
 /// NpgsqlDataSource itself must be built once and registered as a singleton (see
 /// DependencyInjection.AddInfrastructure), never rebuilt from the connection string per request.
 ///
-/// GradeType is deliberately NOT mapped here — the live grade_type Postgres type carries two
-/// legacy-casing duplicate labels (A_B, MIXED) that GradeTypeConverter's read path collapses onto
-/// AB/Mixed, but MapEnum's translator is a strict one-to-one mapping and cannot express "two
-/// labels, one CLR value". Grade is never filtered by WHERE anywhere in this codebase, so the
-/// original converter (safe on read, simply unusable in a predicate) is left in place.
+/// GradeType uses its own hand-written translator (GradeTranslator below), not SnakeCase — the
+/// live grade_type Postgres type's canonical label for AB is "A/B" (a slash, not expressible by
+/// automatic casing) and it also carries two legacy-casing duplicate labels (A_B, MIXED) that this
+/// enum deliberately does not model. A live check (2026) confirmed zero existing rows use the
+/// legacy labels — only "A" and "A/B" are in use — so native mapping is safe; MapEnum would throw
+/// on deserializing a row it can't recognize, but nothing in this codebase ever writes the legacy
+/// spellings, and .NET is the only writer of this table going forward.
 /// </summary>
 public static class NpgsqlEnumMapping
 {
     private static readonly NpgsqlSnakeCaseNameTranslator SnakeCase = new();
     private static readonly NpgsqlNullNameTranslator Identity = new(); // CurrencyType members (USD/GBP/EUR/PKR) already match the DB labels verbatim.
+    private static readonly GradeTypeNameTranslator GradeTranslator = new();
 
     public static void ConfigureDataSource(NpgsqlDataSourceBuilder builder)
     {
@@ -53,6 +56,7 @@ public static class NpgsqlEnumMapping
         builder.MapEnum<LanguagePref>("language_pref", nameTranslator: SnakeCase);
         builder.MapEnum<RequirementType>("requirement_type", nameTranslator: SnakeCase);
         builder.MapEnum<CurrencyType>("currency_type", nameTranslator: Identity);
+        builder.MapEnum<GradeType>("grade_type", nameTranslator: GradeTranslator);
     }
 
     public static void ConfigureContextOptions(NpgsqlDbContextOptionsBuilder npgsqlOptions)
@@ -69,5 +73,19 @@ public static class NpgsqlEnumMapping
         npgsqlOptions.MapEnum<LanguagePref>("language_pref", nameTranslator: SnakeCase);
         npgsqlOptions.MapEnum<RequirementType>("requirement_type", nameTranslator: SnakeCase);
         npgsqlOptions.MapEnum<CurrencyType>("currency_type", nameTranslator: Identity);
+        npgsqlOptions.MapEnum<GradeType>("grade_type", nameTranslator: GradeTranslator);
+    }
+
+    /// <summary>Explicit member->label map (not a casing rule) — GradeType.AB is the only member
+    /// whose canonical DB label ("A/B") can't be derived by any automatic name translator.</summary>
+    private sealed class GradeTypeNameTranslator : Npgsql.INpgsqlNameTranslator
+    {
+        public string TranslateMemberName(string clrName) => clrName switch
+        {
+            nameof(GradeType.AB) => "A/B",
+            var name => name,
+        };
+
+        public string TranslateTypeName(string clrName) => clrName;
     }
 }

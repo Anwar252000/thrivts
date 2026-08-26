@@ -54,7 +54,28 @@ public class SupabaseAdminClient : ISupabaseAdminClient
         }
     }
 
+    public async Task<SupabaseAdminUser> GetUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        var response = await _httpClient.GetAsync($"admin/users/{userId}", cancellationToken);
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadFromJsonAsync<SupabaseErrorResponse>((System.Text.Json.JsonSerializerOptions?)null, cancellationToken);
+            throw new SupabaseAuthException(error?.Msg ?? error?.ErrorDescription ?? "Could not read the user.");
+        }
+
+        var payload = await response.Content.ReadFromJsonAsync<SupabaseAdminUserDetailResponse>((System.Text.Json.JsonSerializerOptions?)null, cancellationToken)
+            ?? throw new SupabaseAuthException("Supabase returned an empty response.");
+
+        return new SupabaseAdminUser(payload.Id, payload.Email, payload.UserMetadata, payload.EmailConfirmedAt is not null);
+    }
+
     private sealed record SupabaseAdminUserResponse([property: JsonPropertyName("id")] Guid Id);
+
+    private sealed record SupabaseAdminUserDetailResponse(
+        [property: JsonPropertyName("id")] Guid Id,
+        [property: JsonPropertyName("email")] string Email,
+        [property: JsonPropertyName("user_metadata")] System.Text.Json.JsonElement UserMetadata,
+        [property: JsonPropertyName("email_confirmed_at")] DateTimeOffset? EmailConfirmedAt);
 
     private sealed record SupabaseErrorResponse(
         [property: JsonPropertyName("msg")] string? Msg,

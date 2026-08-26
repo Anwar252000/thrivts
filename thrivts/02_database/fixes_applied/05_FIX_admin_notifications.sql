@@ -27,6 +27,11 @@ $$;
 -- ----------------------------------------------------------------------------
 -- 1) New buyer / seller signup  (fires on the profiles row created at signup)
 -- ----------------------------------------------------------------------------
+-- 2026-08-22 fix: NEW.role/NEW.approval_status are the native user_role/approval_status Postgres
+-- enums (not text) since the .NET migration's NpgsqlEnumMapping work — Postgres has no implicit
+-- enum->text cast for function-argument resolution, so notify_admins(text,...) failed to resolve
+-- with "function ... does not exist" the first time a .NET-driven INSERT (buyer self-registration)
+-- fired this trigger. Explicit ::text casts fix it without changing notify_admins' own signature.
 create or replace function public.trg_notify_admin_new_signup()
 returns trigger
 language plpgsql
@@ -37,11 +42,11 @@ begin
   if NEW.role in ('buyer','seller') then
     perform public.notify_admins(
       'signup',
-      'New ' || NEW.role || ' registered',
-      'A new ' || NEW.role || ' account was created'
-        || case when NEW.approval_status = 'pending'
+      'New ' || NEW.role::text || ' registered',
+      'A new ' || NEW.role::text || ' account was created'
+        || case when NEW.approval_status::text = 'pending'
                 then ' and is awaiting approval.' else '.' end,
-      NEW.role, NEW.id);
+      NEW.role::text, NEW.id);
   end if;
   return NEW;
 end;

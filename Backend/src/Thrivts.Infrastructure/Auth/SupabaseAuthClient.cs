@@ -73,6 +73,20 @@ public class SupabaseAuthClient : ISupabaseAuthClient
         }
     }
 
+    public async Task SignUpAsync(string email, string password, IDictionary<string, object?> metadata, string redirectTo, CancellationToken cancellationToken = default)
+    {
+        var response = await _httpClient.PostAsJsonAsync(
+            $"signup?redirect_to={Uri.EscapeDataString(redirectTo)}",
+            new { email, password, data = metadata },
+            cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            var error = await response.Content.ReadFromJsonAsync<SupabaseErrorResponse>((System.Text.Json.JsonSerializerOptions?)null, cancellationToken);
+            throw new SupabaseAuthException(error?.ErrorDescription ?? error?.Msg ?? "Could not submit the application.");
+        }
+    }
+
     public async Task ResetPasswordAsync(string recoveryAccessToken, string newPassword, CancellationToken cancellationToken = default)
     {
         using var request = new HttpRequestMessage(HttpMethod.Put, "user")

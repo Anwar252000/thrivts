@@ -26,5 +26,9 @@ public class SellerConfiguration : IEntityTypeConfiguration<Seller>
 
         builder.HasIndex(s => s.PublicAlias)
             .IsUnique(); // the buyer-facing pseudonym must never collide — see README_HANDOVER.md's "moat".
+
+        // Seller.Id is also a foreign key to profiles.id (sellers_id_fkey, live schema) — see
+        // BuyerConfiguration's identical fix for why this must be declared even with no navigation.
+        builder.HasOne<Profile>().WithOne().HasForeignKey<Seller>(s => s.Id);
     }
 }

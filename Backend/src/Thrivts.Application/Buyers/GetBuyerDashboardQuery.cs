@@ -57,7 +57,8 @@ public sealed class GetBuyerDashboardQueryHandler : IQueryHandler<GetBuyerDashbo
         var requirementIds = recentRequirements.Select(r => r.Id).ToArray();
         var dealStatusByRequirementId = await _db.Deals.AsNoTracking()
             .Where(d => requirementIds.Contains(d.RequirementId))
-            .ToDictionaryAsync(d => d.RequirementId, d => d.Status, cancellationToken);
+            .Select(d => new { d.RequirementId, d.Status })
+            .ToDictionaryAsync(x => x.RequirementId, x => x.Status, cancellationToken);
 
         var recentDtos = recentRequirements.Select(r =>
         {

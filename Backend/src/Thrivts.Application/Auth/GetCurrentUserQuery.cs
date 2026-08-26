@@ -14,7 +14,7 @@ namespace Thrivts.Application.Auth;
 /// </summary>
 public sealed record GetCurrentUserQuery : IQuery<ErrorOr<CurrentUserDto>>;
 
-public sealed record CurrentUserDto(Guid Id, string Email, string FullName, UserRole Role, ApprovalStatus ApprovalStatus, bool IsActive);
+public sealed record CurrentUserDto(Guid Id, string Email, string FullName, UserRole Role, ApprovalStatus ApprovalStatus, bool IsActive, string? RejectionReason);
 
 public sealed class GetCurrentUserQueryHandler : IQueryHandler<GetCurrentUserQuery, ErrorOr<CurrentUserDto>>
 {
@@ -38,6 +38,6 @@ public sealed class GetCurrentUserQueryHandler : IQueryHandler<GetCurrentUserQue
         if (profile is null)
             return Error.NotFound(description: "Profile not found.");
 
-        return new CurrentUserDto(profile.Id, profile.Email, profile.FullName, profile.Role, profile.ApprovalStatus, profile.IsActive);
+        return new CurrentUserDto(profile.Id, profile.Email, profile.FullName, profile.Role, profile.ApprovalStatus, profile.IsActive, profile.RejectionReason);
     }
 }

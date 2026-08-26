@@ -4,7 +4,7 @@ import type { AuthStatus, AuthUser } from './authTypes'
 
 const STORAGE_KEY_REFRESH_TOKEN = 'thrivts:refresh-token'
 
-interface AuthSession {
+export interface AuthSession {
   accessToken: string
   refreshToken: string
   expiresIn: number
@@ -19,6 +19,7 @@ interface CurrentUserResponse {
   role: AuthUser['role']
   approvalStatus: string
   isActive: boolean
+  rejectionReason: string | null
 }
 
 interface ResolvedSession {
@@ -71,6 +72,18 @@ export const signIn = createAsyncThunk(
   },
 )
 
+/** Establishes the session once the applicant has clicked the confirmation-email link — the
+ * frontend parses access_token/refresh_token/expires_in out of that redirect's URL fragment (see
+ * VerifyEmail.tsx) and hands them here. Distinct from signIn: this also calls
+ * complete-buyer-registration first, since no Profile/Buyer row exists until that runs. */
+export const completeBuyerRegistration = createAsyncThunk(
+  'auth/completeBuyerRegistration',
+  async (session: AuthSession) => {
+    await apiClient.post('/api/v1/auth/complete-buyer-registration', undefined, { accessToken: session.accessToken })
+    return resolveSession(session)
+  },
+)
+
 export const signOut = createAsyncThunk('auth/signOut', async (_: void, { getState }) => {
   const { auth } = getState() as { auth: AuthState }
   if (auth.accessToken) {
@@ -111,6 +124,17 @@ const authSlice = createSlice({
         state.status = 'unauthenticated'
         state.error = action.error.message ?? 'Sign in failed'
       })
+      .addCase(completeBuyerRegistration.pending, (state) => {
+        state.status = 'loading'
+        state.error = null
+      })
+      .addCase(completeBuyerRegistration.fulfilled, (state, action) => {
+        applySession(state, action.payload)
+      })
+      .addCase(completeBuyerRegistration.rejected, (state, action) => {
+        state.status = 'unauthenticated'
+        state.error = action.error.message ?? 'Could not complete your registration'
+      })
       .addCase(signOut.fulfilled, (state) => {
         persistRefreshToken(null)
         state.user = null
@@ -128,7 +152,14 @@ function applySession(state: AuthState, resolved: ResolvedSession | null) {
 
   const { session, user } = resolved
   persistRefreshToken(session.refreshToken)
-  state.user = { id: user.id, email: user.email, fullName: user.fullName, role: user.role }
+  state.user = {
+    id: user.id,
+    email: user.email,
+    fullName: user.fullName,
+    role: user.role,
+    approvalStatus: user.approvalStatus as AuthUser['approvalStatus'],
+    rejectionReason: user.rejectionReason,
+  }
   state.accessToken = session.accessToken
   state.status = 'authenticated'
 }

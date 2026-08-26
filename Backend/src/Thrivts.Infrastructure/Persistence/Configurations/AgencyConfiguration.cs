@@ -17,5 +17,9 @@ public class AgencyConfiguration : IEntityTypeConfiguration<Agency>
 
         builder.HasIndex(a => a.AgencyCode)
             .IsUnique();
+
+        // Agency.Id is also a foreign key to profiles.id (agencies_id_fkey, live schema) — see
+        // BuyerConfiguration's identical fix for why this must be declared even with no navigation.
+        builder.HasOne<Profile>().WithOne().HasForeignKey<Agency>(a => a.Id);
     }
 }

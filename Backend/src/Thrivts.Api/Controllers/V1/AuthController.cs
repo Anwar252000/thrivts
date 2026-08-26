@@ -32,6 +32,7 @@ public class AuthController : ControllerBase
         _mediator = mediator;
     }
 
+    /// <summary>Sends a confirmation email; no account exists yet — see RegisterBuyerCommand.</summary>
     [HttpPost("register/buyer")]
     public async Task<IActionResult> RegisterBuyer([FromBody] RegisterBuyerRequest request, CancellationToken cancellationToken)
     {
@@ -42,7 +43,21 @@ public class AuthController : ControllerBase
             request.AgencyRef, request.ReferralCode), cancellationToken);
 
         return result.Match<IActionResult>(
-            session => Ok(AuthResponse.From(session)),
+            _ => NoContent(),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
+    /// <summary>Called by the frontend right after the confirmation-email redirect, bearing the
+    /// access_token GoTrue put in that link — creates the Profile+Buyer this account never had.
+    /// Deliberately just [Authorize], not a role policy: there is no Profile/role claim yet.</summary>
+    [HttpPost("complete-buyer-registration")]
+    [Authorize]
+    public async Task<IActionResult> CompleteBuyerRegistration(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new CompleteBuyerRegistrationCommand(), cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => NoContent(),
             errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
     }
 
@@ -141,9 +156,9 @@ public record AuthResponse(string AccessToken, string RefreshToken, int ExpiresI
         new(session.AccessToken, session.RefreshToken, session.ExpiresIn, session.UserId, session.Email);
 }
 
-public record CurrentUserResponse(Guid Id, string Email, string FullName, string Role, string ApprovalStatus, bool IsActive)
+public record CurrentUserResponse(Guid Id, string Email, string FullName, string Role, string ApprovalStatus, bool IsActive, string? RejectionReason)
 {
     public static CurrentUserResponse From(CurrentUserDto user) =>
         new(user.Id, user.Email, user.FullName, user.Role.ToString().ToLowerInvariant(),
-            user.ApprovalStatus.ToString().ToLowerInvariant(), user.IsActive);
+            user.ApprovalStatus.ToString().ToLowerInvariant(), user.IsActive, user.RejectionReason);
 }

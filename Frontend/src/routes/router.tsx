@@ -6,7 +6,15 @@ import { Landing } from '@/pages/Landing'
 import { Login } from '@/pages/auth/Login'
 import { ForgotPassword } from '@/pages/auth/ForgotPassword'
 import { ResetPassword } from '@/pages/auth/ResetPassword'
+import { BuyerSignup } from '@/pages/auth/BuyerSignup'
+import { VerifyEmail } from '@/pages/auth/VerifyEmail'
 import { BuyerDashboard } from '@/pages/buyer/Dashboard'
+import { PostRequirement } from '@/pages/buyer/PostRequirement'
+import { BuyerRequirements } from '@/pages/buyer/requirements/Requirements'
+import { BuyerDeals } from '@/pages/buyer/deals/Deals'
+import { BuyerMessages } from '@/pages/buyer/Messages'
+import { BuyerHistory } from '@/pages/buyer/History'
+import { BuyerProfile } from '@/pages/buyer/Profile'
 import { SellerDashboard } from '@/pages/seller/Dashboard'
 import { AdminDashboard } from '@/pages/admin/Dashboard'
 import { AdminApprovals } from '@/pages/admin/Approvals'
@@ -30,6 +38,8 @@ export const router = createBrowserRouter([
   // neither is nested in PublicLayout, which would render a second, conflicting header.
   { path: '/', element: <Landing /> },
   { path: '/login', element: <Login /> },
+  { path: '/apply', element: <BuyerSignup /> },
+  { path: '/verify-email', element: <VerifyEmail /> },
   { path: '/forgot-password', element: <ForgotPassword /> },
   { path: '/reset-password', element: <ResetPassword /> },
   {
@@ -41,8 +51,12 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <BuyerDashboard /> },
-      { path: 'requirements', element: <Placeholder title="My Requirements" /> },
-      { path: 'deals', element: <Placeholder title="My Deals" /> },
+      { path: 'post-requirement', element: <PostRequirement /> },
+      { path: 'requirements', element: <BuyerRequirements /> },
+      { path: 'deals', element: <BuyerDeals /> },
+      { path: 'messages', element: <BuyerMessages /> },
+      { path: 'history', element: <BuyerHistory /> },
+      { path: 'profile', element: <BuyerProfile /> },
     ],
   },
   {

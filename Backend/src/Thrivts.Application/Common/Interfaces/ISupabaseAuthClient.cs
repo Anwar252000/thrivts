@@ -19,6 +19,13 @@ public interface ISupabaseAuthClient
     /// <summary>Sets a new password for the user identified by a recovery access token — the token
     /// from the link GoTrue emailed, not a normal login session.</summary>
     Task ResetPasswordAsync(string recoveryAccessToken, string newPassword, CancellationToken cancellationToken = default);
+
+    /// <summary>Self-service signup via the anon key (not the admin API) — GoTrue creates an
+    /// unconfirmed auth identity, stashes <paramref name="metadata"/> as raw_user_meta_data, and
+    /// emails a confirmation link to redirectTo. No Profile/role row is created yet — that only
+    /// happens once the link is clicked, via CompleteBuyerRegistrationCommand reading this
+    /// metadata back through ISupabaseAdminClient.GetUserAsync.</summary>
+    Task SignUpAsync(string email, string password, IDictionary<string, object?> metadata, string redirectTo, CancellationToken cancellationToken = default);
 }
 
 public record SupabaseSession(string AccessToken, string RefreshToken, int ExpiresIn, Guid UserId, string Email);
