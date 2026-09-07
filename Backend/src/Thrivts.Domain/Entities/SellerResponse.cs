@@ -76,7 +76,9 @@ public class SellerResponse : BaseEntity, IAggregateRoot
     /// <summary>Buyer-facing all-in price/pc — the ONLY number a buyer-side DTO may carry.</summary>
     public decimal? BuyerPricePerPcUsd => CurrentPriceUsd + FeePerPcAppliedUsd;
 
-    /// <summary>Seller re-quotes before any negotiation started (replaces the old duplicate-key-erroring re-submit).</summary>
+    /// <summary>Seller re-quotes on a bid they already own (replaces seller_revise_bid — the old
+    /// duplicate-key-erroring re-submit). Resets to a fresh seller offer and clears any stale buyer
+    /// counter, exactly as that RPC's own comment describes.</summary>
     public void Revise(decimal newPriceUsd, int availableQuantityPcs, string? sellerNotes)
     {
         EnsureNotAccepted();
@@ -85,6 +87,11 @@ public class SellerResponse : BaseEntity, IAggregateRoot
         CurrentPriceUsd = newPriceUsd;
         AvailableQuantityPcs = availableQuantityPcs;
         SellerNotes = sellerNotes;
+        Status = BidStatus.Pending;
+        NegotiationState = NegotiationState.CounteredBySeller;
+        BuyerCounterPriceUsd = null;
+        BuyerCounterAt = null;
+        BuyerCounterNote = null;
         Touch(NegotiationActor.Seller);
     }
 
@@ -142,6 +149,13 @@ public class SellerResponse : BaseEntity, IAggregateRoot
 
         CurrentPriceUsd = BuyerCounterPriceUsd.Value;
         ProposedPriceUsd = BuyerCounterPriceUsd.Value;
+        // Mirrors seller_respond_to_counter's accept branch: back to 'open' at the now-agreed
+        // price (the ball moves to the buyer to confirm), and the stale counter is cleared so the
+        // seller's own board stops showing "Buyer countered — your move" forever.
+        NegotiationState = NegotiationState.Open;
+        BuyerCounterPriceUsd = null;
+        BuyerCounterAt = null;
+        BuyerCounterNote = null;
         Touch(NegotiationActor.Seller);
     }
 

@@ -80,14 +80,14 @@ export function Hero() {
             className="flex gap-3"
           >
             <Link
-              to="/login"
+              to="/sourcing"
               data-cursor-hover
               className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-full bg-[var(--color-cream)] px-8 py-4 text-xs font-bold uppercase tracking-widest text-[var(--color-ink)] transition-all hover:-translate-y-1 hover:shadow-[0_20px_40px_-16px_rgba(0,0,0,.4)]"
             >
               Start Sourcing <span className="transition-transform group-hover:translate-x-1">↗</span>
             </Link>
             <Link
-              to="/login"
+              to="/selling"
               data-cursor-hover
               className="inline-flex items-center gap-2.5 whitespace-nowrap rounded-full border border-white px-8 py-4 text-xs font-bold uppercase tracking-widest text-white transition-all hover:-translate-y-1 hover:border-[var(--color-cream)] hover:bg-[var(--color-cream)] hover:text-[var(--color-ink)]"
             >

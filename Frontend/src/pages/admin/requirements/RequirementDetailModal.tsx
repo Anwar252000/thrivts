@@ -10,7 +10,7 @@ import { formatUsd } from '@/lib/utils'
 import {
   useGetRequirementByIdQuery, useUpdateRequirementMutation, useDeleteRequirementMutation,
   usePostRequirementLiveMutation, useSetRequirementPublicDisplayMutation, useSetRequirementFiltersMutation,
-  useGetBidBoardQuery, useAcceptSellerResponseMutation,
+  useSetSellerTargetPriceMutation, useGetBidBoardQuery, useAcceptSellerResponseMutation,
 } from '@/features/admin/adminApi'
 import type { AdminBidBoardRow, GradeType, SellerTier } from '@/features/admin/adminTypes'
 import { OffersPanel } from './OffersPanel'
@@ -32,6 +32,12 @@ const filtersSchema = z.object({
 })
 type FiltersForm = z.infer<typeof filtersSchema>
 
+const sellerTargetSchema = z.object({
+  sellerTargetPriceUsd: z.coerce.number().min(0.01, 'Must be greater than 0'),
+})
+type SellerTargetFormInput = z.input<typeof sellerTargetSchema>
+type SellerTargetForm = z.infer<typeof sellerTargetSchema>
+
 interface RequirementDetailModalProps {
   requirementId: string | null
   onClose: () => void
@@ -46,6 +52,7 @@ export function RequirementDetailModal({ requirementId, onClose }: RequirementDe
   const [postLive] = usePostRequirementLiveMutation()
   const [setPublicDisplay] = useSetRequirementPublicDisplayMutation()
   const [setFilters, { isLoading: savingFilters }] = useSetRequirementFiltersMutation()
+  const [setSellerTargetPrice, { isLoading: savingSellerTarget }] = useSetSellerTargetPriceMutation()
   const [acceptBid] = useAcceptSellerResponseMutation()
   const [confirmDelete, setConfirmDelete] = useState(false)
 
@@ -53,6 +60,10 @@ export function RequirementDetailModal({ requirementId, onClose }: RequirementDe
   const {
     register: registerFilters, handleSubmit: handleSubmitFilters, reset: resetFilters, formState: { isDirty: filtersDirty },
   } = useForm<FiltersForm>({ resolver: zodResolver(filtersSchema) })
+  const {
+    register: registerSellerTarget, handleSubmit: handleSubmitSellerTarget, reset: resetSellerTarget,
+    formState: { errors: sellerTargetErrors, isDirty: sellerTargetDirty },
+  } = useForm<SellerTargetFormInput, unknown, SellerTargetForm>({ resolver: zodResolver(sellerTargetSchema) })
 
   useEffect(() => {
     if (requirement) {
@@ -68,8 +79,9 @@ export function RequirementDetailModal({ requirementId, onClose }: RequirementDe
         minSellerTier: requirement.minSellerTier,
         restrictedToTags: (requirement.restrictedToTags ?? []).join(', '),
       })
+      resetSellerTarget({ sellerTargetPriceUsd: requirement.sellerTargetPriceUsd ?? 0 })
     }
-  }, [requirement, reset, resetFilters])
+  }, [requirement, reset, resetFilters, resetSellerTarget])
 
   if (!requirementId) return null
 
@@ -80,6 +92,10 @@ export function RequirementDetailModal({ requirementId, onClose }: RequirementDe
   const onSaveFilters = (values: FiltersForm) => {
     const restrictedToTags = values.restrictedToTags?.split(',').map((t) => t.trim()).filter(Boolean)
     setFilters({ requirementId, minSellerTier: values.minSellerTier as SellerTier, restrictedToTags: restrictedToTags?.length ? restrictedToTags : null })
+  }
+
+  const onSaveSellerTarget = (values: SellerTargetForm) => {
+    setSellerTargetPrice({ requirementId, sellerTargetPriceUsd: values.sellerTargetPriceUsd })
   }
 
   const handleDelete = async (confirmCascade?: boolean) => {
@@ -167,13 +183,27 @@ export function RequirementDetailModal({ requirementId, onClose }: RequirementDe
             </Button>
           </form>
 
+          <form onSubmit={handleSubmitSellerTarget(onSaveSellerTarget)} className="flex flex-col gap-3 border-t border-[var(--color-line)] pt-5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Seller target price (max-pay-to-seller — sellers never see this)</p>
+            <div className="w-48">
+              <Field label="Target price/pc (USD)" type="number" step="0.01" error={sellerTargetErrors.sellerTargetPriceUsd?.message} {...registerSellerTarget('sellerTargetPriceUsd')} />
+            </div>
+            <Button type="submit" size="sm" className="self-start" disabled={!sellerTargetDirty || savingSellerTarget}>
+              {savingSellerTarget ? 'Saving…' : 'Save seller target price'}
+            </Button>
+          </form>
+
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Bid board</p>
             <DataTable columns={bidColumns} rows={bidBoard ?? []} keyFor={(b) => b.bidId} loading={bidsLoading} emptyTitle="No bids yet" />
           </div>
 
           <div className="border-t border-[var(--color-line)] pt-5">
-            <OffersPanel requirementId={requirementId} requirementSellerCost={requirement.buyerTargetPriceUsd} />
+            <OffersPanel
+              requirementId={requirementId}
+              requirementSellerCost={requirement.sellerTargetPriceUsd ?? requirement.buyerTargetPriceUsd}
+              requirementQuantityPcs={requirement.quantityPcs}
+            />
           </div>
 
           <div className="flex flex-wrap gap-2 border-t border-[var(--color-line)] pt-5">

@@ -3,10 +3,13 @@ import { BuyerLayout } from '@/layouts/BuyerLayout'
 import { SellerLayout } from '@/layouts/SellerLayout'
 import { AdminLayout } from '@/layouts/AdminLayout'
 import { Landing } from '@/pages/Landing'
+import { BuyerLanding } from '@/pages/landing/BuyerLanding'
+import { SellerLanding } from '@/pages/landing/SellerLanding'
 import { Login } from '@/pages/auth/Login'
 import { ForgotPassword } from '@/pages/auth/ForgotPassword'
 import { ResetPassword } from '@/pages/auth/ResetPassword'
 import { BuyerSignup } from '@/pages/auth/BuyerSignup'
+import { SellerSignup } from '@/pages/auth/SellerSignup'
 import { VerifyEmail } from '@/pages/auth/VerifyEmail'
 import { BuyerDashboard } from '@/pages/buyer/Dashboard'
 import { PostRequirement } from '@/pages/buyer/PostRequirement'
@@ -16,6 +19,11 @@ import { BuyerMessages } from '@/pages/buyer/Messages'
 import { BuyerHistory } from '@/pages/buyer/History'
 import { BuyerProfile } from '@/pages/buyer/Profile'
 import { SellerDashboard } from '@/pages/seller/Dashboard'
+import { SellerRequirements } from '@/pages/seller/requirements/Requirements'
+import { SellerQuotes } from '@/pages/seller/quotes/Quotes'
+import { SellerOffers } from '@/pages/seller/offers/Offers'
+import { SellerDeals } from '@/pages/seller/deals/Deals'
+import { SellerProfile } from '@/pages/seller/Profile'
 import { AdminDashboard } from '@/pages/admin/Dashboard'
 import { AdminApprovals } from '@/pages/admin/Approvals'
 import { AdminUsers } from '@/pages/admin/users/Users'
@@ -29,7 +37,6 @@ import { AdminDisputes } from '@/pages/admin/disputes/Disputes'
 import { AdminMessages } from '@/pages/admin/Messages'
 import { AdminSettings } from '@/pages/admin/Settings'
 import { AdminAudit } from '@/pages/admin/Audit'
-import { Placeholder } from '@/components/dashboard/Placeholder'
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute'
 
 export const router = createBrowserRouter([
@@ -37,8 +44,11 @@ export const router = createBrowserRouter([
   // (MarketingNav/MarketingFooter, and admin.html's centered .login-screen respectively) —
   // neither is nested in PublicLayout, which would render a second, conflicting header.
   { path: '/', element: <Landing /> },
+  { path: '/sourcing', element: <BuyerLanding /> },
+  { path: '/selling', element: <SellerLanding /> },
   { path: '/login', element: <Login /> },
   { path: '/apply', element: <BuyerSignup /> },
+  { path: '/apply-seller', element: <SellerSignup /> },
   { path: '/verify-email', element: <VerifyEmail /> },
   { path: '/forgot-password', element: <ForgotPassword /> },
   { path: '/reset-password', element: <ResetPassword /> },
@@ -68,9 +78,11 @@ export const router = createBrowserRouter([
     ),
     children: [
       { index: true, element: <SellerDashboard /> },
-      { path: 'requirements', element: <Placeholder title="Open Requirements" /> },
-      { path: 'quotes', element: <Placeholder title="My Quotes" /> },
-      { path: 'deals', element: <Placeholder title="My Deals" /> },
+      { path: 'requirements', element: <SellerRequirements /> },
+      { path: 'quotes', element: <SellerQuotes /> },
+      { path: 'offers', element: <SellerOffers /> },
+      { path: 'deals', element: <SellerDeals /> },
+      { path: 'profile', element: <SellerProfile /> },
     ],
   },
   {

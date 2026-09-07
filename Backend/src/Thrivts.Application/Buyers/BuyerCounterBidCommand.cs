@@ -2,6 +2,7 @@ using ErrorOr;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Thrivts.Application.Common.Interfaces;
+using Thrivts.Domain.Entities;
 using Thrivts.Domain.Exceptions;
 
 namespace Thrivts.Application.Buyers;
@@ -42,6 +43,13 @@ public sealed class BuyerCounterBidCommandHandler : ICommandHandler<BuyerCounter
         {
             return Error.Validation(description: ex.Message);
         }
+
+        // Mirrors buyer_counter_bid's perform push_notification(...) call — never a table trigger,
+        // so this has to be written explicitly here (only a brand-new bid's INSERT is trigger-covered).
+        _db.Notifications.Add(new Notification(
+            bid.SellerId, "Buyer countered your bid",
+            $"New offer: ${command.CounterBuyerPriceUsd:F2}/pc on {requirement.RequirementNumber}",
+            refType: "requirement", refId: bid.RequirementId));
 
         await _db.SaveChangesAsync(cancellationToken);
         return Result.Success;

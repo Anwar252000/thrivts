@@ -9,8 +9,9 @@ namespace Thrivts.Application.Admin.Offers;
 public sealed record GetOffersQuery(Guid? RequirementId, OfferStatus? Status) : IQuery<ErrorOr<List<OfferListItemDto>>>;
 
 public sealed record OfferListItemDto(
-    Guid Id, string? OfferNumber, Guid RequirementId, Guid SellerId, decimal? OfferPricePerPc,
-    decimal? CurrentPricePerPc, OfferStatus Status, Guid? DealId, DateTimeOffset? SentAt, DateTimeOffset? ExpiresAt);
+    Guid Id, string? OfferNumber, Guid RequirementId, Guid SellerId, string? ItemName, int? QuantityPcs, string? Grade,
+    decimal? OfferPricePerPc, decimal? CurrentPricePerPc, OfferStatus Status, string? AdminNotes, Guid? DealId,
+    DateTimeOffset? SentAt, DateTimeOffset? ExpiresAt);
 
 public sealed class GetOffersQueryHandler : IQueryHandler<GetOffersQuery, ErrorOr<List<OfferListItemDto>>>
 {
@@ -37,8 +38,8 @@ public sealed class GetOffersQueryHandler : IQueryHandler<GetOffersQuery, ErrorO
         var result = await offers
             .OrderByDescending(o => o.SentAt)
             .Select(o => new OfferListItemDto(
-                o.Id, o.OfferNumber, o.RequirementId, o.SellerId, o.OfferPricePerPc,
-                o.CurrentPricePerPc, o.Status, o.DealId, o.SentAt, o.ExpiresAt))
+                o.Id, o.OfferNumber, o.RequirementId, o.SellerId, o.ItemName, o.QuantityPcs, o.Grade,
+                o.OfferPricePerPc, o.CurrentPricePerPc, o.Status, o.AdminNotes, o.DealId, o.SentAt, o.ExpiresAt))
             .ToListAsync(cancellationToken);
 
         return result;

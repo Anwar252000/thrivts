@@ -99,6 +99,19 @@ public class Seller : BaseEntity, IAggregateRoot
         ReferenceContact = referenceContact;
     }
 
+    /// <summary>Sets the signup-form fields the constructor doesn't cover — called once, right
+    /// after construction, by RegisterSellerCommand (mirrors Buyer.CompleteSignupProfile).</summary>
+    public void CompleteSignupProfile(string? companyName, string? phone, string? whatsApp,
+        int? yearsInBusiness, int? monthlyVolumeCapacityPcs, string? socialMediaJson)
+    {
+        CompanyName = companyName;
+        Phone = phone;
+        WhatsApp = whatsApp;
+        YearsInBusiness = yearsInBusiness;
+        MonthlyVolumeCapacityPcs = monthlyVolumeCapacityPcs;
+        SocialMediaJson = socialMediaJson;
+    }
+
     public void RecordActivity(DateTimeOffset occurredAt) => LastActiveAt = occurredAt;
 
     public void RecordFulfilledOrder(long quantityPcs, decimal paidUsd)

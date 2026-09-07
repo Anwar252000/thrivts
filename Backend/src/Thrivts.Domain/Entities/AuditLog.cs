@@ -3,7 +3,8 @@ using Thrivts.Domain.Enums;
 
 namespace Thrivts.Domain.Entities;
 
-/// <summary>An immutable record of an admin action (every admin action is written here automatically).</summary>
+/// <summary>An immutable record of a mutating admin/buyer/seller action (written here automatically
+/// by AuditLoggingBehavior).</summary>
 public class AuditLog : BaseEntity, IAggregateRoot
 {
     public Guid? ActorId { get; private set; }

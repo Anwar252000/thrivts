@@ -191,6 +191,7 @@ export interface RequirementDetail {
   destinationCountry: string
   destinationPort: string | null
   buyerTargetPriceUsd: number
+  sellerTargetPriceUsd: number | null
   buyerNotes: string | null
   adminNotes: string | null
   status: RequirementStatus
@@ -444,9 +445,13 @@ export interface OfferListItem {
   offerNumber: string | null
   requirementId: string
   sellerId: string
+  itemName: string | null
+  quantityPcs: number | null
+  grade: string | null
   offerPricePerPc: number | null
   currentPricePerPc: number | null
   status: OfferStatus
+  adminNotes: string | null
   dealId: string | null
   sentAt: string | null
   expiresAt: string | null
@@ -477,4 +482,5 @@ export interface DashboardStats {
   totalVolumeUsd: number
   pendingCommissionsUsd: number
   commissionsReadyToRelease: number
+  dealsAwaitingPayment: number
 }

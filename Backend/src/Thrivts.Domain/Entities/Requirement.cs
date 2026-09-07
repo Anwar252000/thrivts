@@ -129,6 +129,16 @@ public class Requirement : BaseEntity, IAggregateRoot
         RestrictedToTags = restrictedToTags;
     }
 
+    /// <summary>Replaces editSellerTargetPrice() — the max-pay-to-seller ceiling admin uses when
+    /// sending direct offers. Sellers never see this value.</summary>
+    public void SetSellerTargetPrice(decimal sellerTargetPriceUsd)
+    {
+        if (sellerTargetPriceUsd <= 0)
+            throw new DomainException("Seller target price must be greater than zero.");
+
+        SellerTargetPriceUsd = sellerTargetPriceUsd;
+    }
+
     /// <summary>Called after a bid is accepted: fully committed -> ready_to_order, otherwise -> matching.</summary>
     public void AdvanceOnAcceptedQuantity(int remainingAfterAcceptance, DateTimeOffset occurredAt)
     {
@@ -149,6 +159,18 @@ public class Requirement : BaseEntity, IAggregateRoot
     public void RevertToMatching()
     {
         if (IsTerminal()) return;
+        Status = RequirementStatus.Matching;
+    }
+
+    /// <summary>Mirrors accept_seller_offer's requirement-side effect: force-advances to Matching
+    /// unless already Matching/Confirmed/Settled/Cancelled. Accepting a direct offer does not itself
+    /// create a deal (RequirementSellerOffer's own doc comment), so this only nudges the requirement
+    /// off its pre-match status.</summary>
+    public void MarkMatchingFromAcceptedOffer()
+    {
+        if (Status is RequirementStatus.Matching or RequirementStatus.Confirmed or RequirementStatus.Settled or RequirementStatus.Cancelled)
+            return;
+
         Status = RequirementStatus.Matching;
     }
 

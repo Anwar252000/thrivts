@@ -16,8 +16,14 @@ export function AdminDashboard() {
     approvals && approvals.length > 0
       ? { to: '/admin/approvals', label: `${approvals.length} pending approval${approvals.length === 1 ? '' : 's'}`, tone: 'warning' as const }
       : null,
+    stats && stats.requirementsAwaitingReview > 0
+      ? { to: '/admin/requirements', label: `${stats.requirementsAwaitingReview} requirement${stats.requirementsAwaitingReview === 1 ? '' : 's'} awaiting review`, tone: 'warning' as const }
+      : null,
     stats && stats.openDisputes > 0
       ? { to: '/admin/disputes', label: `${stats.openDisputes} open dispute${stats.openDisputes === 1 ? '' : 's'} need resolution`, tone: 'danger' as const }
+      : null,
+    stats && stats.dealsAwaitingPayment > 0
+      ? { to: '/admin/deals', label: `${stats.dealsAwaitingPayment} deal${stats.dealsAwaitingPayment === 1 ? '' : 's'} awaiting payment`, tone: 'info' as const }
       : null,
     stats && stats.commissionsReadyToRelease > 0
       ? { to: '/admin/commissions', label: `${stats.commissionsReadyToRelease} commission${stats.commissionsReadyToRelease === 1 ? '' : 's'} ready to release`, tone: 'info' as const }

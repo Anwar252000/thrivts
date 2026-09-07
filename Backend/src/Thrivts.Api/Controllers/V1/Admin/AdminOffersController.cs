@@ -29,7 +29,8 @@ public class AdminOffersController : AdminControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateOfferRequest request, CancellationToken cancellationToken)
     {
-        var result = await Mediator.Send(new CreateOfferCommand(request.RequirementId, request.SellerId, request.OfferPricePerPc), cancellationToken);
+        var result = await Mediator.Send(new CreateOfferCommand(
+            request.RequirementId, request.SellerId, request.QuantityPcs, request.OfferPricePerPc, request.Notes, request.ExpiresInDays), cancellationToken);
         return ToResponse(result, id => CreatedAtAction(nameof(Create), new { }, new { id }));
     }
 
@@ -62,6 +63,6 @@ public class AdminOffersController : AdminControllerBase
     }
 }
 
-public record CreateOfferRequest(Guid RequirementId, Guid SellerId, decimal OfferPricePerPc);
+public record CreateOfferRequest(Guid RequirementId, Guid SellerId, int QuantityPcs, decimal OfferPricePerPc, string? Notes, int ExpiresInDays);
 public record PostOfferRoundRequest(string Kind, decimal? PricePerPcUsd, string? Notes);
 public record DeclineOfferRequest(string Reason);

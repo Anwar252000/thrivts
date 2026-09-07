@@ -28,5 +28,10 @@ public class SellerResponseConfiguration : IEntityTypeConfiguration<SellerRespon
         // BuyerPricePerPcUsd is derived (CurrentPriceUsd + FeePerPcAppliedUsd), never stored —
         // it is also the ONLY price field a buyer-facing DTO may project (see the "fee opacity" moat rule).
         builder.Ignore(sr => sr.BuyerPricePerPcUsd);
+
+        // seller_responses has no created_at column — responded_at (set in the constructor) is its
+        // creation timestamp instead (confirmed live: inserting BaseEntity.CreatedAt by convention
+        // throws "column created_at of relation seller_responses does not exist").
+        builder.Ignore(sr => sr.CreatedAt);
     }
 }

@@ -40,7 +40,7 @@ public sealed class PostOfferRoundCommandHandler : ICommandHandler<PostOfferRoun
             if (command.PricePerPcUsd is null)
                 return Error.Validation(description: "PricePerPcUsd is required for a counter round.");
 
-            offer.PostRound(command.PricePerPcUsd.Value, _clock.UtcNow);
+            offer.PostRound(NegotiationActor.Admin, command.PricePerPcUsd.Value, command.Notes, _clock.UtcNow);
         }
 
         var round = new OfferRound(command.OfferId, NegotiationActor.Admin, command.Kind, command.PricePerPcUsd, command.Notes, _currentUser.UserId);

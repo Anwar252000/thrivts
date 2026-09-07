@@ -22,7 +22,8 @@ public sealed record DashboardStatsDto(
     int LiveRequirements, int RequirementsAwaitingReview,
     int OpenDisputes,
     decimal TotalVolumeUsd,
-    decimal PendingCommissionsUsd, int CommissionsReadyToRelease);
+    decimal PendingCommissionsUsd, int CommissionsReadyToRelease,
+    int DealsAwaitingPayment);
 
 public sealed class GetDashboardStatsQueryHandler : IQueryHandler<GetDashboardStatsQuery, ErrorOr<DashboardStatsDto>>
 {
@@ -64,6 +65,8 @@ public sealed class GetDashboardStatsQueryHandler : IQueryHandler<GetDashboardSt
             .SumAsync(c => (decimal?)c.CommissionAmountUsd, cancellationToken) ?? 0m;
         var commissionsReadyToRelease = await _db.Commissions.CountAsync(c => c.Status == CommissionStatus.ReadyToRelease, cancellationToken);
 
+        var dealsAwaitingPayment = await _db.Deals.CountAsync(d => d.Status == DealStatus.AwaitingPayment, cancellationToken);
+
         return new DashboardStatsDto(
             totalBuyers, pendingBuyers,
             totalSellers, pendingSellers,
@@ -71,6 +74,7 @@ public sealed class GetDashboardStatsQueryHandler : IQueryHandler<GetDashboardSt
             liveRequirements, requirementsAwaitingReview,
             openDisputes,
             totalVolumeUsd,
-            pendingCommissionsUsd, commissionsReadyToRelease);
+            pendingCommissionsUsd, commissionsReadyToRelease,
+            dealsAwaitingPayment);
     }
 }

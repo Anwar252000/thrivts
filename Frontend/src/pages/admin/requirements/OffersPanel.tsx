@@ -12,12 +12,13 @@ import { CreateDealModal } from './CreateDealModal'
 interface OffersPanelProps {
   requirementId: string
   requirementSellerCost?: number | null
+  requirementQuantityPcs?: number
 }
 
 const TERMINAL: string[] = ['Accepted', 'Declined', 'Expired', 'Withdrawn']
 
 /** Replaces admin.html's "Direct Offers Sent" section, embedded in the requirement detail view. */
-export function OffersPanel({ requirementId, requirementSellerCost }: OffersPanelProps) {
+export function OffersPanel({ requirementId, requirementSellerCost, requirementQuantityPcs }: OffersPanelProps) {
   const { data: offers, isLoading } = useGetOffersQuery({ requirementId })
   const { data: sellersPage } = useGetSellersQuery({ pageSize: 200 })
   const [createOffer, { isLoading: sending }] = useCreateOfferMutation()
@@ -25,7 +26,10 @@ export function OffersPanel({ requirementId, requirementSellerCost }: OffersPane
 
   const [sendingOpen, setSendingOpen] = useState(false)
   const [sellerId, setSellerId] = useState('')
+  const [qty, setQty] = useState(String(requirementQuantityPcs ?? ''))
   const [price, setPrice] = useState('')
+  const [notes, setNotes] = useState('')
+  const [expiresInDays, setExpiresInDays] = useState('7')
   const [negotiatingId, setNegotiatingId] = useState<string | null>(null)
   const [dealCtx, setDealCtx] = useState<{ requirementId: string; sellerId: string; defaultQty: number; defaultSellerCost: number; sourceOfferId: string } | null>(null)
 
@@ -36,11 +40,17 @@ export function OffersPanel({ requirementId, requirementSellerCost }: OffersPane
   }, [sellersPage])
 
   const submitOffer = async () => {
-    if (!sellerId || !price || Number(price) <= 0) return
-    await createOffer({ requirementId, sellerId, offerPricePerPc: Number(price) })
+    if (!sellerId || !qty || Number(qty) <= 0 || !price || Number(price) <= 0) return
+    await createOffer({
+      requirementId, sellerId, quantityPcs: Number(qty), offerPricePerPc: Number(price),
+      notes: notes.trim() || undefined, expiresInDays: Number(expiresInDays) || 7,
+    })
     setSendingOpen(false)
     setSellerId('')
+    setQty(String(requirementQuantityPcs ?? ''))
     setPrice('')
+    setNotes('')
+    setExpiresInDays('7')
   }
 
   return (
@@ -65,11 +75,23 @@ export function OffersPanel({ requirementId, requirementSellerCost }: OffersPane
               ))}
             </Select>
           </div>
-          <div className="w-40">
-            <label className="mb-1 block text-xs font-medium text-[var(--color-ink-soft)]">Offer price/pc (USD)</label>
-            <Input type="number" step="0.01" min="0.01" value={price} onChange={(e) => setPrice(e.target.value)} />
+          <div className="w-28">
+            <label className="mb-1 block text-xs font-medium text-[var(--color-ink-soft)]">Quantity (pcs)</label>
+            <Input type="number" min="1" value={qty} onChange={(e) => setQty(e.target.value)} />
           </div>
-          <Button size="sm" onClick={submitOffer} disabled={sending || !sellerId || !price}>
+          <div className="w-36">
+            <label className="mb-1 block text-xs font-medium text-[var(--color-ink-soft)]">Offer price/pc (USD)</label>
+            <Input type="number" step="0.01" min="0.01" placeholder="What you'll pay seller" value={price} onChange={(e) => setPrice(e.target.value)} />
+          </div>
+          <div className="w-28">
+            <label className="mb-1 block text-xs font-medium text-[var(--color-ink-soft)]">Expires (days)</label>
+            <Input type="number" min="1" max="30" value={expiresInDays} onChange={(e) => setExpiresInDays(e.target.value)} />
+          </div>
+          <div className="min-w-[220px] flex-1">
+            <label className="mb-1 block text-xs font-medium text-[var(--color-ink-soft)]">Notes to seller (optional)</label>
+            <Input value={notes} onChange={(e) => setNotes(e.target.value)} />
+          </div>
+          <Button size="sm" onClick={submitOffer} disabled={sending || !sellerId || !qty || !price}>
             {sending ? 'Sending…' : 'Send'}
           </Button>
         </div>
@@ -94,9 +116,12 @@ export function OffersPanel({ requirementId, requirementSellerCost }: OffersPane
                   <Badge tone={statusTone(o.status)}>{humanizeStatus(o.status)}</Badge>
                 </div>
                 <div className="mt-2 grid grid-cols-2 gap-3">
+                  <Field label="Quantity" value={o.quantityPcs != null ? `${o.quantityPcs.toLocaleString()} pcs` : '—'} />
+                  <Field label="Expires" value={o.expiresAt ? new Date(o.expiresAt).toLocaleDateString() : '—'} />
                   <Field label="Offered/pc" value={formatUsd(o.offerPricePerPc ?? 0)} />
                   <Field label="Standing/pc" value={formatUsd(standing)} />
                 </div>
+                {o.adminNotes && <p className="mt-2 rounded bg-[var(--color-sage-mist)] px-2.5 py-1.5 text-xs text-[var(--color-ink-soft)]">{o.adminNotes}</p>}
                 <div className="mt-2 flex flex-wrap justify-end gap-2">
                   {!terminal && (
                     <Button size="sm" variant="outline" onClick={() => setNegotiatingId(negotiatingId === o.id ? null : o.id)}>
@@ -110,7 +135,7 @@ export function OffersPanel({ requirementId, requirementSellerCost }: OffersPane
                         setDealCtx({
                           requirementId,
                           sellerId: o.sellerId,
-                          defaultQty: 1,
+                          defaultQty: o.quantityPcs ?? 1,
                           defaultSellerCost: requirementSellerCost ?? standing,
                           sourceOfferId: o.id,
                         })

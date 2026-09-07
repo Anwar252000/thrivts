@@ -20,6 +20,12 @@ public class SellerConfiguration : IEntityTypeConfiguration<Seller>
 
         builder.Property(s => s.SocialMediaJson).HasColumnName("social_media").HasColumnType("jsonb");
 
+        // manual_tags is `generated always as (tags) stored` in the live DB — a real Postgres
+        // generated column, not just a default. Any client-supplied value on INSERT is rejected
+        // outright (confirmed live: "cannot insert a non-DEFAULT value into column manual_tags"),
+        // so EF must never include it in the INSERT/UPDATE column list.
+        builder.Property(s => s.ManualTags).HasComputedColumnSql("tags", stored: true);
+
         // "WhatsApp" splits as "whats_app" under the snake_case naming convention, but the real
         // column is the single token "whatsapp" (it's a brand name, not two words).
         builder.Property(s => s.WhatsApp).HasColumnName("whatsapp");

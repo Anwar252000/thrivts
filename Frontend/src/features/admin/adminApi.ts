@@ -203,6 +203,10 @@ export const adminApi = createApi({
       query: ({ requirementId, ...body }) => ({ url: `/api/v1/admin/requirements/${requirementId}/matching-filters`, method: 'POST', body }),
       invalidatesTags: (_r, _e, { requirementId }) => [{ type: 'Requirement', id: requirementId }],
     }),
+    setSellerTargetPrice: builder.mutation<void, { requirementId: string; sellerTargetPriceUsd: number }>({
+      query: ({ requirementId, ...body }) => ({ url: `/api/v1/admin/requirements/${requirementId}/seller-target-price`, method: 'POST', body }),
+      invalidatesTags: (_r, _e, { requirementId }) => [{ type: 'Requirement', id: requirementId }],
+    }),
 
     // ---- Deals ----
     getDeals: builder.query<PagedResult<DealListItem>, { status?: DealStatus; page?: number; pageSize?: number } | void>({
@@ -309,7 +313,7 @@ export const adminApi = createApi({
       query: (offerId) => `/api/v1/admin/offers/${offerId}/rounds`,
       providesTags: (_r, _e, offerId) => [{ type: 'OfferRound', id: offerId }],
     }),
-    createOffer: builder.mutation<{ id: string }, { requirementId: string; sellerId: string; offerPricePerPc: number }>({
+    createOffer: builder.mutation<{ id: string }, { requirementId: string; sellerId: string; quantityPcs: number; offerPricePerPc: number; notes?: string; expiresInDays: number }>({
       query: (body) => ({ url: '/api/v1/admin/offers', method: 'POST', body }),
       invalidatesTags: ['Offer'],
     }),
@@ -422,7 +426,7 @@ export const {
   useGetSellersQuery, useGetSellerByIdQuery, useSetSellerApprovalMutation, useSetSellerKycMutation, useUpdateSellerMutation, useDeleteSellerMutation,
   useGetAgenciesQuery, useGetAgencyByIdQuery, useCreateAgencyMutation, useUpdateAgencyMutation, useSetAgencyApprovalMutation,
   useGetRequirementsQuery, useGetBidBoardQuery, useGetRequirementByIdQuery, useUpdateRequirementMutation, useDeleteRequirementMutation,
-  usePostRequirementLiveMutation, useSetRequirementPublicDisplayMutation, useSetRequirementFiltersMutation,
+  usePostRequirementLiveMutation, useSetRequirementPublicDisplayMutation, useSetRequirementFiltersMutation, useSetSellerTargetPriceMutation,
   useGetDealsQuery, useGetDealByIdQuery, useCreateDealFromMatchMutation, useAdvanceDealStatusMutation,
   useRecordDealPaymentMutation, useSetDealShippingMutation, useSetDealTrackingMutation, useCancelDealMutation,
   useGetDealAllocationsQuery, useAcceptSellerResponseMutation,

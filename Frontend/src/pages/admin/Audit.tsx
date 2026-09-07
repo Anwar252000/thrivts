@@ -19,7 +19,7 @@ export function AdminAudit() {
   return (
     <PageTransition>
       <h1 className="mb-1 text-2xl font-semibold">Audit log</h1>
-      <p className="mb-6 text-sm text-[var(--color-ink-faint)]">Every admin action, most recent first.</p>
+      <p className="mb-6 text-sm text-[var(--color-ink-faint)]">Every admin, buyer, and seller action, most recent first.</p>
 
       <DataTable columns={columns} rows={entries ?? []} keyFor={(e) => e.id} loading={isLoading} emptyTitle="No audit entries yet" />
     </PageTransition>

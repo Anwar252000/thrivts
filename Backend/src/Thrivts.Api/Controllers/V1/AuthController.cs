@@ -61,6 +61,32 @@ public class AuthController : ControllerBase
             errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
     }
 
+    /// <summary>Sends a confirmation email; no account exists yet — see RegisterSellerCommand.</summary>
+    [HttpPost("register/seller")]
+    public async Task<IActionResult> RegisterSeller([FromBody] RegisterSellerRequest request, CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new RegisterSellerCommand(
+            request.Email, request.Password, request.FullName, request.CompanyName, request.Country, request.City,
+            request.Phone, request.WhatsApp, request.YearsInBusiness, request.MonthlyVolumeCapacityPcs,
+            request.CategoriesSupplied, request.Language), cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => NoContent(),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
+    /// <summary>Seller counterpart of CompleteBuyerRegistration — see its doc comment.</summary>
+    [HttpPost("complete-seller-registration")]
+    [Authorize]
+    public async Task<IActionResult> CompleteSellerRegistration(CancellationToken cancellationToken)
+    {
+        var result = await _mediator.Send(new CompleteSellerRegistrationCommand(), cancellationToken);
+
+        return result.Match<IActionResult>(
+            _ => NoContent(),
+            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
+    }
+
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] LoginRequest request, CancellationToken cancellationToken)
     {
@@ -145,6 +171,10 @@ public record RegisterBuyerRequest(
     string CompanyName, string? Website, string Country, string? City, string? Instagram,
     int? EstimatedMonthlyVolumePcs, string? TypicalRequirementType, int[]? CategoryIds,
     string? AgencyRef, string? ReferralCode);
+public record RegisterSellerRequest(
+    string Email, string Password, string FullName, string CompanyName, string Country, string? City,
+    string? Phone, string? WhatsApp, int? YearsInBusiness, int? MonthlyVolumeCapacityPcs,
+    string[]? CategoriesSupplied, LanguagePref Language);
 public record LoginRequest(string Email, string Password);
 public record RefreshRequest(string RefreshToken);
 public record ForgotPasswordRequest(string Email);

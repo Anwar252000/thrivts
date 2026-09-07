@@ -125,7 +125,10 @@ export function Login() {
           </form>
 
           <p className="mt-6 text-center text-sm text-[var(--color-ink-soft)]">
-            Don't have an account? <Link to="/apply" className="font-medium text-[var(--color-accent)] underline">Apply as a buyer</Link>
+            Don't have an account?{' '}
+            <Link to="/apply" className="font-medium text-[var(--color-accent)] underline">Apply as a buyer</Link>
+            {' '}or{' '}
+            <Link to="/apply-seller" className="font-medium text-[var(--color-accent)] underline">as a seller</Link>
           </p>
         </Card>
       </motion.div>

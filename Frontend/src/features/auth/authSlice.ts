@@ -84,6 +84,15 @@ export const completeBuyerRegistration = createAsyncThunk(
   },
 )
 
+/** Seller counterpart of completeBuyerRegistration — see its doc comment. */
+export const completeSellerRegistration = createAsyncThunk(
+  'auth/completeSellerRegistration',
+  async (session: AuthSession) => {
+    await apiClient.post('/api/v1/auth/complete-seller-registration', undefined, { accessToken: session.accessToken })
+    return resolveSession(session)
+  },
+)
+
 export const signOut = createAsyncThunk('auth/signOut', async (_: void, { getState }) => {
   const { auth } = getState() as { auth: AuthState }
   if (auth.accessToken) {
@@ -132,6 +141,17 @@ const authSlice = createSlice({
         applySession(state, action.payload)
       })
       .addCase(completeBuyerRegistration.rejected, (state, action) => {
+        state.status = 'unauthenticated'
+        state.error = action.error.message ?? 'Could not complete your registration'
+      })
+      .addCase(completeSellerRegistration.pending, (state) => {
+        state.status = 'loading'
+        state.error = null
+      })
+      .addCase(completeSellerRegistration.fulfilled, (state, action) => {
+        applySession(state, action.payload)
+      })
+      .addCase(completeSellerRegistration.rejected, (state, action) => {
         state.status = 'unauthenticated'
         state.error = action.error.message ?? 'Could not complete your registration'
       })

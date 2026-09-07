@@ -43,36 +43,60 @@ public class RequirementSellerOffer : BaseEntity, IAggregateRoot
         // EF Core
     }
 
-    public RequirementSellerOffer(Guid requirementId, Guid sellerId, decimal offerPricePerPc, Guid sentBy)
+    public RequirementSellerOffer(string offerNumber, Guid requirementId, Guid sellerId, string itemName,
+        int quantityPcs, string grade, decimal offerPricePerPc, Guid sentBy, string? adminNotes, DateTimeOffset expiresAt)
     {
+        OfferNumber = offerNumber;
         RequirementId = requirementId;
         SellerId = sellerId;
+        ItemName = itemName;
+        QuantityPcs = quantityPcs;
+        Grade = grade;
         OfferPricePerPc = offerPricePerPc;
         CurrentPricePerPc = offerPricePerPc;
         SentBy = sentBy;
+        AdminNotes = adminNotes;
+        ExpiresAt = expiresAt;
         SentAt = DateTimeOffset.UtcNow;
     }
 
-    public void MarkViewed(DateTimeOffset occurredAt) => ViewedAt ??= occurredAt;
-
-    public void PostRound(decimal newPricePerPc, DateTimeOffset occurredAt)
+    /// <summary>Mirrors loadOffers()'s auto-mark-viewed side effect (only flips a still-Sent offer
+    /// to Viewed — any later action already backfills ViewedAt itself via PostRound/Accept/Decline).</summary>
+    public void MarkViewed(DateTimeOffset occurredAt)
     {
-        EnsureOpen();
+        ViewedAt ??= occurredAt;
+        if (Status == OfferStatus.Sent)
+            Status = OfferStatus.Viewed;
+    }
+
+    /// <summary>Mirrors post_offer_round's counter branch. CounterPricePerPc/CounterNotes only move
+    /// when the SELLER is the one countering (matches the live RPC's `case when v_party='seller'`) —
+    /// an admin counter only moves the standing CurrentPricePerPc.</summary>
+    public void PostRound(NegotiationActor party, decimal newPricePerPc, string? notes, DateTimeOffset occurredAt)
+    {
+        EnsureOpen(occurredAt);
         CurrentPricePerPc = newPricePerPc;
         Status = OfferStatus.Countered;
         RespondedAt = occurredAt;
+        ViewedAt ??= occurredAt;
+
+        if (party == NegotiationActor.Seller)
+        {
+            CounterPricePerPc = newPricePerPc;
+            CounterNotes = notes;
+        }
     }
 
     public void Accept(DateTimeOffset occurredAt)
     {
-        EnsureOpen();
+        EnsureOpen(occurredAt);
         Status = OfferStatus.Accepted;
         RespondedAt = occurredAt;
     }
 
     public void Decline(DateTimeOffset occurredAt)
     {
-        EnsureOpen();
+        EnsureOpen(occurredAt);
         Status = OfferStatus.Declined;
         RespondedAt = occurredAt;
     }
@@ -83,9 +107,18 @@ public class RequirementSellerOffer : BaseEntity, IAggregateRoot
 
     public void LinkDeal(Guid dealId) => DealId = dealId;
 
-    private void EnsureOpen()
+    /// <summary>seller.html gated every offer action client-side on expires_at (never verified
+    /// server-side before) — lazily flips to Expired the first time anyone tries to act on a
+    /// past-expiry offer, rather than requiring a separate sweep job.</summary>
+    private void EnsureOpen(DateTimeOffset occurredAt)
     {
         if (Status is OfferStatus.Accepted or OfferStatus.Declined or OfferStatus.Expired or OfferStatus.Withdrawn)
             throw new DomainException($"This offer is already {Status}.");
+
+        if (ExpiresAt is not null && ExpiresAt < occurredAt)
+        {
+            Status = OfferStatus.Expired;
+            throw new DomainException("This offer has expired.");
+        }
     }
 }
