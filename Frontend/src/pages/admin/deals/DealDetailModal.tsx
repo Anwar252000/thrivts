@@ -8,6 +8,7 @@ import { formatUsd, formatDate, formatDateTime } from '@/lib/utils'
 import {
   useGetDealByIdQuery, useAdvanceDealStatusMutation, useRecordDealPaymentMutation,
   useSetDealShippingMutation, useSetDealTrackingMutation, useCancelDealMutation, useGetDealAllocationsQuery,
+  useGetPurchaseOrderQuery, useIssuePurchaseOrderMutation, useAdminMarkPoPaidMutation, useVerifyPurchaseOrderMutation, useAddPaymentLinkMutation,
 } from '@/features/admin/adminApi'
 import type { DealAllocation, DealStatus } from '@/features/admin/adminTypes'
 
@@ -114,6 +115,8 @@ export function DealDetailModal({ dealId, onClose }: DealDetailModalProps) {
             </div>
           )}
 
+          <PurchaseOrderSection dealId={dealId} dealStatus={deal.status} />
+
           <div className="grid gap-5 border-t border-[var(--color-line)] pt-5 sm:grid-cols-2">
             <form
               className="flex flex-col gap-2"
@@ -177,6 +180,73 @@ export function DealDetailModal({ dealId, onClose }: DealDetailModalProps) {
         confirmLabel="Cancel deal"
       />
     </Modal>
+  )
+}
+
+/** Mirrors admin.html's PO controls: "Issue PO" only appears for a Confirmed deal with no PO yet
+ * (the normal path never reaches this — a PO auto-issues via a DB trigger the instant the deal is
+ * confirmed — this is the manual fallback); "Mark paid" / "Verify" / "Add payment link" are gated
+ * on the PO's own status, same as admin.html's button-visibility rules. */
+function PurchaseOrderSection({ dealId, dealStatus }: { dealId: string; dealStatus: DealStatus }) {
+  const { data: po, isLoading } = useGetPurchaseOrderQuery(dealId)
+  const [issue, issueState] = useIssuePurchaseOrderMutation()
+  const [markPaid, markPaidState] = useAdminMarkPoPaidMutation()
+  const [verify, verifyState] = useVerifyPurchaseOrderMutation()
+  const [addLink, addLinkState] = useAddPaymentLinkMutation()
+  const [linkInput, setLinkInput] = useState('')
+
+  if (isLoading) return null
+
+  if (!po) {
+    return dealStatus === 'Confirmed' ? (
+      <div className="border-t border-[var(--color-line)] pt-5">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Purchase order</p>
+        <Button size="sm" onClick={() => issue({ dealId })} disabled={issueState.isLoading}>
+          {issueState.isLoading ? 'Issuing…' : 'Issue PO'}
+        </Button>
+      </div>
+    ) : null
+  }
+
+  const canMarkPaid = po.status === 'Issued' || po.status === 'PaymentSubmitted'
+
+  return (
+    <div className="border-t border-[var(--color-line)] pt-5">
+      <div className="mb-2 flex items-center justify-between">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Purchase order {po.poNumber}</p>
+        <Badge tone={po.status === 'Verified' ? 'success' : po.status === 'PaymentSubmitted' ? 'info' : 'warning'}>{po.status}</Badge>
+      </div>
+      <div className="mb-3 grid grid-cols-3 gap-3 text-sm">
+        <Field label="Amount" value={formatUsd(po.amountUsd)} />
+        <Field label="Due" value={formatDate(po.dueAt)} />
+        <Field label="Receipt" value={po.receiptUrl ?? '—'} />
+      </div>
+      <div className="flex flex-wrap items-center gap-2">
+        {canMarkPaid && (
+          <Button size="sm" onClick={() => markPaid(dealId)} disabled={markPaidState.isLoading}>
+            {markPaidState.isLoading ? 'Marking…' : 'Mark paid'}
+          </Button>
+        )}
+        {po.status === 'PaymentSubmitted' && (
+          <Button size="sm" variant="outline" onClick={() => verify(dealId)} disabled={verifyState.isLoading}>
+            {verifyState.isLoading ? 'Verifying…' : 'Verify payment'}
+          </Button>
+        )}
+        {po.status === 'Issued' && (
+          <div className="flex items-center gap-2">
+            <Input placeholder="Payment link URL" value={linkInput} onChange={(e) => setLinkInput(e.target.value)} className="w-56" />
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!linkInput.trim() || addLinkState.isLoading}
+              onClick={() => { addLink({ dealId, link: linkInput.trim() }); setLinkInput('') }}
+            >
+              {addLinkState.isLoading ? 'Saving…' : 'Add payment link'}
+            </Button>
+          </div>
+        )}
+      </div>
+    </div>
   )
 }
 

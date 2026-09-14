@@ -8,12 +8,17 @@ namespace Thrivts.Application.Buyers;
 
 /// <summary>Replaces the buyer_deals_view read — powers both "My deals" and (client-side filtered
 /// to Settled) the "Order history" section. Shape mirrors buyer.html's mapBuyerDeal() so the
-/// eventual frontend needs no reshaping.</summary>
+/// eventual frontend needs no reshaping. Timeline/tracking/FulfillmentDueAt added to match the
+/// updated buyer.html's fulfilment view (buyer_deals_view's own fulfillment_due_at expression:
+/// paid_at + delivery_timeline_days, replicated below rather than a stored column).</summary>
 public sealed record GetMyDealsQuery : IQuery<ErrorOr<List<MyDealListItemDto>>>;
 
 public sealed record MyDealListItemDto(
     Guid Id, string DealNumber, string RequirementNumber, string ItemName, GradeType Grade, string DestinationCountry,
-    string? ShippingMode, int TotalQuantityPcs, decimal TotalInvoiceUsd, DealStatus Status, bool HasDispute, DateTimeOffset CreatedAt);
+    string? ShippingMode, int TotalQuantityPcs, decimal TotalInvoiceUsd, DealStatus Status, bool HasDispute, DateTimeOffset CreatedAt,
+    DateTimeOffset? ConfirmedAt, DateTimeOffset? PaidAt, DateTimeOffset? InFulfillmentAt, DateTimeOffset? DispatchedAt,
+    DateTimeOffset? DeliveredAt, DateTimeOffset? SettledAt, DateTimeOffset? CancelledAt,
+    string? TrackingNumber, string? TrackingUrl, string? Courier, DateTimeOffset? FulfillmentDueAt);
 
 public sealed class GetMyDealsQueryHandler : IQueryHandler<GetMyDealsQuery, ErrorOr<List<MyDealListItemDto>>>
 {
@@ -38,7 +43,10 @@ public sealed class GetMyDealsQueryHandler : IQueryHandler<GetMyDealsQuery, Erro
             orderby d.CreatedAt descending
             select new MyDealListItemDto(
                 d.Id, d.DealNumber, r.RequirementNumber, r.ItemName, r.Grade, r.DestinationCountry, r.ShippingMode,
-                d.TotalQuantityPcs, d.TotalInvoiceUsd, d.Status, d.HasDispute, d.CreatedAt))
+                d.TotalQuantityPcs, d.TotalInvoiceUsd, d.Status, d.HasDispute, d.CreatedAt,
+                d.ConfirmedAt, d.PaidAt, d.InFulfillmentAt, d.DispatchedAt, d.DeliveredAt, d.SettledAt, d.CancelledAt,
+                d.TrackingNumber, d.TrackingUrl, d.Courier,
+                d.PaidAt != null && r.DeliveryTimelineDays != null ? d.PaidAt.Value.AddDays(r.DeliveryTimelineDays.Value) : (DateTimeOffset?)null))
             .ToListAsync(cancellationToken);
 
         return result;

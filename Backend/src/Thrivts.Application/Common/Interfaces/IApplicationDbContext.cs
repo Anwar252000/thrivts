@@ -22,6 +22,7 @@ public interface IApplicationDbContext
     DbSet<OfferRound> OfferRounds { get; }
     DbSet<Deal> Deals { get; }
     DbSet<DealAllocation> DealAllocations { get; }
+    DbSet<PurchaseOrder> PurchaseOrders { get; }
     DbSet<Commission> Commissions { get; }
     DbSet<InfluencerCommission> InfluencerCommissions { get; }
     DbSet<Dispute> Disputes { get; }

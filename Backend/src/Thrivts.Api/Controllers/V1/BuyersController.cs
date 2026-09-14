@@ -2,6 +2,7 @@ using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Thrivts.Application.Buyers;
+using Thrivts.Application.PurchaseOrders;
 using Thrivts.Domain.Enums;
 
 namespace Thrivts.Api.Controllers.V1;
@@ -98,6 +99,31 @@ public class BuyersController : ApiControllerBase
     public async Task<IActionResult> ApplyReferralCode([FromBody] ApplyReferralCodeRequest request, CancellationToken cancellationToken)
     {
         var result = await Mediator.Send(new ApplyReferralCodeCommand(request.Code), cancellationToken);
+        return ToNoContentResponse(result);
+    }
+
+    [HttpGet("deals/{dealId:guid}/purchase-order")]
+    public async Task<IActionResult> GetPurchaseOrder(Guid dealId, CancellationToken cancellationToken)
+    {
+        var result = await Mediator.Send(new GetPurchaseOrderByDealIdQuery(dealId), cancellationToken);
+        return ToResponse(result);
+    }
+
+    [HttpPost("deals/{dealId:guid}/purchase-order/request-payment-link")]
+    public async Task<IActionResult> RequestPaymentLink(Guid dealId, CancellationToken cancellationToken)
+    {
+        var result = await Mediator.Send(new RequestPaymentLinkCommand(dealId), cancellationToken);
+        return ToNoContentResponse(result);
+    }
+
+    [HttpPost("deals/{dealId:guid}/purchase-order/mark-paid")]
+    public async Task<IActionResult> MarkPurchaseOrderPaid(Guid dealId, [FromForm] IFormFile receipt, CancellationToken cancellationToken)
+    {
+        using var stream = new MemoryStream();
+        await receipt.CopyToAsync(stream, cancellationToken);
+
+        var result = await Mediator.Send(
+            new MarkPoPaidCommand(dealId, stream.ToArray(), receipt.FileName, receipt.ContentType), cancellationToken);
         return ToNoContentResponse(result);
     }
 }

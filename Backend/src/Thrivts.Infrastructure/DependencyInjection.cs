@@ -12,6 +12,7 @@ using Thrivts.Infrastructure.Configuration;
 using Thrivts.Infrastructure.Email;
 using Thrivts.Infrastructure.Persistence;
 using Thrivts.Infrastructure.Services;
+using Thrivts.Infrastructure.Storage;
 
 namespace Thrivts.Infrastructure;
 
@@ -67,6 +68,8 @@ public static class DependencyInjection
         services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>()
             .AddStandardResilienceHandler();
         services.AddHttpClient<ISupabaseAdminClient, SupabaseAdminClient>()
+            .AddStandardResilienceHandler();
+        services.AddHttpClient<ISupabaseStorageClient, SupabaseStorageClient>()
             .AddStandardResilienceHandler();
 
         AddSupabaseAuthentication(services, configuration);

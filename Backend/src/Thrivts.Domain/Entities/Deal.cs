@@ -43,6 +43,7 @@ public class Deal : BaseEntity, IAggregateRoot
     public string? PaymentReference { get; private set; }
     public Guid? PaymentReceivedBy { get; private set; }
     public DateTimeOffset? SellersPaidAt { get; private set; }
+    public DateTimeOffset? SellerMarkedReadyAt { get; private set; }
 
     public string? ContainerNumber { get; private set; }
     public string? ContainerSize { get; private set; }
@@ -145,6 +146,20 @@ public class Deal : BaseEntity, IAggregateRoot
     }
 
     public void RecordSellersPaid(DateTimeOffset occurredAt) => SellersPaidAt = occurredAt;
+
+    /// <summary>Replaces seller_mark_order_ready — seller signals the order is packed and ready for
+    /// pickup. Idempotent (a second call is a harmless no-op on the timestamp); advances Paid ->
+    /// InFulfillment the same way the RPC does, via the existing state machine.</summary>
+    public void MarkOrderReady(DateTimeOffset occurredAt)
+    {
+        if (Status is not (DealStatus.Paid or DealStatus.InFulfillment))
+            throw new DomainException($"Order can only be marked ready once payment is received (status is {Status}).");
+
+        SellerMarkedReadyAt ??= occurredAt;
+
+        if (Status == DealStatus.Paid)
+            AdvanceTo(DealStatus.InFulfillment, occurredAt);
+    }
 
     public void SetShippingDetails(string? containerNumber, string? containerSize, string? shippingLine,
         string? vesselName, string? billOfLading)

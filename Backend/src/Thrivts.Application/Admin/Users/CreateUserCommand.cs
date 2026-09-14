@@ -1,5 +1,6 @@
 using ErrorOr;
 using Mediator;
+using Microsoft.EntityFrameworkCore;
 using Thrivts.Application.Common.Exceptions;
 using Thrivts.Application.Common.Interfaces;
 using Thrivts.Domain.Entities;
@@ -56,6 +57,17 @@ public sealed class CreateUserCommandHandler : ICommandHandler<CreateUserCommand
 
         try
         {
+            // The live handle_new_user() trigger fires on ANY new auth.users row — including one
+            // created straight through this admin API with no metadata — and inserts a placeholder
+            // profiles row (role defaults to 'buyer' whenever metadata carries no role) plus a
+            // buyers row. Both are wrong for whatever role the admin actually requested here, and
+            // the profiles row's id collides with the one we're about to insert (confirmed live:
+            // "duplicate key value violates unique constraint profiles_pkey"). Clear them before
+            // writing our own, fully-correct rows — the trigger has already committed by the time
+            // CreateUserAsync returns, so there's no race to worry about.
+            await _db.Profiles.Where(p => p.Id == authUserId).ExecuteDeleteAsync(cancellationToken);
+            await _db.Buyers.Where(b => b.Id == authUserId).ExecuteDeleteAsync(cancellationToken);
+
             var now = _clock.UtcNow;
             var profile = new Profile(authUserId, command.Role, command.Email, command.FullName);
             profile.Approve(_currentUser.UserId.Value, now);

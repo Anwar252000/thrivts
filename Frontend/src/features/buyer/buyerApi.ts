@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import type { RootState } from '@/app/store'
-import type { Category } from '@/features/admin/adminTypes'
+import type { Category, PurchaseOrder } from '@/features/admin/adminTypes'
 import type {
   BuyerProfile, BuyerDashboard, MyRequirementListItem, BuyerVisibleBid, MyDealListItem,
   MyMessageThread, PublicExchangeRate, PublicActivityItem,
@@ -19,7 +19,7 @@ export const buyerApi = createApi({
       return headers
     },
   }),
-  tagTypes: ['Profile', 'Dashboard', 'Requirement', 'Bid', 'Deal', 'MessageThread'],
+  tagTypes: ['Profile', 'Dashboard', 'Requirement', 'Bid', 'Deal', 'MessageThread', 'PurchaseOrder'],
   endpoints: (builder) => ({
     // ---- Buyer (self-service) ----
     getMyProfile: builder.query<BuyerProfile, void>({
@@ -71,6 +71,22 @@ export const buyerApi = createApi({
       query: ({ dealId, ...body }) => ({ url: `/api/v1/buyers/deals/${dealId}/disputes`, method: 'POST', body }),
       invalidatesTags: [{ type: 'Deal', id: 'LIST' }],
     }),
+    getPurchaseOrder: builder.query<PurchaseOrder | null, string>({
+      query: (dealId) => `/api/v1/buyers/deals/${dealId}/purchase-order`,
+      providesTags: (_r, _e, dealId) => [{ type: 'PurchaseOrder', id: dealId }],
+    }),
+    requestPaymentLink: builder.mutation<void, string>({
+      query: (dealId) => ({ url: `/api/v1/buyers/deals/${dealId}/purchase-order/request-payment-link`, method: 'POST' }),
+      invalidatesTags: (_r, _e, dealId) => [{ type: 'PurchaseOrder', id: dealId }],
+    }),
+    markPoPaid: builder.mutation<void, { dealId: string; receipt: File }>({
+      query: ({ dealId, receipt }) => {
+        const formData = new FormData()
+        formData.append('receipt', receipt)
+        return { url: `/api/v1/buyers/deals/${dealId}/purchase-order/mark-paid`, method: 'POST', body: formData }
+      },
+      invalidatesTags: (_r, _e, { dealId }) => [{ type: 'PurchaseOrder', id: dealId }],
+    }),
     getMessageThreads: builder.query<MyMessageThread[], void>({
       query: () => '/api/v1/buyers/message-threads',
       providesTags: ['MessageThread'],
@@ -99,6 +115,7 @@ export const buyerApi = createApi({
 export const {
   useGetMyProfileQuery, useGetDashboardQuery, useGetMyRequirementsQuery, usePostRequirementMutation, useDeleteRequirementMutation,
   useGetBidsQuery, useCounterBidMutation, useAcceptBidMutation, useGetMyDealsQuery, useRaiseDisputeMutation,
+  useGetPurchaseOrderQuery, useRequestPaymentLinkMutation, useMarkPoPaidMutation,
   useGetMessageThreadsQuery, useApplyReferralCodeMutation,
   useGetPublicCategoriesQuery, useGetPublicExchangeRatesQuery, useGetPublicActivityQuery, useGetAgencyNameQuery,
 } = buyerApi

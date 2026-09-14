@@ -57,6 +57,7 @@ public static class NpgsqlEnumMapping
         builder.MapEnum<RequirementType>("requirement_type", nameTranslator: SnakeCase);
         builder.MapEnum<CurrencyType>("currency_type", nameTranslator: Identity);
         builder.MapEnum<GradeType>("grade_type", nameTranslator: GradeTranslator);
+        builder.MapEnum<PoStatus>("po_status", nameTranslator: SnakeCase);
     }
 
     public static void ConfigureContextOptions(NpgsqlDbContextOptionsBuilder npgsqlOptions)
@@ -74,6 +75,7 @@ public static class NpgsqlEnumMapping
         npgsqlOptions.MapEnum<RequirementType>("requirement_type", nameTranslator: SnakeCase);
         npgsqlOptions.MapEnum<CurrencyType>("currency_type", nameTranslator: Identity);
         npgsqlOptions.MapEnum<GradeType>("grade_type", nameTranslator: GradeTranslator);
+        npgsqlOptions.MapEnum<PoStatus>("po_status", nameTranslator: SnakeCase);
     }
 
     /// <summary>Explicit member->label map (not a casing rule) — GradeType.AB is the only member

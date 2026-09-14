@@ -21,7 +21,8 @@ public sealed record SellerDealDto(
     DateTimeOffset? ConfirmedAt, DateTimeOffset? PaidAt, DateTimeOffset? InFulfillmentAt, DateTimeOffset? DispatchedAt,
     DateTimeOffset? DeliveredAt, DateTimeOffset? SettledAt, DateTimeOffset? CancelledAt,
     string? TrackingNumber, string? TrackingUrl, string? Courier,
-    string ItemName, GradeType Grade, string DestinationCountry, string? ShippingMode, DateTimeOffset CreatedAt);
+    string ItemName, GradeType Grade, string DestinationCountry, string? ShippingMode, DateTimeOffset CreatedAt,
+    DateTimeOffset? SellerMarkedReadyAt, DateTimeOffset? FulfillmentDueAt);
 
 public sealed class GetSellerDealsQueryHandler : IQueryHandler<GetSellerDealsQuery, ErrorOr<List<SellerDealDto>>>
 {
@@ -65,11 +66,16 @@ public sealed class GetSellerDealsQueryHandler : IQueryHandler<GetSellerDealsQue
             var totalPayout = alloc?.TotalPayoutUsd ?? d.TotalSellerPayoutUsd;
             var feePerPc = alloc?.FeePerPcAppliedUsd ?? 0.70m;
 
+            var fulfillmentDueAt = d.PaidAt is not null && x.Requirement.DeliveryTimelineDays is not null
+                ? d.PaidAt.Value.AddDays(x.Requirement.DeliveryTimelineDays.Value)
+                : (DateTimeOffset?)null;
+
             return new SellerDealDto(
                 d.Id, d.DealNumber, d.Status, qty, pricePerPc, totalPayout, feePerPc, alloc?.PayoutPaidAt,
                 d.ConfirmedAt, d.PaidAt, d.InFulfillmentAt, d.DispatchedAt, d.DeliveredAt, d.SettledAt, d.CancelledAt,
                 d.TrackingNumber, d.TrackingUrl, d.Courier,
-                x.Requirement.ItemName, x.Requirement.Grade, x.Requirement.DestinationCountry, x.Requirement.ShippingMode, d.CreatedAt);
+                x.Requirement.ItemName, x.Requirement.Grade, x.Requirement.DestinationCountry, x.Requirement.ShippingMode, d.CreatedAt,
+                d.SellerMarkedReadyAt, fulfillmentDueAt);
         }).ToList();
 
         return result;

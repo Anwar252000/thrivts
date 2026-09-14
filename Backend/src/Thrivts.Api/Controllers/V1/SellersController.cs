@@ -1,6 +1,7 @@
 using Mediator;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Thrivts.Application.PurchaseOrders;
 using Thrivts.Application.Sellers;
 
 namespace Thrivts.Api.Controllers.V1;
@@ -84,6 +85,20 @@ public class SellersController : ApiControllerBase
     {
         var result = await Mediator.Send(new GetSellerDealsQuery(), cancellationToken);
         return ToResponse(result);
+    }
+
+    [HttpGet("deals/{dealId:guid}/purchase-order")]
+    public async Task<IActionResult> GetPurchaseOrder(Guid dealId, CancellationToken cancellationToken)
+    {
+        var result = await Mediator.Send(new GetPurchaseOrderByDealIdQuery(dealId), cancellationToken);
+        return ToResponse(result);
+    }
+
+    [HttpPost("deals/{dealId:guid}/mark-ready")]
+    public async Task<IActionResult> MarkOrderReady(Guid dealId, CancellationToken cancellationToken)
+    {
+        var result = await Mediator.Send(new MarkOrderReadyCommand(dealId), cancellationToken);
+        return ToNoContentResponse(result);
     }
 }
 

@@ -1,8 +1,8 @@
-import { PageTransition, Badge, Spinner } from '@/components/ui'
+import { PageTransition, Badge, Button, Spinner } from '@/components/ui'
 import { EmptyState } from '@/components/admin'
 import { statusTone, humanizeStatus } from '@/features/admin/statusTone'
 import { formatDate, formatUsd } from '@/lib/utils'
-import { useGetMyDealsQuery } from '@/features/seller/sellerApi'
+import { useGetMyDealsQuery, useMarkOrderReadyMutation } from '@/features/seller/sellerApi'
 import type { SellerDeal } from '@/features/seller/sellerTypes'
 
 const STAGES: { key: SellerDeal['status']; label: string; ts: (d: SellerDeal) => string | null }[] = [
@@ -87,6 +87,8 @@ function DealRow({ deal }: { deal: SellerDeal }) {
         </div>
       </div>
 
+      {(deal.status === 'Paid' || deal.status === 'InFulfillment') && <FulfillmentBlock deal={deal} />}
+
       {deal.trackingNumber && (
         <div className="mt-2 rounded-[var(--radius-sm)] bg-[var(--color-sage-mist)] p-2.5 text-sm">
           <strong>Shipping:</strong> {deal.courier} · {deal.trackingNumber}
@@ -98,6 +100,45 @@ function DealRow({ deal }: { deal: SellerDeal }) {
           )}
         </div>
       )}
+    </div>
+  )
+}
+
+/** Mirrors seller.html's renderSellerFulfillment(): a payment-received countdown to
+ * fulfillmentDueAt (paid_at + the requirement's delivery_timeline_days) with a "mark order ready"
+ * action, replaced by a static banner once the seller has marked it. */
+function FulfillmentBlock({ deal }: { deal: SellerDeal }) {
+  const [markReady, { isLoading }] = useMarkOrderReadyMutation()
+
+  if (deal.sellerMarkedReadyAt) {
+    return (
+      <div className="mt-3 rounded-[var(--radius-sm)] bg-[var(--color-success-soft)] px-3 py-2 text-sm text-[var(--color-success)]">
+        ✓ Order marked ready — {formatDate(deal.sellerMarkedReadyAt)}
+      </div>
+    )
+  }
+
+  const dueAt = deal.fulfillmentDueAt ? new Date(deal.fulfillmentDueAt) : null
+  const hoursLeft = dueAt ? (dueAt.getTime() - new Date().getTime()) / 3_600_000 : null
+  const overdue = hoursLeft !== null && hoursLeft < 0
+  const urgent = hoursLeft !== null && hoursLeft >= 0 && hoursLeft < 24
+
+  const tone = overdue ? 'bg-[var(--color-danger-soft)] text-[var(--color-danger)]'
+    : urgent ? 'bg-[var(--color-warning-soft)] text-[var(--color-warning)]'
+    : 'bg-[var(--color-sage-mist)] text-[var(--color-ink-soft)]'
+
+  return (
+    <div className={`mt-3 flex flex-wrap items-center justify-between gap-2 rounded-[var(--radius-sm)] px-3 py-2 text-sm ${tone}`}>
+      <span>
+        {dueAt
+          ? overdue
+            ? `Overdue — was due ${formatDate(deal.fulfillmentDueAt)}`
+            : `Due by ${formatDate(deal.fulfillmentDueAt)}`
+          : 'Prepare for dispatch'}
+      </span>
+      <Button size="sm" onClick={() => markReady(deal.dealId)} disabled={isLoading}>
+        {isLoading ? 'Marking…' : 'Mark order ready for dispatch'}
+      </Button>
     </div>
   )
 }

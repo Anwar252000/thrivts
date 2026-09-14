@@ -59,10 +59,15 @@ export const sellerApi = createApi({
       query: (offerIds) => ({ url: '/api/v1/sellers/offers/mark-viewed', method: 'POST', body: { offerIds } }),
       invalidatesTags: ['Offer'],
     }),
+    markOrderReady: builder.mutation<void, string>({
+      query: (dealId) => ({ url: `/api/v1/sellers/deals/${dealId}/mark-ready`, method: 'POST' }),
+      invalidatesTags: ['Deal', 'Dashboard'],
+    }),
   }),
 })
 
 export const {
   useGetMyProfileQuery, useGetDashboardQuery, useGetOpenRequirementsQuery, useGetMyQuotesQuery, useSubmitQuoteMutation,
   useRespondToBuyerCounterMutation, useGetOffersQuery, useRespondToOfferMutation, useGetMyDealsQuery, useMarkOffersViewedMutation,
+  useMarkOrderReadyMutation,
 } = sellerApi

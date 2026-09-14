@@ -35,7 +35,10 @@ public sealed class RegisterSellerCommandHandler : ICommandHandler<RegisterSelle
             ["years_in_business"] = command.YearsInBusiness,
             ["monthly_volume_capacity_pcs"] = command.MonthlyVolumeCapacityPcs,
             ["categories_supplied"] = command.CategoriesSupplied,
-            ["language_pref"] = command.Language.ToString(),
+            // Lowercase: the live language_pref enum only has 'en'/'fr' — see RegisterBuyerCommandHandler's
+            // identical fix for why this matters (the handover blames this exact casing, plus the
+            // seller form's old 'ur', for silently breaking the legacy signup trigger).
+            ["language_pref"] = command.Language.ToString().ToLowerInvariant(),
         };
 
         try

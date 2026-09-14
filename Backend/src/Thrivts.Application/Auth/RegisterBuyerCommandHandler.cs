@@ -27,7 +27,10 @@ public sealed class RegisterBuyerCommandHandler : ICommandHandler<RegisterBuyerC
             ["full_name"] = command.FullName,
             ["phone"] = command.Phone,
             ["whatsapp"] = command.WhatsApp,
-            ["language_pref"] = command.Language.ToString(),
+            // Lowercase: the live language_pref enum only has 'en'/'fr' — sending the C# enum's
+            // PascalCase ToString() ("En"/"Fr") is the exact capitalization the handover docs blame
+            // for silently breaking the legacy signup trigger.
+            ["language_pref"] = command.Language.ToString().ToLowerInvariant(),
             ["company_name"] = command.CompanyName,
             ["website"] = command.Website,
             ["country"] = command.Country,

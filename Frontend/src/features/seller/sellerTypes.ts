@@ -1,6 +1,6 @@
-import type { SellerTier, GradeType, RequirementStatus, DealStatus, BidStatus, OfferStatus, NegotiationActor } from '@/features/admin/adminTypes'
+import type { SellerTier, GradeType, RequirementStatus, DealStatus, BidStatus, OfferStatus, NegotiationActor, PoStatus, PurchaseOrder } from '@/features/admin/adminTypes'
 
-export type { SellerTier, GradeType, RequirementStatus, DealStatus, BidStatus, OfferStatus, NegotiationActor }
+export type { SellerTier, GradeType, RequirementStatus, DealStatus, BidStatus, OfferStatus, NegotiationActor, PoStatus, PurchaseOrder }
 export type NegotiationState = 'Open' | 'CounteredByBuyer' | 'CounteredBySeller' | 'Accepted' | 'Declined'
 
 export interface SellerProfile {
@@ -112,4 +112,6 @@ export interface SellerDeal {
   destinationCountry: string
   shippingMode: string | null
   createdAt: string
+  sellerMarkedReadyAt: string | null
+  fulfillmentDueAt: string | null
 }

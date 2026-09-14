@@ -23,6 +23,7 @@ public class ThrivtsDbContext : DbContext, IApplicationDbContext
     public DbSet<OfferRound> OfferRounds => Set<OfferRound>();
     public DbSet<Deal> Deals => Set<Deal>();
     public DbSet<DealAllocation> DealAllocations => Set<DealAllocation>();
+    public DbSet<PurchaseOrder> PurchaseOrders => Set<PurchaseOrder>();
     public DbSet<Commission> Commissions => Set<Commission>();
     public DbSet<InfluencerCommission> InfluencerCommissions => Set<InfluencerCommission>();
     public DbSet<Dispute> Disputes => Set<Dispute>();

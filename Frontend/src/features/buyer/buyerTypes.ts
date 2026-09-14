@@ -1,6 +1,6 @@
-import type { SellerTier, GradeType, CurrencyType, RequirementStatus, DealStatus, BidStatus, Category } from '@/features/admin/adminTypes'
+import type { SellerTier, GradeType, CurrencyType, RequirementStatus, DealStatus, BidStatus, Category, PoStatus, PurchaseOrder } from '@/features/admin/adminTypes'
 
-export type { Category, SellerTier, GradeType, CurrencyType, RequirementStatus, DealStatus, BidStatus }
+export type { Category, SellerTier, GradeType, CurrencyType, RequirementStatus, DealStatus, BidStatus, PoStatus, PurchaseOrder }
 export type NegotiationState = 'Open' | 'CounteredByBuyer' | 'CounteredBySeller' | 'Accepted' | 'Declined'
 export type LanguagePref = 'En' | 'Fr'
 
@@ -83,6 +83,17 @@ export interface MyDealListItem {
   status: DealStatus
   hasDispute: boolean
   createdAt: string
+  confirmedAt: string | null
+  paidAt: string | null
+  inFulfillmentAt: string | null
+  dispatchedAt: string | null
+  deliveredAt: string | null
+  settledAt: string | null
+  cancelledAt: string | null
+  trackingNumber: string | null
+  trackingUrl: string | null
+  courier: string | null
+  fulfillmentDueAt: string | null
 }
 
 export interface MyMessageThread {

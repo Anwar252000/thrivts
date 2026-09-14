@@ -5,7 +5,7 @@ import type {
   RequirementListItem, RequirementDetail, AdminBidBoardRow, DealListItem, DealDetail, DealAllocation, CommissionListItem,
   PlatformFeeRevenueMonth, DisputeListItem, MessageThreadListItem, AdminMessage, PendingApproval,
   AuditLogEntry, Category, ShippingRate, ExchangeRate, InfluencerListItem, PartnerApplication,
-  PlatformFeeConfig, OfferListItem, OfferRound, DashboardStats, NotificationItem,
+  PlatformFeeConfig, OfferListItem, OfferRound, DashboardStats, NotificationItem, PurchaseOrder,
   ProfileApprovalAction, UserRoleEnum, SellerTier, GradeType, CurrencyType,
   RequirementStatus, DealStatus, CommissionStatus, DisputeStatus, OfferStatus,
 } from './adminTypes'
@@ -26,6 +26,7 @@ export const adminApi = createApi({
     'User', 'Buyer', 'Seller', 'Agency', 'Requirement', 'BidBoard', 'Deal', 'DealAllocation', 'Commission',
     'Dispute', 'MessageThread', 'Message', 'Approval', 'Audit', 'Category', 'ShippingRate',
     'ExchangeRate', 'Influencer', 'PartnerApplication', 'FeeConfig', 'Offer', 'OfferRound', 'Dashboard', 'Notification',
+    'PurchaseOrder',
   ],
   endpoints: (builder) => ({
     // ---- Dashboard ----
@@ -254,6 +255,26 @@ export const adminApi = createApi({
       query: (dealId) => `/api/v1/admin/deals/${dealId}/allocations`,
       providesTags: (_r, _e, dealId) => [{ type: 'DealAllocation', id: dealId }],
     }),
+    getPurchaseOrder: builder.query<PurchaseOrder | null, string>({
+      query: (dealId) => `/api/v1/admin/deals/${dealId}/purchase-order`,
+      providesTags: (_r, _e, dealId) => [{ type: 'PurchaseOrder', id: dealId }],
+    }),
+    issuePurchaseOrder: builder.mutation<{ id: string }, { dealId: string; dueDays?: number }>({
+      query: ({ dealId, dueDays }) => ({ url: `/api/v1/admin/deals/${dealId}/purchase-order/issue`, method: 'POST', body: { dueDays } }),
+      invalidatesTags: (_r, _e, { dealId }) => [{ type: 'PurchaseOrder', id: dealId }, { type: 'Deal', id: dealId }],
+    }),
+    adminMarkPoPaid: builder.mutation<void, string>({
+      query: (dealId) => ({ url: `/api/v1/admin/deals/${dealId}/purchase-order/mark-paid`, method: 'POST' }),
+      invalidatesTags: (_r, _e, dealId) => [{ type: 'PurchaseOrder', id: dealId }, { type: 'Deal', id: dealId }],
+    }),
+    verifyPurchaseOrder: builder.mutation<void, string>({
+      query: (dealId) => ({ url: `/api/v1/admin/deals/${dealId}/purchase-order/verify`, method: 'POST' }),
+      invalidatesTags: (_r, _e, dealId) => [{ type: 'PurchaseOrder', id: dealId }, { type: 'Deal', id: dealId }],
+    }),
+    addPaymentLink: builder.mutation<void, { dealId: string; link: string }>({
+      query: ({ dealId, link }) => ({ url: `/api/v1/admin/deals/${dealId}/purchase-order/payment-link`, method: 'POST', body: { link } }),
+      invalidatesTags: (_r, _e, { dealId }) => [{ type: 'PurchaseOrder', id: dealId }],
+    }),
     acceptSellerResponse: builder.mutation<{ dealId: string }, string>({
       query: (sellerResponseId) => ({ url: `/api/v1/admin/seller-responses/${sellerResponseId}/accept`, method: 'POST' }),
       invalidatesTags: [{ type: 'Deal', id: 'LIST' }, { type: 'Requirement', id: 'LIST' }, 'BidBoard', 'Dashboard'],
@@ -430,6 +451,7 @@ export const {
   useGetDealsQuery, useGetDealByIdQuery, useCreateDealFromMatchMutation, useAdvanceDealStatusMutation,
   useRecordDealPaymentMutation, useSetDealShippingMutation, useSetDealTrackingMutation, useCancelDealMutation,
   useGetDealAllocationsQuery, useAcceptSellerResponseMutation,
+  useGetPurchaseOrderQuery, useIssuePurchaseOrderMutation, useAdminMarkPoPaidMutation, useVerifyPurchaseOrderMutation, useAddPaymentLinkMutation,
   useGetCommissionsQuery, useGetFeeRevenueQuery,
   useGetDisputesQuery, useBeginDisputeInvestigationMutation, useResolveDisputeMutation, useRejectDisputeMutation,
   useGetMessageThreadsQuery, useGetThreadMessagesQuery, useSendAdminMessageMutation, useMarkThreadReadMutation,

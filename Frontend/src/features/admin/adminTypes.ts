@@ -24,6 +24,25 @@ export type OfferStatus = 'Sent' | 'Viewed' | 'Accepted' | 'Declined' | 'Counter
 export type MessageSenderType = 'Admin' | 'Buyer' | 'Seller' | 'Agency'
 export type NegotiationActor = 'Buyer' | 'Seller' | 'Admin'
 export type NotificationChannel = 'Email' | 'Whatsapp' | 'InApp'
+export type PoStatus = 'Issued' | 'PaymentSubmitted' | 'Verified' | 'Expired' | 'Cancelled'
+
+export interface PurchaseOrder {
+  id: string
+  dealId: string
+  poNumber: string
+  status: PoStatus
+  amountUsd: number
+  currency: string
+  dueAt: string
+  paymentMethod: string | null
+  paymentLinkUrl: string | null
+  linkRequestedAt: string | null
+  receiptUrl: string | null
+  paidMarkedAt: string | null
+  verifiedAt: string | null
+  notes: string | null
+  createdAt: string
+}
 
 export interface PagedResult<T> {
   items: T[]
