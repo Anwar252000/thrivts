@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { Trash2 } from 'lucide-react'
 import { Modal, ConfirmDialog } from '@/components/admin'
 import { Badge, Button, Input, Spinner } from '@/components/ui'
@@ -133,10 +134,19 @@ function BidBoard({ requirementId }: { requirementId: string }) {
   )
 }
 
+/** Mirrors buyer.html's acceptBid()/openNewestDealForRequirement(): jump straight to the new
+ * deal's PO panel so the buyer can pay right away, instead of leaving them on the requirement. */
 function AcceptButton({ bidId, requirementId }: { bidId: string; requirementId: string }) {
   const [acceptBid, { isLoading }] = useAcceptBidMutation()
+  const navigate = useNavigate()
+
+  const handleAccept = async () => {
+    const result = await acceptBid({ bidId, requirementId })
+    if ('data' in result && result.data) navigate('/buyer/deals', { state: { openDealId: result.data } })
+  }
+
   return (
-    <Button size="sm" disabled={isLoading} onClick={() => acceptBid({ bidId, requirementId })}>
+    <Button size="sm" disabled={isLoading} onClick={handleAccept}>
       {isLoading ? 'Accepting…' : 'Accept'}
     </Button>
   )

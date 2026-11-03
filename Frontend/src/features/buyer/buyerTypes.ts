@@ -93,7 +93,11 @@ export interface MyDealListItem {
   trackingNumber: string | null
   trackingUrl: string | null
   courier: string | null
+  vesselName: string | null
+  containerNumber: string | null
+  estimatedArrivalDate: string | null
   fulfillmentDueAt: string | null
+  deliveryTimelineDays: number | null
 }
 
 export interface MyMessageThread {

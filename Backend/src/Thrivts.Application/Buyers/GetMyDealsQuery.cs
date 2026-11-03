@@ -18,7 +18,8 @@ public sealed record MyDealListItemDto(
     string? ShippingMode, int TotalQuantityPcs, decimal TotalInvoiceUsd, DealStatus Status, bool HasDispute, DateTimeOffset CreatedAt,
     DateTimeOffset? ConfirmedAt, DateTimeOffset? PaidAt, DateTimeOffset? InFulfillmentAt, DateTimeOffset? DispatchedAt,
     DateTimeOffset? DeliveredAt, DateTimeOffset? SettledAt, DateTimeOffset? CancelledAt,
-    string? TrackingNumber, string? TrackingUrl, string? Courier, DateTimeOffset? FulfillmentDueAt);
+    string? TrackingNumber, string? TrackingUrl, string? Courier, string? VesselName, string? ContainerNumber,
+    DateOnly? EstimatedArrivalDate, DateTimeOffset? FulfillmentDueAt, int? DeliveryTimelineDays);
 
 public sealed class GetMyDealsQueryHandler : IQueryHandler<GetMyDealsQuery, ErrorOr<List<MyDealListItemDto>>>
 {
@@ -45,8 +46,9 @@ public sealed class GetMyDealsQueryHandler : IQueryHandler<GetMyDealsQuery, Erro
                 d.Id, d.DealNumber, r.RequirementNumber, r.ItemName, r.Grade, r.DestinationCountry, r.ShippingMode,
                 d.TotalQuantityPcs, d.TotalInvoiceUsd, d.Status, d.HasDispute, d.CreatedAt,
                 d.ConfirmedAt, d.PaidAt, d.InFulfillmentAt, d.DispatchedAt, d.DeliveredAt, d.SettledAt, d.CancelledAt,
-                d.TrackingNumber, d.TrackingUrl, d.Courier,
-                d.PaidAt != null && r.DeliveryTimelineDays != null ? d.PaidAt.Value.AddDays(r.DeliveryTimelineDays.Value) : (DateTimeOffset?)null))
+                d.TrackingNumber, d.TrackingUrl, d.Courier, d.VesselName, d.ContainerNumber, d.EstimatedArrivalDate,
+                d.PaidAt != null && r.DeliveryTimelineDays != null ? d.PaidAt.Value.AddDays(r.DeliveryTimelineDays.Value) : (DateTimeOffset?)null,
+                r.DeliveryTimelineDays))
             .ToListAsync(cancellationToken);
 
         return result;

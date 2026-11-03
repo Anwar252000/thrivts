@@ -45,6 +45,13 @@ public class AdminPurchaseOrdersController : AdminControllerBase
         var result = await Mediator.Send(new AddPaymentLinkCommand(dealId, request.Link), cancellationToken);
         return ToNoContentResponse(result);
     }
+
+    [HttpGet("receipt-url")]
+    public async Task<IActionResult> GetReceiptUrl(Guid dealId, CancellationToken cancellationToken)
+    {
+        var result = await Mediator.Send(new GetReceiptSignedUrlQuery(dealId), cancellationToken);
+        return ToResponse(result, url => Ok(new { url }));
+    }
 }
 
 public record IssuePurchaseOrderRequest(int? DueDays);

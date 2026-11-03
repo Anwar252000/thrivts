@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.HttpOverrides;
 using Scalar.AspNetCore;
 using Serilog;
 using Thrivts.Api.ExceptionHandlers;
@@ -59,6 +60,19 @@ if (app.Environment.IsDevelopment())
 // plain HTTP to sidestep the local self-signed-cert trust dance.
 if (!app.Environment.IsDevelopment())
 {
+    // Render (like Heroku/Fly/any PaaS) terminates TLS at its own edge and forwards plain HTTP
+    // to this container, setting X-Forwarded-Proto: https on the way in. Without this,
+    // UseHttpsRedirection() sees an "http" request and 307s it to https — which Render's edge
+    // then forwards right back here as http again, an infinite redirect loop. KnownNetworks/
+    // KnownProxies are cleared because the proxy's IP isn't a fixed address we can whitelist.
+    var forwardedHeadersOptions = new ForwardedHeadersOptions
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
+    };
+    forwardedHeadersOptions.KnownNetworks.Clear();
+    forwardedHeadersOptions.KnownProxies.Clear();
+    app.UseForwardedHeaders(forwardedHeadersOptions);
+
     app.UseHttpsRedirection();
     app.UseHsts();
 }

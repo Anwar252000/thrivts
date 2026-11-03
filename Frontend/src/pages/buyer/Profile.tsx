@@ -51,6 +51,7 @@ export function BuyerProfile() {
                 <Row label="City" value={profile.city ?? '—'} />
                 <Row label="Instagram" value={profile.instagram ?? '—'} />
                 <Row label="Monthly volume" value={profile.estimatedMonthlyVolumePcs ? `${profile.estimatedMonthlyVolumePcs.toLocaleString()} pcs` : '—'} />
+                <Row label="Buys" value={profile.typicalRequirementType ?? '—'} />
                 <Row
                   label="Support"
                   value={
@@ -62,7 +63,14 @@ export function BuyerProfile() {
               </tbody>
             </table>
 
-            <div className="mt-4 flex justify-end border-t border-[var(--color-line)] pt-4">
+            <div className="mt-4 flex flex-wrap justify-end gap-2 border-t border-[var(--color-line)] pt-4">
+              <a
+                href={`https://wa.me/447988595541?text=${encodeURIComponent(`Hi Thrivts, I'd like to request a change to my profile (${profile.companyName}).`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Button size="sm" variant="outline" type="button">Request a change</Button>
+              </a>
               <Button size="sm" variant="outline" onClick={handleSignOut}>
                 <LogOut size={14} /> Sign out
               </Button>

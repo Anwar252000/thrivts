@@ -45,6 +45,15 @@ public sealed class SubmitOrReviseQuoteCommandHandler : ICommandHandler<SubmitOr
         var existing = await _db.SellerResponses
             .FirstOrDefaultAsync(sr => sr.RequirementId == command.RequirementId && sr.SellerId == sellerId, cancellationToken);
 
+        // Mirrors seller.html's submitQuote() client-side guards (seller.html:2103-2108), re-enforced
+        // server-side since neither check previously existed in the API.
+        if (command.AvailableQuantityPcs > requirement.QuantityPcs)
+            return Error.Validation(description: $"Quantity can't exceed the requirement ({requirement.QuantityPcs:N0} pcs).");
+
+        var feePerPc = await ResolveFeePerPcAsync(sellerId, cancellationToken);
+        if (command.PricePerPcUsd <= feePerPc)
+            return Error.Validation(description: $"Price must be above ${feePerPc:0.00}/pc (the platform fee) so your net stays positive.");
+
         try
         {
             if (existing is not null)
@@ -64,7 +73,6 @@ public sealed class SubmitOrReviseQuoteCommandHandler : ICommandHandler<SubmitOr
                 return existing.Id;
             }
 
-            var feePerPc = await ResolveFeePerPcAsync(sellerId, cancellationToken);
             var bid = new SellerResponse(command.RequirementId, sellerId, command.AvailableQuantityPcs, command.PricePerPcUsd, feePerPc, command.SellerNotes);
             _db.SellerResponses.Add(bid);
             await _db.SaveChangesAsync(cancellationToken);

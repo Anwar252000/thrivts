@@ -9,6 +9,7 @@ import {
   useGetDealByIdQuery, useAdvanceDealStatusMutation, useRecordDealPaymentMutation,
   useSetDealShippingMutation, useSetDealTrackingMutation, useCancelDealMutation, useGetDealAllocationsQuery,
   useGetPurchaseOrderQuery, useIssuePurchaseOrderMutation, useAdminMarkPoPaidMutation, useVerifyPurchaseOrderMutation, useAddPaymentLinkMutation,
+  useGetReceiptUrlMutation,
 } from '@/features/admin/adminApi'
 import type { DealAllocation, DealStatus } from '@/features/admin/adminTypes'
 
@@ -193,6 +194,7 @@ function PurchaseOrderSection({ dealId, dealStatus }: { dealId: string; dealStat
   const [markPaid, markPaidState] = useAdminMarkPoPaidMutation()
   const [verify, verifyState] = useVerifyPurchaseOrderMutation()
   const [addLink, addLinkState] = useAddPaymentLinkMutation()
+  const [getReceiptUrl, receiptUrlState] = useGetReceiptUrlMutation()
   const [linkInput, setLinkInput] = useState('')
 
   if (isLoading) return null
@@ -209,6 +211,14 @@ function PurchaseOrderSection({ dealId, dealStatus }: { dealId: string; dealStat
   }
 
   const canMarkPaid = po.status === 'Issued' || po.status === 'PaymentSubmitted'
+  // Mirrors admin.html: the "Add payment link" input only shows once the buyer has actually
+  // requested one, and hides again once a link is on file (admin.html:4012).
+  const showLinkInput = po.status === 'Issued' && !!po.linkRequestedAt && !po.paymentLinkUrl
+
+  const viewReceipt = async () => {
+    const result = await getReceiptUrl(dealId)
+    if ('data' in result && result.data) window.open(result.data.url, '_blank', 'noopener')
+  }
 
   return (
     <div className="border-t border-[var(--color-line)] pt-5">
@@ -219,8 +229,25 @@ function PurchaseOrderSection({ dealId, dealStatus }: { dealId: string; dealStat
       <div className="mb-3 grid grid-cols-3 gap-3 text-sm">
         <Field label="Amount" value={formatUsd(po.amountUsd)} />
         <Field label="Due" value={formatDate(po.dueAt)} />
-        <Field label="Receipt" value={po.receiptUrl ?? '—'} />
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Receipt</p>
+          {po.receiptUrl ? (
+            <button
+              type="button"
+              className="mt-0.5 font-medium text-[var(--color-accent)] underline disabled:opacity-60"
+              onClick={viewReceipt}
+              disabled={receiptUrlState.isLoading}
+            >
+              {receiptUrlState.isLoading ? 'Loading…' : 'View receipt ↗'}
+            </button>
+          ) : (
+            <p className="mt-0.5 font-medium">—</p>
+          )}
+        </div>
       </div>
+      {po.status === 'Issued' && po.linkRequestedAt && !po.paymentLinkUrl && (
+        <p className="mb-2 text-xs text-[var(--color-warning)]">Buyer requested a payment link — add one below.</p>
+      )}
       <div className="flex flex-wrap items-center gap-2">
         {canMarkPaid && (
           <Button size="sm" onClick={() => markPaid(dealId)} disabled={markPaidState.isLoading}>
@@ -232,7 +259,7 @@ function PurchaseOrderSection({ dealId, dealStatus }: { dealId: string; dealStat
             {verifyState.isLoading ? 'Verifying…' : 'Verify payment'}
           </Button>
         )}
-        {po.status === 'Issued' && (
+        {showLinkInput && (
           <div className="flex items-center gap-2">
             <Input placeholder="Payment link URL" value={linkInput} onChange={(e) => setLinkInput(e.target.value)} className="w-56" />
             <Button

@@ -275,6 +275,9 @@ export const adminApi = createApi({
       query: ({ dealId, link }) => ({ url: `/api/v1/admin/deals/${dealId}/purchase-order/payment-link`, method: 'POST', body: { link } }),
       invalidatesTags: (_r, _e, { dealId }) => [{ type: 'PurchaseOrder', id: dealId }],
     }),
+    getReceiptUrl: builder.mutation<{ url: string }, string>({
+      query: (dealId) => `/api/v1/admin/deals/${dealId}/purchase-order/receipt-url`,
+    }),
     acceptSellerResponse: builder.mutation<{ dealId: string }, string>({
       query: (sellerResponseId) => ({ url: `/api/v1/admin/seller-responses/${sellerResponseId}/accept`, method: 'POST' }),
       invalidatesTags: [{ type: 'Deal', id: 'LIST' }, { type: 'Requirement', id: 'LIST' }, 'BidBoard', 'Dashboard'],
@@ -452,6 +455,7 @@ export const {
   useRecordDealPaymentMutation, useSetDealShippingMutation, useSetDealTrackingMutation, useCancelDealMutation,
   useGetDealAllocationsQuery, useAcceptSellerResponseMutation,
   useGetPurchaseOrderQuery, useIssuePurchaseOrderMutation, useAdminMarkPoPaidMutation, useVerifyPurchaseOrderMutation, useAddPaymentLinkMutation,
+  useGetReceiptUrlMutation,
   useGetCommissionsQuery, useGetFeeRevenueQuery,
   useGetDisputesQuery, useBeginDisputeInvestigationMutation, useResolveDisputeMutation, useRejectDisputeMutation,
   useGetMessageThreadsQuery, useGetThreadMessagesQuery, useSendAdminMessageMutation, useMarkThreadReadMutation,

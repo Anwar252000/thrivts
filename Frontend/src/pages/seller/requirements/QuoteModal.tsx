@@ -51,7 +51,8 @@ function QuoteForm({ requirement, existing, onClose }: { requirement: OpenRequir
 
   const handleSubmit = async () => {
     if (!(qtyNum >= 1)) { setError('Quantity must be at least 1.'); return }
-    if (!(priceNum > 0)) { setError('Enter a valid price.'); return }
+    if (qtyNum > requirement.quantityPcs) { setError(`Quantity can't exceed the requirement (${requirement.quantityPcs.toLocaleString()} pcs).`); return }
+    if (!(priceNum > FEE_PER_PC_USD)) { setError(`Price must be above ${formatUsd(FEE_PER_PC_USD)}/pc (the platform fee) so your net stays positive.`); return }
     setError(null)
     try {
       await submitQuote({ requirementId: requirement.id, availableQuantityPcs: qtyNum, pricePerPcUsd: priceNum, sellerNotes: notes || undefined }).unwrap()

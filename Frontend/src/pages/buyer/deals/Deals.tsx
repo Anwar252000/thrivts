@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { PageTransition, Badge, Select } from '@/components/ui'
 import { DataTable, SearchField, type Column } from '@/components/admin'
 import { statusTone, humanizeStatus } from '@/features/admin/statusTone'
@@ -10,9 +11,10 @@ import { DealDetailModal } from './DealDetailModal'
 const STATUS_OPTIONS: DealStatus[] = ['Confirmed', 'AwaitingPayment', 'Paid', 'InFulfillment', 'Dispatched', 'Delivered', 'Settled']
 
 export function BuyerDeals() {
+  const location = useLocation()
   const [search, setSearch] = useState('')
   const [status, setStatus] = useState<DealStatus | ''>('')
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selected, setSelected] = useState<string | null>((location.state as { openDealId?: string } | null)?.openDealId ?? null)
   const { data, isLoading } = useGetMyDealsQuery()
 
   const rows = (data ?? [])

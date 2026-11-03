@@ -85,12 +85,16 @@ export function AgencyDetailModal({ agencyId, onClose }: AgencyDetailModalProps)
           </form>
 
           <div className="flex flex-wrap gap-2 border-t border-[var(--color-line)] pt-5">
-            <Button size="sm" onClick={() => setApproval({ agencyId, action: 'Approve' })}>
-              <Check size={14} /> Approve
-            </Button>
-            <Button size="sm" variant="outline" onClick={() => setRejecting(true)}>
-              <X size={14} /> Reject
-            </Button>
+            {agency.approvalStatus === 'Pending' && (
+              <>
+                <Button size="sm" onClick={() => setApproval({ agencyId, action: 'Approve' })}>
+                  <Check size={14} /> Approve
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setRejecting(true)}>
+                  <X size={14} /> Reject
+                </Button>
+              </>
+            )}
             {agency.isActive ? (
               <Button size="sm" variant="outline" onClick={() => setApproval({ agencyId, action: 'Block' })}>
                 <ShieldOff size={14} /> Block

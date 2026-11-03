@@ -1,0 +1,31 @@
+services:
+  - type: web
+    name: thrivts-api
+    runtime: docker
+    plan: free
+    region: frankfurt
+    rootDir: Backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      # Everything below is a secret or environment-specific value — Render will prompt
+      # for each on first deploy (sync: false means "don't store this in git").
+      - key: ConnectionStrings__Default
+        sync: false
+      - key: Supabase__Url
+        sync: false
+      - key: Supabase__AnonKey
+        sync: false
+      - key: Supabase__ServiceRoleKey
+        sync: false
+      - key: Resend__ApiKey
+        sync: false
+      - key: Resend__FromAddress
+        sync: false
+      - key: App__FrontendBaseUrl
+        sync: false
+      - key: Cors__AllowedOrigins__0
+        sync: false

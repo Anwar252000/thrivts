@@ -7,6 +7,7 @@ import { Logo } from '@/components/marketing/Logo'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
 import { signOut } from '@/features/auth/authSlice'
 import { useGetMessageThreadsQuery, useGetMyProfileQuery, buyerApi } from '@/features/buyer/buyerApi'
+import { LiveActivityFeed } from '@/pages/landing/LiveActivityFeed'
 import { cn } from '@/lib/utils'
 
 const NAV_ITEMS = [
@@ -178,6 +179,10 @@ function PendingScreen() {
           </div>
         </div>
       )}
+      <div className="mt-6 w-full max-w-xl text-left">
+        <p className="mb-3 text-center text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-faint)]">Live activity on Thrivts</p>
+        <LiveActivityFeed emptyLabel="No recent activity to show yet." />
+      </div>
     </StatusShell>
   )
 }

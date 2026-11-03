@@ -12,7 +12,7 @@ public sealed record AgencyDetailDto(
     Guid Id, string Email, string AgencyName, string AgencyCode, string OwnerFullName, string Country, string? City,
     int? TeamSize, decimal CommissionRate, int TotalBuyersReferred, int TotalDealsClosed,
     decimal TotalCommissionEarnedUsd, decimal TotalCommissionPaidUsd, decimal TotalCommissionPendingUsd,
-    bool IsActive, string? Notes, DateTimeOffset CreatedAt);
+    ApprovalStatus ApprovalStatus, bool IsActive, string? Notes, DateTimeOffset CreatedAt);
 
 public sealed class GetAgencyByIdQueryHandler : IQueryHandler<GetAgencyByIdQuery, ErrorOr<AgencyDetailDto>>
 {
@@ -38,7 +38,7 @@ public sealed class GetAgencyByIdQueryHandler : IQueryHandler<GetAgencyByIdQuery
                     agency.Id, profile.Email, agency.AgencyName, agency.AgencyCode, agency.OwnerFullName, agency.Country, agency.City,
                     agency.TeamSize, agency.CommissionRate, agency.TotalBuyersReferred, agency.TotalDealsClosed,
                     agency.TotalCommissionEarnedUsd, agency.TotalCommissionPaidUsd, agency.TotalCommissionPendingUsd,
-                    agency.IsActive, agency.Notes, agency.CreatedAt))
+                    profile.ApprovalStatus, agency.IsActive, agency.Notes, agency.CreatedAt))
             .FirstOrDefaultAsync(cancellationToken);
 
         return result is null

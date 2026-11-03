@@ -182,6 +182,7 @@ export interface AgencyDetail {
   totalCommissionEarnedUsd: number
   totalCommissionPaidUsd: number
   totalCommissionPendingUsd: number
+  approvalStatus: ApprovalStatus
   isActive: boolean
   notes: string | null
   createdAt: string
