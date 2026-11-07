@@ -7,7 +7,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/Thrivts.Api.IntegrationTests/Thrivts.Api.IntegrationTests.csproj" />
-    <Project Path="tests/Thrivts.Application.UnitTests/Thrivts.Application.UnitTests.csproj" />
     <Project Path="tests/Thrivts.Domain.UnitTests/Thrivts.Domain.UnitTests.csproj" />
     <Project Path="tests/Thrivts.Infrastructure.IntegrationTests/Thrivts.Infrastructure.IntegrationTests.csproj" />
   </Folder>
