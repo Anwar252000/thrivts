@@ -23,11 +23,11 @@ public class ApiSmokeTests : IClassFixture<CustomWebApplicationFactory>
     }
 
     [Fact]
-    public async Task Admin_endpoint_rejects_an_anonymous_caller()
+    public async Task Authenticated_endpoint_rejects_an_anonymous_caller()
     {
         var client = _factory.CreateClient();
 
-        var response = await client.PostAsync($"/api/v1/admin/deals/{Guid.NewGuid()}/advance-status", content: null);
+        var response = await client.GetAsync("/api/v1/auth/me");
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }

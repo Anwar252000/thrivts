@@ -1,0 +1,45 @@
+services:
+  - type: web
+    name: thrivts-api
+    runtime: docker
+    plan: free
+    region: singapore
+    rootDir: Backend
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: Database__MigrateOnStartup
+        value: "true"
+      # Everything below is a secret or environment-specific value — Render prompts for each on
+      # first deploy (sync: false means "never stored in git").
+      - key: ConnectionStrings__Default
+        sync: false
+      # At least 32 random bytes, e.g. `openssl rand -base64 48`. Rotating it signs everyone out.
+      - key: Jwt__SigningKey
+        sync: false
+      # The two frontends live on separate domains; both must be listed.
+      - key: Cors__AllowedOrigins__0
+        sync: false
+      - key: Cors__AllowedOrigins__1
+        sync: false
+      # Buyers' order portal site(s). Add __1, __2… for more portals.
+      - key: Cors__PortalOrigins__0
+        sync: false
+      # VH Assistant (owner app). Leave empty to disable the assistant.
+      - key: Assistant__ApiKey
+        sync: false
+      # The first owner account, created only when the users table is empty. Everyone else is
+      # added from the owner app afterwards. Remove these after the first successful start.
+      - key: Bootstrap__Users__0__DisplayName
+        sync: false
+      - key: Bootstrap__Users__0__Title
+        value: Owner
+      - key: Bootstrap__Users__0__Role
+        value: Owner
+      - key: Bootstrap__Users__0__Color
+        value: "#5a8c3a"
+      - key: Bootstrap__Users__0__Pin
+        sync: false

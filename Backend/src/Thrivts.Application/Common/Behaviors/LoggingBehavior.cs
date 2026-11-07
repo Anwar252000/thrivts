@@ -1,36 +1,29 @@
+using System.Diagnostics;
 using Mediator;
 using Microsoft.Extensions.Logging;
-using Thrivts.Application.Common.Interfaces;
 
 namespace Thrivts.Application.Common.Behaviors;
 
-/// <summary>
-/// Structured log line for every Command/Query, tagged with the calling user. Admin/* commands
-/// are also picked up here as a cheap audit-trail companion (the real audit_log write happens in
-/// AuditLoggingBehavior for Admin commands specifically).
-/// </summary>
-public class LoggingBehavior<TMessage, TResponse> : IPipelineBehavior<TMessage, TResponse>
+/// <summary>Times every Command/Query. Payloads are never logged — they can carry PINs, tokens or
+/// prices. Anything slower than half a second is logged as a warning so slow queries surface
+/// before users complain.</summary>
+public sealed class LoggingBehavior<TMessage, TResponse>(ILogger<LoggingBehavior<TMessage, TResponse>> logger)
+    : IPipelineBehavior<TMessage, TResponse>
     where TMessage : IMessage
 {
-    private readonly ILogger<LoggingBehavior<TMessage, TResponse>> _logger;
-    private readonly ICurrentUserService _currentUser;
+    private const int SlowThresholdMs = 500;
 
-    public LoggingBehavior(ILogger<LoggingBehavior<TMessage, TResponse>> logger, ICurrentUserService currentUser)
+    public async ValueTask<TResponse> Handle(TMessage message, MessageHandlerDelegate<TMessage, TResponse> next, CancellationToken cancellationToken)
     {
-        _logger = logger;
-        _currentUser = currentUser;
-    }
+        var started = Stopwatch.GetTimestamp();
+        var response = await next(message, cancellationToken);
+        var elapsedMs = Stopwatch.GetElapsedTime(started).TotalMilliseconds;
 
-    public async ValueTask<TResponse> Handle(
-        TMessage message,
-        MessageHandlerDelegate<TMessage, TResponse> next,
-        CancellationToken cancellationToken)
-    {
-        _logger.LogInformation(
-            "Handling {MessageName} for user {UserId}",
-            typeof(TMessage).Name,
-            _currentUser.UserId);
+        if (elapsedMs > SlowThresholdMs)
+            logger.LogWarning("Slow request {MessageName} took {ElapsedMs:0} ms", typeof(TMessage).Name, elapsedMs);
+        else if (logger.IsEnabled(LogLevel.Debug))
+            logger.LogDebug("Handled {MessageName} in {ElapsedMs:0} ms", typeof(TMessage).Name, elapsedMs);
 
-        return await next(message, cancellationToken);
+        return response;
     }
 }

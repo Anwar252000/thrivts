@@ -1,18 +1,21 @@
-using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Anthropic;
 using Npgsql;
+using Thrivts.Application.Features.Owner;
+using Thrivts.Infrastructure.Assistant;
 using Thrivts.Application.Common.Interfaces;
-using Thrivts.Infrastructure.Auth;
-using Thrivts.Infrastructure.Configuration;
-using Thrivts.Infrastructure.Email;
+using Thrivts.Application.Common.Security;
+using Thrivts.Infrastructure.Common;
+using Thrivts.Infrastructure.Identity;
 using Thrivts.Infrastructure.Persistence;
-using Thrivts.Infrastructure.Services;
-using Thrivts.Infrastructure.Storage;
+using Thrivts.Infrastructure.Seeding;
 
 namespace Thrivts.Infrastructure;
 
@@ -20,91 +23,109 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        // Built exactly once and shared as a singleton. Passing a fresh NpgsqlDataSourceBuilder
-        // (or fresh MapEnum translator instances) into UseNpgsql on every DbContext construction
-        // makes EF Core treat each context's configuration as distinct, which forces a new
-        // internal service provider per DbContext and eventually throws
-        // ManyServiceProvidersCreatedWarning — see NpgsqlEnumMapping's doc comment.
-        services.AddSingleton(_ =>
-        {
-            var dataSourceBuilder = new NpgsqlDataSourceBuilder(configuration.GetConnectionString("Default"));
-            NpgsqlEnumMapping.ConfigureDataSource(dataSourceBuilder);
-            return dataSourceBuilder.Build();
-        });
+        var connectionString = configuration.GetConnectionString("Default")
+            ?? throw new InvalidOperationException("ConnectionStrings:Default is not configured.");
 
-        services.AddDbContext<ThrivtsDbContext>((sp, options) =>
-            options.UseNpgsql(
-                    sp.GetRequiredService<NpgsqlDataSource>(),
-                    npgsqlOptions =>
-                    {
-                        // Supavisor's transaction-mode pooler (port 6543) can hand a logical
-                        // "connection" a different physical backend per statement, so Npgsql's
-                        // automatic prepared-statement cache (keyed to one backend) goes stale and
-                        // surfaces as random stream-read timeouts — EnableRetryOnFailure absorbs
-                        // those transient blips instead of bubbling a 500 up to the caller.
-                        npgsqlOptions.EnableRetryOnFailure();
-
-                        // Registers every native-Postgres-enum-backed property with Npgsql's own
-                        // enum support so WHERE-clause parameters are sent pre-typed as the real
-                        // enum, not text — see NpgsqlEnumMapping's own comment for why this is
-                        // required (HasColumnType alone does not fix it).
-                        NpgsqlEnumMapping.ConfigureContextOptions(npgsqlOptions);
-                    })
-                   .UseSnakeCaseNamingConvention());
-
-        services.AddScoped<IApplicationDbContext>(sp => sp.GetRequiredService<ThrivtsDbContext>());
-
+        services.AddSingleton(TimeProvider.System);
+        services.AddSingleton<IClock, KarachiClock>();
         services.AddHttpContextAccessor();
-        services.AddScoped<ICurrentUserService, CurrentUserService>();
-        services.AddTransient<IClaimsTransformation, ProfileRoleClaimsTransformation>();
-        services.AddSingleton<IDateTimeProvider, DateTimeProvider>();
-        services.AddSingleton<IAppUrlProvider, AppUrlProvider>();
+        services.AddSingleton<ICurrentUser, CurrentUser>();
+        services.AddSingleton<AuditingInterceptor>();
 
-        services.Configure<ResendOptions>(configuration.GetSection(ResendOptions.SectionName));
-        services.AddHttpClient<IEmailSender, ResendEmailSender>()
-            .AddStandardResilienceHandler();
+        // One data source for the whole process: it owns the connection pool.
+        services.AddSingleton(_ => new NpgsqlDataSourceBuilder(connectionString).Build());
 
-        services.Configure<SupabaseAuthOptions>(configuration.GetSection(SupabaseAuthOptions.SectionName));
-        services.AddHttpClient<ISupabaseAuthClient, SupabaseAuthClient>()
-            .AddStandardResilienceHandler();
-        services.AddHttpClient<ISupabaseAdminClient, SupabaseAdminClient>()
-            .AddStandardResilienceHandler();
-        services.AddHttpClient<ISupabaseStorageClient, SupabaseStorageClient>()
-            .AddStandardResilienceHandler();
+        // Pooled contexts: instances are reset and reused instead of allocated per request, which
+        // cuts allocation and GC pressure under heavy traffic.
+        services.AddDbContextPool<ThrivtsDbContext>((sp, options) =>
+        {
+            options.UseNpgsql(sp.GetRequiredService<NpgsqlDataSource>(), npgsql =>
+                {
+                    npgsql.EnableRetryOnFailure(maxRetryCount: 3, maxRetryDelay: TimeSpan.FromSeconds(5), errorCodesToAdd: null);
+                    npgsql.CommandTimeout(30);
+                    npgsql.MigrationsHistoryTable("__ef_migrations_history");
+                })
+                .UseSnakeCaseNamingConvention()
+                .AddInterceptors(sp.GetRequiredService<AuditingInterceptor>())
+                .ConfigureWarnings(w => w.Ignore(CoreEventId.PossibleIncorrectRequiredNavigationWithQueryFilterInteractionWarning));
+        }, poolSize: 256);
 
-        AddSupabaseAuthentication(services, configuration);
+        services.AddScoped<IAppDbContext>(sp => sp.GetRequiredService<ThrivtsDbContext>());
+        services.AddScoped<ISerialGenerator, SerialGenerator>();
+        services.AddScoped<DatabaseSeeder>();
+
+        services.AddSingleton<IPinHasher, PinHasher>();
+        services.AddSingleton<ITokenService, TokenService>();
+
+        services.AddHybridCache(options =>
+        {
+            options.MaximumPayloadBytes = 4 * 1024 * 1024;
+            options.MaximumKeyLength = 256;
+        });
+        services.AddSingleton<ICacheService, HybridCacheService>();
+
+        services.AddOptions<AssistantOptions>().Bind(configuration.GetSection(AssistantOptions.SectionName));
+        services.AddSingleton(sp => new AnthropicClient
+        {
+            ApiKey = sp.GetRequiredService<IOptions<AssistantOptions>>().Value.ApiKey ?? string.Empty,
+            Timeout = TimeSpan.FromSeconds(90),
+            MaxRetries = 2,
+        });
+        services.AddSingleton<IAssistantClient, AnthropicAssistantClient>();
+
+        AddAuthentication(services, configuration);
 
         return services;
     }
 
-    private static void AddSupabaseAuthentication(IServiceCollection services, IConfiguration configuration)
+    private static void AddAuthentication(IServiceCollection services, IConfiguration configuration)
     {
-        var supabaseUrl = configuration["Supabase:Url"]
-            ?? throw new InvalidOperationException("Supabase:Url is not configured.");
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
-        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer();
+        services.AddOptions<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme)
+            .Configure<IOptions<JwtOptions>>((options, jwt) =>
             {
-                // Supabase's current projects sign access tokens with an asymmetric key (ES256,
-                // rotatable) rather than the legacy shared HS256 secret — there is no static
-                // "secret" to configure at all. Authority makes the handler fetch
-                // {Authority}/.well-known/openid-configuration -> jwks_uri, cache the public
-                // keys, resolve by the token's `kid`, and refresh automatically on rotation.
-                options.Authority = $"{supabaseUrl}/auth/v1";
+                options.MapInboundClaims = false;
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
+                    ValidIssuer = jwt.Value.Issuer,
+                    ValidAudience = jwt.Value.Audience,
+                    IssuerSigningKey = TokenService.SigningKey(jwt.Value),
                     ValidateIssuer = true,
-                    ValidIssuer = $"{supabaseUrl}/auth/v1",
                     ValidateAudience = true,
-                    ValidAudience = "authenticated",
+                    ValidateIssuerSigningKey = true,
                     ValidateLifetime = true,
-                    ClockSkew = TimeSpan.FromSeconds(30)
+                    ValidAlgorithms = [SecurityAlgorithms.HmacSha256],
+                    ClockSkew = TimeSpan.FromSeconds(30),
+                    NameClaimType = "name",
+                    RoleClaimType = JwtOptions.RoleClaim,
+                };
+
+                // SignalR's WebSocket transport cannot send headers, so the hub accepts the token
+                // from the query string — only on the hub path.
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var token = context.Request.Query["access_token"];
+                        if (!string.IsNullOrEmpty(token) && context.HttpContext.Request.Path.StartsWithSegments("/hubs"))
+                            context.Token = token;
+
+                        return Task.CompletedTask;
+                    },
                 };
             });
 
-        services.AddAuthorizationBuilder()
-            .AddPolicy("AdminOnly", policy => policy.RequireClaim(ProfileRoleClaimsTransformation.RoleClaimType, "Admin"))
-            .AddPolicy("BuyerOnly", policy => policy.RequireClaim(ProfileRoleClaimsTransformation.RoleClaimType, "Buyer"))
-            .AddPolicy("SellerOnly", policy => policy.RequireClaim(ProfileRoleClaimsTransformation.RoleClaimType, "Seller"));
+        var authorization = services.AddAuthorizationBuilder()
+            .SetFallbackPolicy(new AuthorizationPolicyBuilder().RequireAuthenticatedUser().Build());
+
+        foreach (var permission in Permissions.All)
+            authorization.AddPolicy(permission, policy => policy.AddRequirements(new PermissionRequirement(permission)));
+
+        services.AddSingleton<IAuthorizationHandler, PermissionHandler>();
     }
 }

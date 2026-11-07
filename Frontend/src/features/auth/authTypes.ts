@@ -1,5 +1,5 @@
 /** Mirrors Thrivts.Domain.Enums.UserRole on the backend — keep the two in sync. */
-export type UserRole = 'buyer' | 'seller' | 'agency' | 'influencer' | 'admin'
+export type UserRole = 'buyer' | 'seller' | 'agency' | 'admin'
 
 /** Mirrors Thrivts.Domain.Enums.ApprovalStatus, lowercased by CurrentUserResponse. */
 export type ApprovalStatus = 'pending' | 'approved' | 'rejected' | 'suspended'

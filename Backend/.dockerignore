@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+**/.vs/
+**/.vscode/
+.scratch_*/
+*.user
+*.db
+appsettings.Development.json

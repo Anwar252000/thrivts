@@ -1,17 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import authReducer from '@/features/auth/authSlice'
-import { adminApi } from '@/features/admin/adminApi'
-import { buyerApi } from '@/features/buyer/buyerApi'
-import { sellerApi } from '@/features/seller/sellerApi'
+import { api } from './api'
 
 export const store = configureStore({
   reducer: {
     auth: authReducer,
-    [adminApi.reducerPath]: adminApi.reducer,
-    [buyerApi.reducerPath]: buyerApi.reducer,
-    [sellerApi.reducerPath]: sellerApi.reducer,
+    [api.reducerPath]: api.reducer,
   },
-  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(adminApi.middleware, buyerApi.middleware, sellerApi.middleware),
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware().concat(api.middleware),
 })
 
 export type RootState = ReturnType<typeof store.getState>
