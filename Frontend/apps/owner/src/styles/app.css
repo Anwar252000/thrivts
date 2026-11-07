@@ -1,0 +1,33 @@
+/* Small additions the React version needs on top of the verbatim legacy owner stylesheet. */
+
+.boot{min-height:100vh;display:grid;place-items:center}
+.boot .logo{margin:0;animation:vhpulse 1.4s ease-in-out infinite}
+@keyframes vhpulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+.keys button:disabled,.keys.busy button{opacity:.5;cursor:not-allowed}
+.pin.shake{animation:vhshake .3s}
+@keyframes vhshake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.loading-line{color:var(--faint);font-size:12.5px;padding:22px 4px;text-align:center}
+.error-line{color:var(--bad);font-size:12.5px;padding:14px 4px;text-align:center}
+.error-line .btn{margin-left:8px}
+
+/* The legacy owner app used alert(); the React version uses the same toast as the staff app,
+   in owner colours. */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(16px);background:var(--brand);color:#06140c;padding:11px 20px;border-radius:12px;font-size:13px;font-weight:700;opacity:0;transition:opacity .3s ease,transform .35s cubic-bezier(.2,.8,.2,1);pointer-events:none;z-index:200;max-width:92vw;box-shadow:var(--sh)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{background:var(--bad);color:#fff}
+
+.side-scrim{display:none}
+@media(max-width:820px){.side-scrim.on{display:block;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:55}}
+
+/* Forms (the legacy owner app used prompt(); these match its search-bar inputs). */
+.form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:11px;align-items:end}
+.fld{display:flex;flex-direction:column;gap:5px}
+.fld label{color:var(--mut);font-size:10px;text-transform:uppercase;letter-spacing:.07em;font-weight:700}
+.fld input,.fld select,.fld textarea{background:var(--panel2);border:1px solid var(--line2);border-radius:10px;color:var(--ink);padding:9px 12px;font-size:13px;font-family:inherit;width:100%}
+.fld input:focus,.fld select:focus,.fld textarea:focus{outline:none;border-color:var(--brand)}
+.fld input[type=color]{padding:3px;height:38px}
+.row-actions{display:flex;gap:6px;justify-content:flex-end;flex-wrap:wrap}
+.btn.danger{border-color:rgba(221,107,107,.4);color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:not-allowed}

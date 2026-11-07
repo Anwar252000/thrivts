@@ -1,0 +1,15 @@
+/* Small additions the React version needs on top of the verbatim legacy stylesheet. */
+
+.boot{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
+.boot .nav-dot{width:12px;height:12px}
+
+/* The legacy screens were shown/hidden with .screen.active; React renders only the live one. */
+#selectScreen,#pinScreen{display:flex}
+
+.loading-line{color:var(--text3);font-size:13px;padding:24px 4px;text-align:center}
+.error-line{color:var(--danger);font-size:13px;padding:16px 4px;text-align:center}
+.error-line button{margin-left:8px}
+
+/* Disabled big action buttons (legacy used inline opacity). */
+button:disabled{cursor:not-allowed}
+.btn-busy{opacity:.55;pointer-events:none}

@@ -19,7 +19,8 @@ public sealed record OrderPaymentDto(Guid Id, string? Label, decimal Amount, boo
 
 public sealed record OwnerOrderDto(
     Guid Id, string Name, string? ClientName, ClientOrderStatus Status, DateOnly? Deadline, bool IsCompleted, string? LoginCode, decimal TotalValue,
-    int Required, int ClientReady, decimal Paid, IReadOnlyList<OwnerOrderLineDto> Lines, IReadOnlyList<OrderPaymentDto> Payments);
+    int Required, int ClientReady, decimal Paid, IReadOnlyList<OwnerOrderLineDto> Lines, IReadOnlyList<OrderPaymentDto> Payments,
+    string? DestinationCountry, DateOnly? OrderReceivedDate, DateOnly? DispatchDate, int? Boxes, decimal? WeightKg);
 
 public sealed record GetOwnerOrdersQuery(bool Completed) : IQuery<IReadOnlyList<OwnerOrderDto>>;
 
@@ -34,7 +35,8 @@ public sealed class GetOwnerOrdersHandler(IAppDbContext db) : IQueryHandler<GetO
                 o.Id, o.Name, o.ClientName, o.Status, o.Deadline, o.IsCompleted, o.LoginCode, o.TotalValue,
                 o.Lines.Sum(l => l.Required), o.Lines.Sum(l => l.ClientReady), o.Payments.Where(p => p.IsPaid).Sum(p => p.Amount),
                 o.Lines.OrderBy(l => l.Seq).Select(l => new OwnerOrderLineDto(l.Id, l.ItemName, l.Grade, l.Category, l.Required, l.Ready, l.ClientReady, l.Status, l.Note, l.Seq)).ToList(),
-                o.Payments.OrderBy(p => p.CreatedAt).Select(p => new OrderPaymentDto(p.Id, p.Label, p.Amount, p.IsPaid, p.PaidOn)).ToList()))
+                o.Payments.OrderBy(p => p.CreatedAt).Select(p => new OrderPaymentDto(p.Id, p.Label, p.Amount, p.IsPaid, p.PaidOn)).ToList(),
+                o.DestinationCountry, o.OrderReceivedDate, o.DispatchDate, o.Boxes, o.WeightKg))
             .ToListAsync(ct);
 }
 

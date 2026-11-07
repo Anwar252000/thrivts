@@ -9,7 +9,7 @@ using Thrivts.Domain.Identity;
 
 namespace Thrivts.Application.Features.Auth;
 
-public sealed record LoginUserCard(Guid Id, string DisplayName, string Title, string Color, int PinLength);
+public sealed record LoginUserCard(Guid Id, string DisplayName, string Title, string Color, UserRole Role, int PinLength);
 
 public sealed record SessionUser(Guid Id, string DisplayName, string Title, string Color, UserRole Role, AppKind App, IReadOnlyCollection<string> Permissions);
 
@@ -46,7 +46,7 @@ public sealed class GetLoginUsersHandler(IAppDbContext db) : IQueryHandler<GetLo
             .Select(u => new { u.Id, u.DisplayName, u.Title, u.Color, u.Role })
             .ToListAsync(ct);
 
-        return users.Select(u => new LoginUserCard(u.Id, u.DisplayName, u.Title, u.Color, UserRoles.PinLengthFor(u.Role))).ToList();
+        return users.Select(u => new LoginUserCard(u.Id, u.DisplayName, u.Title, u.Color, u.Role, UserRoles.PinLengthFor(u.Role))).ToList();
     }
 }
 

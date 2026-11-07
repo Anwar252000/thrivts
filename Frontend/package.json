@@ -1,32 +1,23 @@
 {
-  "name": "thrivts",
+  "name": "vintage-hub-apps",
   "private": true,
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev:staff": "vite --config apps/staff/vite.config.ts",
+    "dev:owner": "vite --config apps/owner/vite.config.ts",
+    "build:staff": "tsc -p apps/staff && vite build --config apps/staff/vite.config.ts",
+    "build:owner": "tsc -p apps/owner && vite build --config apps/owner/vite.config.ts",
+    "build": "npm run build:staff && npm run build:owner",
+    "typecheck": "tsc -p apps/staff && tsc -p apps/owner && tsc -p tsconfig.node.json",
+    "lint": "eslint ."
   },
   "dependencies": {
-    "@hookform/resolvers": "^5.7.1",
-    "@radix-ui/react-slot": "^1.3.3",
-    "@reduxjs/toolkit": "^2.12.0",
-    "@tailwindcss/vite": "^4.3.3",
+    "@microsoft/signalr": "^10.0.11",
     "@tanstack/react-query": "^5.101.4",
-    "class-variance-authority": "^0.7.1",
-    "clsx": "^2.1.1",
-    "framer-motion": "^13.0.0",
-    "lucide-react": "^1.30.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-hook-form": "^7.85.0",
-    "react-redux": "^9.3.0",
-    "react-router-dom": "^7.18.2",
-    "tailwind-merge": "^3.6.0",
-    "tailwindcss": "^4.3.3",
-    "zod": "^4.4.3"
+    "react-router-dom": "^7.18.2"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
