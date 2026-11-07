@@ -5,38 +5,47 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Thrivts.Api.Controllers.V1;
 
-/// <summary>Shared base for every controller — versioning and the ErrorOr-to-HTTP-status mapping
-/// every endpoint uses. Does not itself require authorization; role-specific bases (e.g.
-/// Admin.AdminControllerBase) add their own [Authorize] policy on top of this.</summary>
+/// <summary>Shared base: versioning and the ErrorOr → HTTP status mapping. Every controller adds
+/// its own [Authorize(Policy = Permissions.X)]; the fallback policy rejects anything unauthenticated.</summary>
 [ApiController]
 [ApiVersion("1.0")]
-public abstract class ApiControllerBase : ControllerBase
+[Produces("application/json")]
+public abstract class ApiControllerBase(IMediator mediator) : ControllerBase
 {
-    protected readonly IMediator Mediator;
+    protected IMediator Mediator { get; } = mediator;
 
-    protected ApiControllerBase(IMediator mediator)
+    protected IActionResult ToResponse<T>(ErrorOr<T> result, Func<T, IActionResult>? onSuccess = null) =>
+        result.Match(value => onSuccess?.Invoke(value) ?? Ok(value), Problem);
+
+    protected IActionResult ToNoContent(ErrorOr<Success> result) =>
+        result.Match<IActionResult>(_ => NoContent(), Problem);
+
+    protected IActionResult ToCreated<T>(ErrorOr<T> result) =>
+        result.Match(value => StatusCode(StatusCodes.Status201Created, value), Problem);
+
+    /// <summary>201 with a <c>{ "id": ... }</c> body, so clients never have to parse a bare string.</summary>
+    protected IActionResult ToCreatedId(ErrorOr<Guid> result) =>
+        result.Match(id => StatusCode(StatusCodes.Status201Created, new IdResponse(id)), Problem);
+
+    /// <summary>For updates whose handler returns the row id: success is simply 204.</summary>
+    protected IActionResult ToNoContent(ErrorOr<Guid> result) =>
+        result.Match<IActionResult>(_ => NoContent(), Problem);
+
+    private IActionResult Problem(List<Error> errors)
     {
-        Mediator = mediator;
+        var error = errors[0];
+        var status = error.Type switch
+        {
+            ErrorType.NotFound => StatusCodes.Status404NotFound,
+            ErrorType.Forbidden => StatusCodes.Status403Forbidden,
+            ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
+            ErrorType.Conflict => StatusCodes.Status409Conflict,
+            ErrorType.Validation => StatusCodes.Status422UnprocessableEntity,
+            _ => StatusCodes.Status500InternalServerError,
+        };
+
+        return Problem(title: error.Description, statusCode: status);
     }
-
-    protected IActionResult ToResponse<T>(ErrorOr<T> result, Func<T, IActionResult>? onSuccess = null)
-    {
-        return result.Match(
-            value => onSuccess?.Invoke(value) ?? Ok(value),
-            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
-    }
-
-    protected IActionResult ToNoContentResponse(ErrorOr<Success> result) =>
-        result.Match<IActionResult>(
-            _ => NoContent(),
-            errors => Problem(title: errors[0].Description, statusCode: MapStatusCode(errors[0].Type)));
-
-    private static int MapStatusCode(ErrorType errorType) => errorType switch
-    {
-        ErrorType.NotFound => StatusCodes.Status404NotFound,
-        ErrorType.Forbidden => StatusCodes.Status403Forbidden,
-        ErrorType.Unauthorized => StatusCodes.Status401Unauthorized,
-        ErrorType.Validation => StatusCodes.Status400BadRequest,
-        _ => StatusCodes.Status500InternalServerError
-    };
 }
+
+public sealed record IdResponse(Guid Id);

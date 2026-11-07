@@ -20,9 +20,8 @@ public class CustomWebApplicationFactory : WebApplicationFactory<Program>, IAsyn
             config.AddInMemoryCollection(new Dictionary<string, string?>
             {
                 ["ConnectionStrings:Default"] = _postgres.GetConnectionString(),
-                ["Supabase:Url"] = "https://test.supabase.co",
-                ["Supabase:JwtSecret"] = "test-jwt-secret-at-least-32-characters-long",
-                ["Resend:ApiKey"] = "test-key"
+                ["Jwt:SigningKey"] = "integration-test-signing-key-at-least-32-bytes-long",
+                ["Database:MigrateOnStartup"] = "true"
             });
         });
     }

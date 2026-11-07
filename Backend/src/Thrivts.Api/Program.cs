@@ -1,96 +1,161 @@
+using System.Diagnostics;
+using System.IO.Compression;
+using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.HttpOverrides;
+using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 using Serilog;
+using Thrivts.Api.Controllers.V1;
 using Thrivts.Api.ExceptionHandlers;
 using Thrivts.Api.Extensions;
+using Thrivts.Api.Middleware;
+using Thrivts.Api.Realtime;
 using Thrivts.Application;
+using Thrivts.Application.Common.Interfaces;
 using Thrivts.Infrastructure;
+using Thrivts.Infrastructure.Persistence;
+using Thrivts.Infrastructure.Seeding;
 
-var builder = WebApplication.CreateBuilder(args);
+Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
 
-builder.Host.UseSerilog((context, services, configuration) => configuration
-    .ReadFrom.Configuration(context.Configuration)
-    .ReadFrom.Services(services)
-    .Enrich.FromLogContext());
-
-// Add services to the container.
-// Enums serialize as their C# member name (e.g. "Confirmed"), not the default int — the frontend
-// never has to hardcode a numeric mapping that silently drifts if an enum is reordered.
-builder.Services.AddControllers()
-    .AddJsonOptions(options => options.JsonSerializerOptions.Converters.Add(new System.Text.Json.Serialization.JsonStringEnumConverter()));
-builder.Services.AddOpenApi();
-
-builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration);
-
-builder.Services.AddThrivtsApiVersioning();
-builder.Services.AddThrivtsRateLimiting();
-
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-builder.Services.AddProblemDetails();
-
-builder.Services.AddHealthChecks()
-    .AddNpgSql(builder.Configuration.GetConnectionString("Default")!, name: "postgres");
-
-var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
-builder.Services.AddCors(options =>
+try
 {
-    options.AddPolicy("ThrivtsApps", policy =>
-        policy.WithOrigins(corsOrigins)
-              .AllowAnyHeader()
-              .AllowAnyMethod());
-});
+    var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
-
-app.UseSerilogRequestLogging();
-
-app.UseExceptionHandler();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-    app.MapScalarApiReference(); // Scalar UI at /scalar — the modern replacement for Swagger UI.
-}
-
-// HTTPS redirection must never run before CORS: a browser's preflight OPTIONS request to
-// http://localhost:5275 would otherwise hit a 307 to the https port before CORS headers are
-// added, and browsers refuse to follow a redirect for a preflight — every POST/PUT from the
-// frontend would fail CORS. Skip it entirely in Development, where we deliberately serve over
-// plain HTTP to sidestep the local self-signed-cert trust dance.
-if (!app.Environment.IsDevelopment())
-{
-    // Render (like Heroku/Fly/any PaaS) terminates TLS at its own edge and forwards plain HTTP
-    // to this container, setting X-Forwarded-Proto: https on the way in. Without this,
-    // UseHttpsRedirection() sees an "http" request and 307s it to https — which Render's edge
-    // then forwards right back here as http again, an infinite redirect loop. KnownNetworks/
-    // KnownProxies are cleared because the proxy's IP isn't a fixed address we can whitelist.
-    var forwardedHeadersOptions = new ForwardedHeadersOptions
+    builder.AddThrivtsLogging();
+    builder.WebHost.ConfigureKestrel(kestrel =>
     {
-        ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto,
-    };
-    forwardedHeadersOptions.KnownNetworks.Clear();
-    forwardedHeadersOptions.KnownProxies.Clear();
-    app.UseForwardedHeaders(forwardedHeadersOptions);
+        kestrel.AddServerHeader = false;
+        kestrel.Limits.MaxRequestBodySize = 2 * 1024 * 1024;
+        kestrel.Limits.MaxRequestHeadersTotalSize = 32 * 1024;
+    });
 
-    app.UseHttpsRedirection();
-    app.UseHsts();
+    builder.Services
+        .AddControllers()
+        .AddJsonOptions(o =>
+        {
+            o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+            o.JsonSerializerOptions.DefaultIgnoreCondition = JsonIgnoreCondition.Never;
+        });
+
+    builder.Services.AddProblemDetails(o => o.CustomizeProblemDetails = ctx =>
+    {
+        ctx.ProblemDetails.Extensions["traceId"] = Activity.Current?.TraceId.ToString() ?? ctx.HttpContext.TraceIdentifier;
+        if (ctx.HttpContext.Items[Thrivts.Infrastructure.Identity.CurrentUser.CorrelationItemKey] is string correlationId)
+            ctx.ProblemDetails.Extensions["correlationId"] = correlationId;
+    });
+    builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+    builder.Services.AddApplication();
+    builder.Services.AddInfrastructure(builder.Configuration);
+    builder.Services.AddThrivtsApiVersioning();
+    builder.Services.AddThrivtsRateLimiting();
+    builder.Services.AddThrivtsTelemetry(builder.Configuration);
+    builder.Services.AddOpenApi();
+
+    builder.Services.AddSignalR(o =>
+    {
+        o.MaximumReceiveMessageSize = 16 * 1024;
+        o.EnableDetailedErrors = builder.Environment.IsDevelopment();
+    });
+    builder.Services.AddSingleton<IRealtimeNotifier, SignalRRealtimeNotifier>();
+
+    builder.Services.AddResponseCompression(o =>
+    {
+        o.EnableForHttps = true;
+        o.Providers.Add<BrotliCompressionProvider>();
+        o.Providers.Add<GzipCompressionProvider>();
+        o.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(["application/problem+json"]);
+    });
+    builder.Services.Configure<BrotliCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
+    builder.Services.Configure<GzipCompressionProviderOptions>(o => o.Level = CompressionLevel.Fastest);
+
+    builder.Services.AddHealthChecks()
+        .AddNpgSql(builder.Configuration.GetConnectionString("Default")!, name: "postgres", tags: ["ready"]);
+
+    var corsOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>() ?? [];
+    builder.Services.AddCors(options => options.AddPolicy("apps", policy => policy
+        .WithOrigins(corsOrigins)
+        .WithMethods("GET", "POST", "PUT", "PATCH", "DELETE")
+        .WithHeaders("Authorization", "Content-Type", "Idempotency-Key", RequestContextMiddleware.HeaderName, "x-requested-with", "x-signalr-user-agent")
+        .WithExposedHeaders(RequestContextMiddleware.HeaderName, "Retry-After")
+        .AllowCredentials()
+        .SetPreflightMaxAge(TimeSpan.FromHours(1))));
+
+    // Buyers' order portals: their own origins, anonymous POSTs only, never credentials.
+    var portalOrigins = builder.Configuration.GetSection("Cors:PortalOrigins").Get<string[]>() ?? [];
+    builder.Services.AddCors(options => options.AddPolicy(PortalCors.PolicyName, policy => policy
+        .WithOrigins(portalOrigins)
+        .WithMethods("POST")
+        .WithHeaders("Content-Type", RequestContextMiddleware.HeaderName)
+        .WithExposedHeaders(RequestContextMiddleware.HeaderName, "Retry-After")
+        .SetPreflightMaxAge(TimeSpan.FromHours(1))));
+
+    builder.Services.Configure<ForwardedHeadersOptions>(o =>
+    {
+        o.ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto;
+        o.KnownIPNetworks.Clear();
+        o.KnownProxies.Clear();
+    });
+
+    var app = builder.Build();
+
+    await PrepareDatabaseAsync(app);
+
+    // Render terminates TLS at its edge and forwards plain HTTP with X-Forwarded-* headers; trust
+    // them first so HTTPS redirection, rate limiting and logs all see the real scheme and client IP.
+    app.UseForwardedHeaders();
+    app.UseMiddleware<RequestContextMiddleware>();
+    app.UseMiddleware<SecurityHeadersMiddleware>();
+    app.UseExceptionHandler();
+    app.UseStatusCodePages();
+    app.ConfigureRequestLogging();
+
+    if (app.Environment.IsDevelopment())
+    {
+        app.MapOpenApi().AllowAnonymous();
+        app.MapScalarApiReference().AllowAnonymous();
+    }
+    else
+    {
+        app.UseHsts();
+        app.UseHttpsRedirection();
+    }
+
+    app.UseResponseCompression();
+    app.UseCors("apps");
+    app.UseAuthentication();
+    app.UseAuthorization();
+    app.UseRateLimiter();
+
+    app.MapControllers();
+    app.MapHub<LiveHub>(LiveHub.Path);
+    app.MapHealthChecks("/health/live", new() { Predicate = _ => false }).AllowAnonymous().DisableRateLimiting();
+    app.MapHealthChecks("/health", new() { Predicate = c => c.Tags.Contains("ready") }).AllowAnonymous().DisableRateLimiting();
+
+    await app.RunAsync();
 }
-
-app.UseCors("ThrivtsApps");
-
-app.UseAuthentication();
-app.UseAuthorization();
-
-app.UseRateLimiter();
-
-app.MapControllers();
-
-app.MapHealthChecks("/health");
-
-app.Run();
-
-// Exposed for WebApplicationFactory<Program> in Thrivts.Api.IntegrationTests.
-public partial class Program
+catch (Exception ex) when (ex is not HostAbortedException)
 {
+    Log.Fatal(ex, "API terminated unexpectedly");
+    throw;
 }
+finally
+{
+    await Log.CloseAndFlushAsync();
+}
+
+static async Task PrepareDatabaseAsync(WebApplication app)
+{
+    await using var scope = app.Services.CreateAsyncScope();
+    var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+    if (configuration.GetValue("Database:MigrateOnStartup", app.Environment.IsDevelopment()))
+        await scope.ServiceProvider.GetRequiredService<ThrivtsDbContext>().Database.MigrateAsync();
+
+    if (configuration.GetValue("Database:SeedOnStartup", true))
+        await scope.ServiceProvider.GetRequiredService<DatabaseSeeder>().SeedAsync(CancellationToken.None);
+}
+
+public partial class Program;

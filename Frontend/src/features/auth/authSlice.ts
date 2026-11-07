@@ -72,27 +72,6 @@ export const signIn = createAsyncThunk(
   },
 )
 
-/** Establishes the session once the applicant has clicked the confirmation-email link — the
- * frontend parses access_token/refresh_token/expires_in out of that redirect's URL fragment (see
- * VerifyEmail.tsx) and hands them here. Distinct from signIn: this also calls
- * complete-buyer-registration first, since no Profile/Buyer row exists until that runs. */
-export const completeBuyerRegistration = createAsyncThunk(
-  'auth/completeBuyerRegistration',
-  async (session: AuthSession) => {
-    await apiClient.post('/api/v1/auth/complete-buyer-registration', undefined, { accessToken: session.accessToken })
-    return resolveSession(session)
-  },
-)
-
-/** Seller counterpart of completeBuyerRegistration — see its doc comment. */
-export const completeSellerRegistration = createAsyncThunk(
-  'auth/completeSellerRegistration',
-  async (session: AuthSession) => {
-    await apiClient.post('/api/v1/auth/complete-seller-registration', undefined, { accessToken: session.accessToken })
-    return resolveSession(session)
-  },
-)
-
 export const signOut = createAsyncThunk('auth/signOut', async (_: void, { getState }) => {
   const { auth } = getState() as { auth: AuthState }
   if (auth.accessToken) {
@@ -132,28 +111,6 @@ const authSlice = createSlice({
       .addCase(signIn.rejected, (state, action) => {
         state.status = 'unauthenticated'
         state.error = action.error.message ?? 'Sign in failed'
-      })
-      .addCase(completeBuyerRegistration.pending, (state) => {
-        state.status = 'loading'
-        state.error = null
-      })
-      .addCase(completeBuyerRegistration.fulfilled, (state, action) => {
-        applySession(state, action.payload)
-      })
-      .addCase(completeBuyerRegistration.rejected, (state, action) => {
-        state.status = 'unauthenticated'
-        state.error = action.error.message ?? 'Could not complete your registration'
-      })
-      .addCase(completeSellerRegistration.pending, (state) => {
-        state.status = 'loading'
-        state.error = null
-      })
-      .addCase(completeSellerRegistration.fulfilled, (state, action) => {
-        applySession(state, action.payload)
-      })
-      .addCase(completeSellerRegistration.rejected, (state, action) => {
-        state.status = 'unauthenticated'
-        state.error = action.error.message ?? 'Could not complete your registration'
       })
       .addCase(signOut.fulfilled, (state) => {
         persistRefreshToken(null)

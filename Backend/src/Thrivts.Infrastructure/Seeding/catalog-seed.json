@@ -1,0 +1,2524 @@
+{
+ "suppliers": [
+  "Khurram",
+  "Arif",
+  "Farhan (Zone)",
+  "Burhan & Shehriyar",
+  "Mehran",
+  "Faizan",
+  "Asmat",
+  "Nasir",
+  "Hammad",
+  "Ayoub",
+  "Uzair (Lahore)",
+  "Salman Pathan"
+ ],
+ "items": [
+  {
+   "name": "TNF Fleece Regular",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Atleast 15-20% Denali",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "TNF Fleece Denali",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "The North Face Denali only",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Columbia Fleece",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "All columbia fleece",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Columbia Fleece Kid Size",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "All Kids",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Patagonia Fleece Regular",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Minimum 30% Men (Bara Bhur, 3 button, Single pocket)",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Patagonia Fleece 3 Button",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "",
+   "criteria": {
+    "brands": "",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Patagonia Fleece Bara Bhur",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "",
+   "criteria": {
+    "brands": "",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Patagonia Fleece Kid Size",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Kid Patagonia",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Fleece",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Ralph Lauren Fleeces",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Lacoste Fleece",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Lacoste Fleeces",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Real Tree Fleece",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Real tree fleeces",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Arcteryx Fleece",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Arcteryx Fleece or Jackets",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Fleece",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Minimum 20% TNF / Columbia\nmore vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Mix Nylon Fleece",
+   "category": "Fleece",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Minimum 20% TNF / Columbia\nmore vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "TNF Puffer Single Color",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Single Color \nAtleast 50% Heavy ones",
+    "grades": "A",
+    "rejectIf": "Flake/leaking down inside, broken zips",
+    "notes": "No flake inside",
+    "style": null
+   },
+   "rejectRule": "Flake/leaking down inside, broken zips"
+  },
+  {
+   "name": "TNF Puffer Double Color",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Double color \nNupste only \nAtleast 50% Heavy ones",
+    "grades": "A",
+    "rejectIf": "Flake/leaking down, broken zips",
+    "notes": "No flake inside",
+    "style": null
+   },
+   "rejectRule": "Flake/leaking down, broken zips"
+  },
+  {
+   "name": "Columbia Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Columbia Puffer",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Patagonia Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Patagonia Puffers\nPatagonia Jackets",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Nike Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Nike Puffer\n50% Vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Adidas Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Adidas Puffer\n50% Vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Canada Goose Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Only Authentic \ncheck with QR",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Moncler Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Only Authentic \ncheck with QR",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Rab Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Rab Puffer",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Designer Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Burberry YSL, Dior, Patagonia, Napapajiri, Carhartt, Mocnler etc",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "",
+   "criteria": {
+    "brands": "",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Mix Puffer",
+   "category": "Puffer",
+   "weightKg": 1,
+   "grade": "",
+   "criteria": {
+    "brands": "",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "TNF Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "",
+   "criteria": {
+    "brands": "",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Columbia Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Columbia jackets\nColumbia Puffers",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Carhartt / Dickies Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "All Workwear material only",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Workwear Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "",
+   "criteria": {
+    "brands": "Carhartt Styles only",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Harrington Jacket Mix",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "RL, Tommy, Timberland, Lacoste etc only harrington Styles",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Harrington Jacket RL",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "",
+   "criteria": {
+    "brands": "",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Denim Jacket Mix",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Marlborough, Diesel, CK, Tommy etc",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Denim Jacket Lee / Levis / Wrangler",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Lee, Levi's, Wrangler",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Barbour Wax Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Men/Women\nWax Jackets only",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Real Tree Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Real Tree",
+    "grades": "A",
+    "rejectIf": "Broken zips",
+    "notes": "ALL zips working",
+    "style": null
+   },
+   "rejectRule": "Broken zips"
+  },
+  {
+   "name": "Arcteryx Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Arcteryx Jackets\nArcteryx fleeces",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Nike Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Atleast 50% Vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Adidas Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Atleast 50% Vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Designer Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Burberry, YSL, Dior atleast 50%\nNapapairi, Stone, Cp, Carhartt, Barbour, Baracuda etc",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Designer Trench Coat",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A",
+   "criteria": {
+    "brands": "Burberry, Aquascutum, Dior, YSL ONLY",
+    "grades": "A",
+    "rejectIf": "Other brands",
+    "notes": "Frankie rule: mostly Burberry",
+    "style": null
+   },
+   "rejectRule": "Other brands"
+  },
+  {
+   "name": "Designer Blazer",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "YSL, Burberry, Dior, Aquascutum etc",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Armani Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Armani Jacket",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "YSL Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "YSL Jacket",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Boiler Suit",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Boiler Suit",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Jacket Regular",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "",
+   "criteria": {
+    "brands": "",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Jacket Premium",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Ralph Lauren, Carhartt, Patagonia, TNF, Dickies, Burberry, YSL, Dior, All top brands",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Heavy Jacket",
+   "category": "Jacket",
+   "weightKg": 1,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "50% Nike Adidas atleast",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Light Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "50% Nike Adidas atleast",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "TNF Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "No flakes",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Columbia Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Columbia Track Jacket",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Nike Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Nike 50% Vintage atleast",
+    "grades": "A",
+    "rejectIf": "Broken zips",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Broken zips"
+  },
+  {
+   "name": "Adidas Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Adidas 50% Vintage atleast",
+    "grades": "A",
+    "rejectIf": "Broken zips",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Broken zips"
+  },
+  {
+   "name": "Nike / Adidas Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Heavy light both 50% Vintage atleast",
+    "grades": "A",
+    "rejectIf": "Broken zips",
+    "notes": "Afnan rule: at least 50% Nike/Adidas",
+    "style": null
+   },
+   "rejectRule": "Broken zips"
+  },
+  {
+   "name": "Patagonia Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Patagonia Track Jacket",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "RL Track Jacket",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Carhartt / Dickies Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Carhartt / Dickies Track Jacket",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Real Tree Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Real Tree Track Jacket",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Mix Track Jacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "≥50% vintage brands",
+    "grades": "A",
+    "rejectIf": "Broken zips",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Broken zips"
+  },
+  {
+   "name": "Nylon Track Jacket (Tracksuit)",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "50% Nike/Adidas",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Carhartt / Dickies Shacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Carhartt & Dickies",
+    "grades": "A",
+    "rejectIf": "Broken buttons/zips",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Broken buttons/zips"
+  },
+  {
+   "name": "Mix Shacket",
+   "category": "Jacket",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Shacket style",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Ralph Lauren Sweatshirts",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweatshirt Kid Size",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Ralph Lauren Sweatshirts kids",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Carhartt / Dickies Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Carhartt & Dickies — less company logos",
+    "grades": "A, B",
+    "rejectIf": "Heavy company logos",
+    "notes": "Manifest: less company logos, 70% A",
+    "style": null
+   },
+   "rejectRule": "Heavy company logos"
+  },
+  {
+   "name": "Nike Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Vintage / Modern",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Adidas Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Vintage / Modern",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Tommy Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Tommy Sweatshirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Lacoste Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Lacoste Sweatshirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Stone Island Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Authentic only",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "CP Company Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Authentic only",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Patagonia Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Patagonia Sweatshirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Barbour Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Barbour Sweatshirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Sweatshirt Modern",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "50% Nike, Adidas & Good brands\nHeavy cotton brands",
+    "grades": "A",
+    "rejectIf": "Thin/cheap cotton",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Thin/cheap cotton"
+  },
+  {
+   "name": "Branded Sweatshirt Vintage A",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Vintage labels only \nRL & Carhartt 20%",
+    "grades": "A",
+    "rejectIf": "Cracked prints",
+    "notes": "≥50% vintage overall",
+    "style": null
+   },
+   "rejectRule": "Cracked prints"
+  },
+  {
+   "name": "Branded Sweatshirt Vintage B",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "B",
+   "criteria": {
+    "brands": "Vintage brands",
+    "grades": "B",
+    "rejectIf": null,
+    "notes": "Repaired/worn as B",
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Pro Sport Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "USA pro sport & college",
+    "grades": "A",
+    "rejectIf": "Cracked prints",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Cracked prints"
+  },
+  {
+   "name": "Mix Brand Sweatshirt",
+   "category": "Sweatshirt",
+   "weightKg": 0.6,
+   "grade": "A",
+   "criteria": {
+    "brands": "Modern shit brands",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweater Half Zip",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "RL Sweater Half Zip",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweater Round Neck",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Heavy ones mostly",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweater V Neck",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Heavy Light both",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweater Cable Knit",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "RL Sweater Cable Knit",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweater Aaroo",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "RL Sweater Aaroo",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweater Shawl Neck",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "RL Sweater Shawl Neck",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Sweater Kid Size",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "RL Sweater Kid Size",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Tommy Sweater Half Zip",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Tommy Hilfiger",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": "Manifest: mostly mens",
+    "style": "All men"
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Tommy Sweater Regular",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Tommy Hilfiger",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": "All men"
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Lacoste Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Authentic Only",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Barbour Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Barbour Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Carhartt Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Carhartt Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Burberry Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Burberry Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "YSL Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "YSL Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Dior Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Dior Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Boss Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Boss Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Armani Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Armani Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Paul & Shark Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Paul & Shark Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Napapijri Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Napapijri Sweater",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Coogi Style Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Coogi-style multicolor knits",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Designer Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "YSL, Burberry, Barbour, Dior atleast 50%\nNapapajiri, Patagonia, Harley, Carhartt, Dickies etc",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Mix Sweater",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "20% Tommy atleast",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Polo Sweater (RL Lauren)",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Polo Sweater (RL Lauren)",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Shirt Check",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Horse and label must",
+    "grades": "A",
+    "rejectIf": "Stains, missing buttons",
+    "notes": null,
+    "style": "Long + short sleeve"
+   },
+   "rejectRule": "Stains, missing buttons"
+  },
+  {
+   "name": "RL Shirt Plain",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Horse and label must",
+    "grades": "A",
+    "rejectIf": "Stains, missing buttons",
+    "notes": null,
+    "style": "Long + short sleeve"
+   },
+   "rejectRule": "Stains, missing buttons"
+  },
+  {
+   "name": "RL Shirt White",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Horse and label must",
+    "grades": "A",
+    "rejectIf": "Yellowing, stains — strict on whites",
+    "notes": null,
+    "style": "Long + short sleeve"
+   },
+   "rejectRule": "Yellowing, stains — strict on whites"
+  },
+  {
+   "name": "Carhartt / Dickies Shirt",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Carhartt & Dickies Shirts",
+    "grades": "A",
+    "rejectIf": "Too many company logos, stains",
+    "notes": "Not too many company logos",
+    "style": null
+   },
+   "rejectRule": "Too many company logos, stains"
+  },
+  {
+   "name": "Designer Shirt",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "40%> Burberry, YSL, Dior, \nCarhartt, Patagonia, Kenzo, Paul & Shark, Harley, Gucci, LV, Oakley, Vineyard Vines, D&G, Eton, APC, Peter Millar. NO Zegna",
+    "grades": "A",
+    "rejectIf": "Stains, missing buttons",
+    "notes": "Zegna removed per Frankie (had 200+ pcs)",
+    "style": null
+   },
+   "rejectRule": "Stains, missing buttons"
+  },
+  {
+   "name": "Racing Shirt",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Racing Shirt",
+    "grades": "A",
+    "rejectIf": "Cracked prints",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Cracked prints"
+  },
+  {
+   "name": "Harley Shirt",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Harley-Davidson",
+    "grades": "A",
+    "rejectIf": "Cracked prints",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Cracked prints"
+  },
+  {
+   "name": "Hawaii Shirt",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Hawaii Shirt",
+    "grades": "A",
+    "rejectIf": "Stains",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Stains"
+  },
+  {
+   "name": "Mix Shirt",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "",
+   "criteria": {
+    "brands": "Mix Shirt",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Real Tree Shirt",
+   "category": "Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Real Tree camo",
+    "grades": "A",
+    "rejectIf": "No army camo",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "No army camo"
+  },
+  {
+   "name": "RL Polo T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.35,
+   "grade": "A",
+   "criteria": {
+    "brands": "Horse and label must\nOnly collar",
+    "grades": "A",
+    "rejectIf": "Cracked prints, stains, stretched collars",
+    "notes": "Broken zip, broken button, not more than 20% oversized,",
+    "style": "Long + short sleeve BOTH"
+   },
+   "rejectRule": "Cracked prints, stains, stretched collars"
+  },
+  {
+   "name": "RL Polo T-Shirt Kid Size",
+   "category": "T-Shirt",
+   "weightKg": 0.35,
+   "grade": "A",
+   "criteria": {
+    "brands": "Ralph Lauren only",
+    "grades": "A",
+    "rejectIf": "Stains, stretched collars",
+    "notes": null,
+    "style": "Long + short sleeve"
+   },
+   "rejectRule": "Stains, stretched collars"
+  },
+  {
+   "name": "Tommy Polo T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.35,
+   "grade": "A",
+   "criteria": {
+    "brands": "Tommy Polo T-Shirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Lacoste Polo T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.35,
+   "grade": "A",
+   "criteria": {
+    "brands": "Lacoste Polo T-Shirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Carhartt / Dickies Polo T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.35,
+   "grade": "A",
+   "criteria": {
+    "brands": "Carhartt / Dickies Polo T-Shirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Designer Polo T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.35,
+   "grade": "A",
+   "criteria": {
+    "brands": "Burberry, YSL, Dior, Fred Perry, etc",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Polo T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.35,
+   "grade": "",
+   "criteria": {
+    "brands": "",
+    "grades": null,
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Unbranded Polo T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.35,
+   "grade": "A",
+   "criteria": {
+    "brands": ".",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Ralph Lauren only",
+    "grades": "A",
+    "rejectIf": "Cracked prints, stains",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "Cracked prints, stains"
+  },
+  {
+   "name": "Carhartt / Dickies T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Carhartt & Dickies",
+    "grades": "A",
+    "rejectIf": "Too many company logos",
+    "notes": "Not too many company logos",
+    "style": null
+   },
+   "rejectRule": "Too many company logos"
+  },
+  {
+   "name": "Real Tree T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Real Tree T-Shirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Music T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Music T-Shirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Racing T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Racing T-Shirt, Nascar",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Harley T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Harley T-Shirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Sports T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Football Club",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Pro Sport T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Pro Sport T-Shirt",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Nike, Lacoste, Adidas, Harley etc — vintage focus",
+    "grades": "A",
+    "rejectIf": "Cracked prints",
+    "notes": "≥50% vintage overall rule applies",
+    "style": null
+   },
+   "rejectRule": "Cracked prints"
+  },
+  {
+   "name": "Mix T-Shirt",
+   "category": "T-Shirt",
+   "weightKg": 0.25,
+   "grade": "A",
+   "criteria": {
+    "brands": "Vintage / Modern",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Rugby",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Ralph Lauren",
+    "grades": "A",
+    "rejectIf": "Stretched collars",
+    "notes": null,
+    "style": "Long sleeve"
+   },
+   "rejectRule": "Stretched collars"
+  },
+  {
+   "name": "Tommy Rugby",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "Tommy Hilfiger",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": "Long sleeve"
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Designer Rugby",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "RL, Tommy, Lacoste tier",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Mix Rugby",
+   "category": "Sweater",
+   "weightKg": 0.5,
+   "grade": "A",
+   "criteria": {
+    "brands": "",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Nike Track Pants",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Nike",
+    "grades": "A",
+    "rejectIf": "Cuffed ankles",
+    "notes": null,
+    "style": "No cuffed"
+   },
+   "rejectRule": "Cuffed ankles"
+  },
+  {
+   "name": "Adidas Track Pants",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Adidas",
+    "grades": "A",
+    "rejectIf": "Cuffed ankles",
+    "notes": null,
+    "style": "No cuffed"
+   },
+   "rejectRule": "Cuffed ankles"
+  },
+  {
+   "name": "Nike / Adidas Track Pants",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Adidas, Nike, Reebok — ≥50% Nike/Adidas",
+    "grades": "A",
+    "rejectIf": "Cuffed ankles, broken elastic",
+    "notes": "Manifest: baggy, no cuffed",
+    "style": "No cuffed"
+   },
+   "rejectRule": "Cuffed ankles, broken elastic"
+  },
+  {
+   "name": "Nylon Track Pants Nike",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Mostly Vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Nylon Track Pants Adidas",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Mostly Vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Nylon Track Pants Mix",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Mostly Vintage",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Arcteryx Track Pants",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Arcteryx Track Pants",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Real Tree Track Pants",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Real Tree Track Pants",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Track Pants",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "50%+ Nike Adidas Atleast",
+    "grades": "A",
+    "rejectIf": "Cuffed ankles",
+    "notes": null,
+    "style": "No cuffed — baggy"
+   },
+   "rejectRule": "Cuffed ankles"
+  },
+  {
+   "name": "Mix Track Pants",
+   "category": "Pants",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "50%+ Nike Adidas Atleast",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Nike Track Shorts",
+   "category": "Shorts",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Nike Track Shorts",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Adidas Track Shorts",
+   "category": "Shorts",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "Adidas Track Shorts",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Mix Track Shorts",
+   "category": "Shorts",
+   "weightKg": 0.3,
+   "grade": "A",
+   "criteria": {
+    "brands": "50%+ Nike Adidas",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Levis 501",
+   "category": "Denim",
+   "weightKg": 0.8,
+   "grade": "A + repaired B",
+   "criteria": {
+    "brands": "Levi's 501 only",
+    "grades": "A + repaired B",
+    "rejectIf": "Unrepaired damage",
+    "notes": "All repairs made — very high grade. Plenty of 501s",
+    "style": "Baggy fits"
+   },
+   "rejectRule": "Unrepaired damage"
+  },
+  {
+   "name": "Mix Levis Pants",
+   "category": "Denim",
+   "weightKg": 0.8,
+   "grade": "A + repaired B",
+   "criteria": {
+    "brands": "Levi's 505, 506, 507 etc",
+    "grades": "A + repaired B",
+    "rejectIf": "Unrepaired damage",
+    "notes": null,
+    "style": "Baggy fits"
+   },
+   "rejectRule": "Unrepaired damage"
+  },
+  {
+   "name": "Carhartt / Dickies Pants A",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A only",
+   "criteria": {
+    "brands": "Carhartt & Dickies 50-50 C/D or mostly Carhartt",
+    "grades": "A only",
+    "rejectIf": "Skinny fits, stains, rips",
+    "notes": null,
+    "style": "Only baggy models — NO skinny"
+   },
+   "rejectRule": "Skinny fits, stains, rips"
+  },
+  {
+   "name": "Carhartt / Dickies Pants B",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "B only",
+   "criteria": {
+    "brands": "Carhartt & Dickies 50-50 C/D or mostly Carhartt",
+    "grades": "B only",
+    "rejectIf": "Skinny fits",
+    "notes": "Repaired/worn accepted as B",
+    "style": "Only baggy models — NO skinny"
+   },
+   "rejectRule": "Skinny fits"
+  },
+  {
+   "name": "Carpenter Pants Branded",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Lee/Wrangler/branded",
+    "grades": "A, B",
+    "rejectIf": "Skinny fits",
+    "notes": null,
+    "style": "Baggy models only"
+   },
+   "rejectRule": "Skinny fits"
+  },
+  {
+   "name": "Lee / Wrangler Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Lee & Wrangler",
+    "grades": "A, B",
+    "rejectIf": "Skinny fits",
+    "notes": null,
+    "style": "Baggy models"
+   },
+   "rejectRule": "Skinny fits"
+  },
+  {
+   "name": "Real Tree Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Real Tree camo",
+    "grades": "A",
+    "rejectIf": "NO army camo",
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": "NO army camo"
+  },
+  {
+   "name": "True Religion Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "True Religion Pants",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Miss Me Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Miss Me Pants",
+    "grades": "A, B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Miss Me Style Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Miss Me Style Pants",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "RL Pants",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Patagonia Trouser",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Patagonia Trouser",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Designer Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Burberry , YSL, Dior, Vercace, gucci, Evisu etc",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Mix Brand Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Carhartt/dickies, Levis 501, Levis, tommy, RL etc",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Dickies Cotton Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A",
+   "criteria": {
+    "brands": "Dickies cotton",
+    "grades": "A",
+    "rejectIf": null,
+    "notes": null,
+    "style": "Cargos, 874 & similar models"
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Levis Shorts",
+   "category": "Denim",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Levis Shorts",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Carhartt / Dickies Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Carhartt / Dickies Shorts",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Lee / Wrangler Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Lee / Wrangler Shorts",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Tommy Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Tommy Shorts",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "RL Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "RL Shorts",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "True Religion / Miss Me Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "True Religion / Miss Me Shorts",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Miss Me Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Miss Me Shorts",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Branded Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Minimum 20% Carhartt/Polo",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Mix Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Minimum 20% Carhartt/Polo",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "LLW Shorts",
+   "category": "Shorts",
+   "weightKg": 0.5,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "LLW Shorts",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Hip Hop Pants Branded",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Jnco, Evisu, True religion, Fubu, Southpole, RR, Ecko, Pelle Pelle etc",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Hip Hop Pants Unbranded",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Hip Hop Shorts Branded",
+   "category": "Shorts",
+   "weightKg": 0.8,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "Jnco, Evisu, True religion, Fubu, Southpole, RR, Ecko, Pelle Pelle etc",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Hip Hop Shorts Unbranded",
+   "category": "Shorts",
+   "weightKg": 0.8,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  },
+  {
+   "name": "Carhartt / Dickies Dungaree",
+   "category": "Pants",
+   "weightKg": 1.2,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Carhartt & Dickies",
+    "grades": "A, B",
+    "rejectIf": "Broken/missing buckles",
+    "notes": "ALL buckles must work",
+    "style": null
+   },
+   "rejectRule": "Broken/missing buckles"
+  },
+  {
+   "name": "Real Tree Dungaree",
+   "category": "Pants",
+   "weightKg": 1.2,
+   "grade": "A",
+   "criteria": {
+    "brands": "Real Tree",
+    "grades": "A",
+    "rejectIf": "Broken buckles",
+    "notes": "ALL buckles must work",
+    "style": null
+   },
+   "rejectRule": "Broken buckles"
+  },
+  {
+   "name": "Mix Dungaree",
+   "category": "Pants",
+   "weightKg": 1.2,
+   "grade": "A, B",
+   "criteria": {
+    "brands": "Mix Dungaree",
+    "grades": "A, B",
+    "rejectIf": "Broken buckles",
+    "notes": "ALL buckles must work",
+    "style": null
+   },
+   "rejectRule": "Broken buckles"
+  },
+  {
+   "name": "True Religion / Miss Me Pants",
+   "category": "Pants",
+   "weightKg": 0.8,
+   "grade": "A/B",
+   "criteria": {
+    "brands": "True Religion / Miss Me Pants",
+    "grades": "A/B",
+    "rejectIf": null,
+    "notes": null,
+    "style": null
+   },
+   "rejectRule": ""
+  }
+ ]
+}

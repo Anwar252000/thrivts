@@ -15,7 +15,10 @@ public class ThrivtsDbContextFactory : IDesignTimeDbContextFactory<ThrivtsDbCont
     public ThrivtsDbContext CreateDbContext(string[] args)
     {
         var optionsBuilder = new DbContextOptionsBuilder<ThrivtsDbContext>();
-        optionsBuilder.UseNpgsql("Host=localhost;Database=thrivts_design_time;Username=postgres;Password=postgres")
+        // Must match the runtime history table (DependencyInjection), or `dotnet ef database update`
+        // would look in the default __EFMigrationsHistory and try to re-apply everything.
+        optionsBuilder.UseNpgsql("Host=localhost;Database=thrivts_design_time;Username=postgres;Password=postgres",
+                npgsql => npgsql.MigrationsHistoryTable("__ef_migrations_history"))
             .UseSnakeCaseNamingConvention();
 
         return new ThrivtsDbContext(optionsBuilder.Options);
